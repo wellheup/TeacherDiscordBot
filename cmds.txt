@@ -1,0 +1,11 @@
+!add bookTitle  	#add a book to the syllabus, no quotations required
+!remove bookTitle 	#remove a book from the syllabus, no quotations required
+!removeNum number 	#remove a book from the syllabus by its index
+!strike bookTitle 	#cross out an entry in the syllabus by its title 
+!strikeNum number 	#cross out an entry in the syllabus by its index
+!bold bookTitle 	#bold an entry in the syllabus by its title
+!boldNum number 	#bold an entry in the syllabus by its index
+!syllabus numMins	#view the current syllabus, add a number of minutes if want 5+
+
+!cmds 				#list available commands
+!bug yourTextHere 	#add a bug to the bug list for Phil to fix later, annoying posters will be blacklisted
