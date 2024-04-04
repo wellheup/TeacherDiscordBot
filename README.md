@@ -1,3 +1,7 @@
+# Teacher Book Club bot
+This is my first Discord bot, I made it in python replit.com. Its purpose is to store a list of books we have/will/want to read in 
+our book club. It will post to the book club chat channel upon command to help us keep track of our books. 
+
 # Python Discord Bot
 
 This is a starting point for making your own Discord bot using Python and the [discordpy](https://discordpy.readthedocs.io/) library.
