@@ -5,7 +5,7 @@ from discord.ext import commands
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix='!', help_command=CustomHelpCommand(), intents=intents)
 
 @bot.event
 async def on_ready():
@@ -15,6 +15,7 @@ async def on_ready():
 # function to send message to channel then delete after num minutes
 async def send_and_delete(ctx, message, minutes = 1):
 	await ctx.send(message, delete_after = minutes * 60)
+	await ctx.message.add_reaction('👍')
 
 # The command to add a new item to the syllabus
 @bot.command()
@@ -265,9 +266,7 @@ except discord.HTTPException as e:
 # add support for the !help command which apparently will give a description automatically...
 # see what happens if all of the @bots are changed to @client
 # add a command that triggers when someone calls @botName where it will introduce itself and share its commands
-# add a feature to say who added a book to syllabus
-# add a thumbs up to any command messages
-		
+# add a feature to say who added a book to syllabus		
 
 # sources:
 # https://docs.replit.com/tutorials/python/discord-role-bot
