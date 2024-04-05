@@ -5,7 +5,7 @@ from discord.ext import commands
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='!', help_command=CustomHelpCommand(), intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.event
 async def on_ready():
@@ -237,6 +237,16 @@ async def bug(ctx, *args):
 	# Send a message to the chat confirming the addition
 	message = f"Added {item} to the bug list"
 	await send_and_delete(ctx, message)
+
+@bot.event
+async def on_message(message):
+  if message.author == bot.user:
+    return
+  elif bot.user.mentioned_in(message):
+    await message.channel.send(
+      f"I am a keeper of the First House and a servant to the Necrolord Highest, and you must call me {bot.user}; not due to my own merits of learning, but because I stand in the stead of the merciful God Above Death, and I live in hope that one day you will call him {bot.user}. And may I call you then, {message.author.mention}! "
+    )
+  await bot.process_commands(message)
 
 try:
 	token = os.getenv("DISCORD_BOT_SECRET") or ""
