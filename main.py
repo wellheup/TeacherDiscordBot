@@ -244,7 +244,7 @@ async def on_message(message):
     return
   elif bot.user.mentioned_in(message):
     await message.channel.send(
-      f"I am a keeper of the First House and a servant to the Necrolord Highest, and you must call me {bot.user}; not due to my own merits of learning, but because I stand in the stead of the merciful God Above Death, and I live in hope that one day you will call him {bot.user}. And may I call you then, {message.author.mention}! "
+      f"I am a keeper of the First House and a servant to the Necrolord Highest, and you must call me {bot.user.name}; not due to my own merits of learning, but because I stand in the stead of the merciful God Above Death, and I live in hope that one day you will call him {bot.user.name}. And may I call you then, {message.author.mention}! "
     )
   await bot.process_commands(message)
 
