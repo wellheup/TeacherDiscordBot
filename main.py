@@ -43,8 +43,6 @@ async def add(ctx, book: str, author: str = None, series: str = None):
 			cursor.execute("INSERT INTO syllabus (book, author, series, added_by, date_added) VALUES (%s, %s, %s, %s, current_date)", (book, author, series, ctx.author.name))
 	conn.commit()
 	cursor.close()
-	# pool.putconn(conn)
-	# pool.closeall()
 	
 	# Send a message to the chat confirming the addition
 	message = f"Added {book} to the syllabus"
@@ -168,12 +166,50 @@ async def todo(ctx, minutes: int = 5):
 			syllabus_str += f'  - {book} ({row[4]})\n'
 		else:
 			syllabus_str += f'  - {book} ({row[4]})\n'
+			
+	message = syllabus_str
+	if minutes == 0:
+		await ctx.send(message)
+	else:
+		await send_and_delete(ctx, message, minutes)
+
+# The command to list all the incomplete items in the syllabus
+@bot.command()
+async def graveyard(ctx, minutes: int = 5):
+	cursor.execute("SELECT book, author, series, num_in_series, unique_id, is_completed FROM syllabus WHERE is_completed = true ORDER BY author, series, num_in_series")
+	rows = cursor.fetchall()
+	currentAuthor = ''
+	currentSeries = ''
+	syllabus_str = '**The following assignments have already been completed: **\n'
+
+	for row in rows:
+		book = f'*{row[0]}*'
+		author = row[1]
+		series = row[2]
+		num_in_series = row[3]
+		if row[5] == 1:
+			book += ' ✅'
+		if author != currentAuthor:
+			syllabus_str += f'{author}\n'
+			currentAuthor = author
+		if series == '':
+			currentSeries = series
+			syllabus_str += f'- {book} ({row[4]})\n'
+		elif series != currentSeries:
+			currentSeries = series
+			syllabus_str += f'- {currentSeries}\n'
+			syllabus_str += f'  - {book} ({row[4]})\n'
+		else:
+			syllabus_str += f'  - {book} ({row[4]})\n'
 
 	message = syllabus_str
 	if minutes == 0:
 		await ctx.send(message)
 	else:
 		await send_and_delete(ctx, message, minutes)
+
+
+
 
 @bot.command()
 async def poll(ctx, item):
@@ -219,8 +255,6 @@ async def poll(ctx, item):
 				await result_message.delete()
 			except asyncio.TimeoutError:
 				await result_message.delete()
-
-
 		try:
 			await bot.wait_for('reaction_add', timeout=20, check=check)
 			await postResults()
@@ -290,15 +324,16 @@ except discord.HTTPException as e:
 		raise e
 
 # Todo
-# add a graveyard function
 # add a support for editing a line in place, rather than deleting and re-adding
 # add a function for viewing just a series by index or text
 # add support for subgroups (book series or authors)
 # add support for the !help command which apparently will give a description automatically...
 # see what happens if all of the @bots are changed to @client
-# add a command that triggers when someone calls @botName where it will introduce itself and share its commands
-# add a feature to say who added a book to syllabus
 # add a feature to determine who gets to chooose the next book, who chose the last, and who has chosen how many, also a randomizer for who is next in the case of a tie
+# add a command to print all of the column names in the syllabus table
+# add a command to list all books in the syllabus table with just their unique_id
+# add a command to attempt to update any field in the syllabus table based on uniquie_id
+# add a display for the whole syllabus table on the Webview page
 
 # sources:
 # https://docs.replit.com/tutorials/python/discord-role-bot
