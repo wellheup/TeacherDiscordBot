@@ -30,6 +30,23 @@ async def send_and_delete(ctx, message, minutes=1):
 		await ctx.send(message, delete_after=minutes * 60)
 		await ctx.message.add_reaction('👍')
 
+command_descriptions = """
+**!add <book> [author] [series]**: Adds a new book with optional author and series to the syllabus.
+**!remove <item>**: Removes an item from the syllabus by name or unique ID.
+**!complete <identifier>**: Marks an item as complete or incomplete by its name or unique ID.
+**!syllabus [minutes]**: Lists all items in the syllabus, optionally deletes the message after specified minutes. Use 0 for infinite time.
+**!todo [minutes]**: Lists all incomplete items in the syllabus, optionally deletes the message after specified minutes.
+**!graveyard [minutes]**: Lists all completed items, optionally deletes the message after specified minutes.
+**!poll <item>**: Initiates a poll for a specific item.
+**!update <identifier> <column> <new_value>**: Updates a specific column of an item in the syllabus.
+**!list_series <series_name>**: Lists all books in a specific series, formatted with authors and order.
+**!columns**: Lists all column names in the syllabus table.
+**!cmds**: Displays available bot commands. (you already know this one)
+**!bug <description>**: Adds a described bug to the bug list.
+**!report_bug <description>**: Allows users to report a bug, which then gets inserted into the database.
+"""
+
+
 # The command to add a new item to the syllabus
 @bot.command()
 async def add(ctx, book: str, author: str = None, series: str = None):
@@ -390,34 +407,36 @@ async def cmds(ctx):
 	conn = pool.getconn()
 	cursor = conn.cursor()
 	
-	# Open the syllabus.txt file and read its contents into a list
-	with open('cmds.txt', 'r') as f:
-		syllabus = f.readlines()
-		f.close()
+	await send_and_delete(ctx, command_descriptions)
 
-	# Create a string with the syllabus of syllabus
-	help_str = '\n'.join([f'{item.strip()}' for index, item in enumerate(syllabus)])
-
-	# Send the commands to the chat
-	message = f'\n```{help_str}```'
-	await send_and_delete(ctx, message)
-
-# The command to add bugs to the bug list
 @bot.command()
-async def bug(ctx, *args):
-	conn = pool.getconn()
-	cursor = conn.cursor()
-	
-	# Join the arguments into a single string
-	item = ' '.join(args)
+async def report_bug(ctx, *, description: str):
+	conn = pool.getconn()  # Get a database connection from the pool
+	cursor = conn.cursor()  # Open a cursor to perform database operations
 
-	with open('bugs.txt', 'a') as f:
-		f.write(item + '\n')
-		f.close()
+	# Check for the existence of the 'bugs' table
+	cursor.execute("SELECT to_regclass('public.bugs');")
+	if cursor.fetchone()[0] is None:
+		# If the table doesn't exist, create it
+		cursor.execute("""
+			CREATE TABLE bugs (
+				bug_id SERIAL PRIMARY KEY,
+				description TEXT NOT NULL,
+				added_by VARCHAR(255) NOT NULL
+			);
+		""")
 
-	# Send a message to the chat confirming the addition
-	message = f"Added {item} to the bug list"
-	await send_and_delete(ctx, message)
+	# Insert the new bug report into the 'bugs' table
+	cursor.execute("""
+		INSERT INTO bugs (description, added_by) VALUES (%s, %s);
+	""", (description, ctx.author.name))
+	conn.commit()  # Commit the transaction
+
+	# Send a confirmation message
+	send_and_delete(ctx, "Bug report submitted successfully!")
+
+	cursor.close()  # Close the cursor
+	pool.putconn(conn)  # Return the connection to the pool
 
 @bot.event
 async def on_message(message):
@@ -428,7 +447,12 @@ async def on_message(message):
 		return
 	elif bot.user.mentioned_in(message):
 		await message.channel.send(
-			f"I am a keeper of the First House and a servant to the Necrolord Highest, and you must call me {bot.user.name}; not due to my own merits of learning, but because I stand in the stead of the merciful God Above Death, and I live in hope that one day you will call him {bot.user.name}. And may I call you then, {message.author.mention}! "
+			f"I am a keeper of the First House and a servant to the Necrolord Highest, "
+			f"and you must call me {bot.user.name}; not due to my own merits of learning, "
+			f"but because I stand in the stead of the merciful God Above Death, "
+			f"and I live in hope that one day you will call him {bot.user.name}. "
+			f"And may I call you then, {message.author.mention}! "
+			f"Should you require further instruction type !cmds."
 		)
 	await bot.process_commands(message)
 
@@ -451,8 +475,7 @@ except discord.HTTPException as e:
 	else:
 		raise e
 
-		# Todo
-# add support for subgroups (book series or authors)
+# Todo
 # add support for the !help command which apparently will give a description automatically...
 # see what happens if all of the @bots are changed to @client
 # add a feature to determine who gets to chooose the next book, who chose the last, and who has chosen how many, also a randomizer for who is next in the case of a tie

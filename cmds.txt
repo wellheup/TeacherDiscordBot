@@ -1,9 +1,0 @@
-!add bookTitle/num   		#add a book to the syllabus, by name w/ quotes
-!remove bookTitle/num		#remove a book from the syllabus, by name w/ quotes or number 
-!complete bookTitle/num		#mark a book as complted by name w/ quotes or number
-!syllabus numMins			#view the current syllabus, add a number of minutes if want 5+
-!todo numMins				#view the current incomplete syllabus, add a number of minutes if want 5+
-!graveyard numMins			#view the current completed syllabus, add a number of minutes if want 5+
-
-!cmds 				#list available commands
-!bug yourTextHere	#add a bug to the bug list for Phil to fix later, annoying posters will be blacklisted
