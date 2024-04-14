@@ -10,7 +10,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-pool = psycopg2.pool.SimpleConnectionPool(0,80, os.getenv("DATABASE_URL"))
+pool = psycopg2.pool.SimpleConnectionPool(0, 80, os.getenv("DATABASE_URL"))
 conn = pool.getconn()
 cursor = conn.cursor()
 
@@ -21,18 +21,21 @@ async def on_ready():
 
 # function to send message to channel then delete after num minutes
 async def send_and_delete(ctx, message, minutes=1):
-    if len(message) > 2000:
-        message_parts = [message[i:i+2000] for i in range(0, len(message), 2000)]
-        for part in message_parts:
-            await ctx.send(part, delete_after=minutes*60)
-        await ctx.message.add_reaction('👍')
-    else:
-        await ctx.send(message, delete_after=minutes*60)
-        await ctx.message.add_reaction('👍')
+	if len(message) > 2000:
+		message_parts = [message[i:i + 2000] for i in range(0, len(message), 2000)]
+		for part in message_parts:
+			await ctx.send(part, delete_after=minutes * 60)
+		await ctx.message.add_reaction('👍')
+	else:
+		await ctx.send(message, delete_after=minutes * 60)
+		await ctx.message.add_reaction('👍')
 
 # The command to add a new item to the syllabus
 @bot.command()
 async def add(ctx, book: str, author: str = None, series: str = None):
+	conn = pool.getconn()
+	cursor = conn.cursor()
+	
 	# Insert the item to the Syllabus table in the Postgres database
 	if author is None:
 		cursor.execute("INSERT INTO syllabus (book, added_by, date_added) VALUES (%s, %s, current_date)", (book, ctx.author.name))
@@ -52,20 +55,26 @@ async def add(ctx, book: str, author: str = None, series: str = None):
 # The commmand to remove an item from the syllabus by name or unique_id
 @bot.command()
 async def remove(ctx, item):
-    if item.isdigit() and int(item) > 0:
-        unique_id = int(item)
-        cursor.execute("DELETE FROM syllabus WHERE unique_id = %s", (unique_id,))
-    else:
-        cursor.execute("DELETE FROM syllabus WHERE book = %s", (item,))
-    conn.commit()
-    cursor.close()
+	conn = pool.getconn()
+	cursor = conn.cursor()
+	
+	if item.isdigit() and int(item) > 0:
+		unique_id = int(item)
+		cursor.execute("DELETE FROM syllabus WHERE unique_id = %s", (unique_id,))
+	else:
+		cursor.execute("DELETE FROM syllabus WHERE book = %s", (item,))
+	conn.commit()
+	cursor.close()
 
-    # Send a message to the chat confirming the removal
-    message = f'Removed item "{item}" from the syllabus.'
-    await send_and_delete(ctx, message)
+	# Send a message to the chat confirming the removal
+	message = f'Removed item "{item}" from the syllabus.'
+	await send_and_delete(ctx, message)
 
 @bot.command()
 async def complete(ctx, arg):
+	conn = pool.getconn()
+	cursor = conn.cursor()
+	
 	if arg.isdigit():
 		unique_id = int(arg)
 		cursor.execute("SELECT is_completed, date_completed FROM syllabus WHERE unique_id = %s", (unique_id,))
@@ -100,10 +109,13 @@ async def complete(ctx, arg):
 	else:
 		message = "No matching item found."
 		await send_and_delete(ctx, message)
-		
+
 # The command to list all the items in the syllabus
 @bot.command()
 async def syllabus(ctx, minutes: int = 5):
+	conn = pool.getconn()
+	cursor = conn.cursor()
+	
 	cursor.execute("SELECT book, author, series, num_in_series, unique_id, is_completed FROM syllabus ORDER BY author, series, num_in_series")
 	rows = cursor.fetchall()
 	currentAuthor = ''
@@ -140,6 +152,9 @@ async def syllabus(ctx, minutes: int = 5):
 # The command to list all the incomplete items in the syllabus
 @bot.command()
 async def todo(ctx, minutes: int = 5):
+	conn = pool.getconn()
+	cursor = conn.cursor()
+	
 	cursor.execute("SELECT book, author, series, num_in_series, unique_id, is_completed FROM syllabus WHERE is_completed = false ORDER BY author, series, num_in_series")
 	rows = cursor.fetchall()
 	currentAuthor = ''
@@ -176,6 +191,9 @@ async def todo(ctx, minutes: int = 5):
 # The command to list all the incomplete items in the syllabus
 @bot.command()
 async def graveyard(ctx, minutes: int = 5):
+	conn = pool.getconn()
+	cursor = conn.cursor()
+	
 	cursor.execute("SELECT book, author, series, num_in_series, unique_id, is_completed FROM syllabus WHERE is_completed = true ORDER BY author, series, num_in_series")
 	rows = cursor.fetchall()
 	currentAuthor = ''
@@ -208,11 +226,11 @@ async def graveyard(ctx, minutes: int = 5):
 	else:
 		await send_and_delete(ctx, message, minutes)
 
-
-
-
 @bot.command()
 async def poll(ctx, item):
+	conn = pool.getconn()
+	cursor = conn.cursor()
+	
 	await ctx.message.add_reaction('👍')
 	if item.isdigit() and int(item) > 0:
 		unique_id = int(item)
@@ -255,6 +273,7 @@ async def poll(ctx, item):
 				await result_message.delete()
 			except asyncio.TimeoutError:
 				await result_message.delete()
+
 		try:
 			await bot.wait_for('reaction_add', timeout=20, check=check)
 			await postResults()
@@ -264,9 +283,51 @@ async def poll(ctx, item):
 		message = "No matching item found."
 		await send_and_delete(ctx, message)
 
+@bot.command()
+async def update(ctx, identifier, column, new_value):
+	conn = pool.getconn()
+	cursor = conn.cursor()
+	
+	# Start by trying to convert identifier to integer to check if it's a unique_id
+	try:
+		identifier = int(identifier)
+		lookup_column = "unique_id"
+	except ValueError:
+		# If it's not an int, we'll revert to treating it as a string and look up by 'book'
+		lookup_column = "book"
+
+	# Construct the SQL statement dynamically
+	sql = f"UPDATE syllabus SET {column} = %s WHERE {lookup_column} = %s RETURNING *;"
+
+	try:
+		cursor.execute(sql, (new_value, identifier))
+		updated_row = cursor.fetchone()
+		conn.commit()
+
+		if updated_row:
+			message = f"Successfully updated {identifier} in column {column}."
+		else:
+			message = f"No matching item found for update."
+	except psycopg2.Error as e:
+		# Specific handling for commonly expected errors could be added here
+		if "invalid input syntax" in str(e):
+			print(f"Error: {e}")
+			message = "The updated value provided is of the incorrect type for that column."
+		else:
+			message = f"Update to {identifier} in column {column} failed due to a database error."
+	finally:
+		# Ensure the cursor is always closed after the operation
+		cursor.close()
+
+	# Send the message to the Discord channel
+	await send_and_delete(ctx, message)
+
 # The command to display available commands
 @bot.command()
 async def cmds(ctx):
+	conn = pool.getconn()
+	cursor = conn.cursor()
+	
 	# Open the syllabus.txt file and read its contents into a list
 	with open('cmds.txt', 'r') as f:
 		syllabus = f.readlines()
@@ -282,6 +343,9 @@ async def cmds(ctx):
 # The command to add bugs to the bug list
 @bot.command()
 async def bug(ctx, *args):
+	conn = pool.getconn()
+	cursor = conn.cursor()
+	
 	# Join the arguments into a single string
 	item = ' '.join(args)
 
@@ -295,13 +359,16 @@ async def bug(ctx, *args):
 
 @bot.event
 async def on_message(message):
-  if message.author == bot.user:
-    return
-  elif bot.user.mentioned_in(message):
-    await message.channel.send(
-      f"I am a keeper of the First House and a servant to the Necrolord Highest, and you must call me {bot.user.name}; not due to my own merits of learning, but because I stand in the stead of the merciful God Above Death, and I live in hope that one day you will call him {bot.user.name}. And may I call you then, {message.author.mention}! "
-    )
-  await bot.process_commands(message)
+	conn = pool.getconn()
+	cursor = conn.cursor()
+	
+	if message.author == bot.user:
+		return
+	elif bot.user.mentioned_in(message):
+		await message.channel.send(
+			f"I am a keeper of the First House and a servant to the Necrolord Highest, and you must call me {bot.user.name}; not due to my own merits of learning, but because I stand in the stead of the merciful God Above Death, and I live in hope that one day you will call him {bot.user.name}. And may I call you then, {message.author.mention}! "
+		)
+	await bot.process_commands(message)
 
 try:
 	token = os.getenv("DISCORD_BOT_SECRET") or ""
@@ -317,28 +384,7 @@ except discord.HTTPException as e:
 			"The Discord servers denied the connection for making too many requests"
 		)
 		print(
-			"Get help from https://stackoverflow.com/questions/66724687/"+
-			"in-discord-py-how-to-solve-the-error-for-toomanyrequests"
+			"Get help from https://stackoverflow.com/questions/66724687/in-discord-py-how-to-solve-the-error-for-toomanyrequests"
 		)
 	else:
 		raise e
-
-# Todo
-# add a support for editing a line in place, rather than deleting and re-adding
-# add a function for viewing just a series by index or text
-# add support for subgroups (book series or authors)
-# add support for the !help command which apparently will give a description automatically...
-# see what happens if all of the @bots are changed to @client
-# add a feature to determine who gets to chooose the next book, who chose the last, and who has chosen how many, also a randomizer for who is next in the case of a tie
-# add a command to print all of the column names in the syllabus table
-# add a command to list all books in the syllabus table with just their unique_id
-# add a command to attempt to update any field in the syllabus table based on uniquie_id
-# add a display for the whole syllabus table on the Webview page
-
-# sources:
-# https://docs.replit.com/tutorials/python/discord-role-bot
-# https://docs.replit.com/tutorials/python/build-basic-discord-bot-python
-# https://docs.replit.com/hosting/deployments/about-deployments
-# https://discordpy.readthedocs.io/en/latest/ext/commands/api.html#discord.ext.commands.Bot.commands
-# https://discordpy.readthedocs.io/en/latest/ext/commands/api.html#commands
-# hosting: https://billing.sparkedhost.com/clientarea.php
