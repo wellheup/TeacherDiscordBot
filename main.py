@@ -322,6 +322,68 @@ async def update(ctx, identifier, column, new_value):
 	# Send the message to the Discord channel
 	await send_and_delete(ctx, message)
 
+@bot.command()
+async def list_series(ctx, series_name):
+	conn = pool.getconn()
+	cursor = conn.cursor()
+
+	# SQL query to select books from the specified series, ordered by num_in_series
+	cursor.execute("""
+		SELECT book, author, num_in_series 
+		FROM syllabus 
+		WHERE series = %s 
+		ORDER BY num_in_series ASC
+	""", (series_name,))
+
+	rows = cursor.fetchall()
+
+	# Check if there are any books in the series
+	if rows:
+		# Assuming author is the same for all books in the series and thus taking it from the first row
+		author = rows[0][1] if rows[0][1] else "Unknown"
+		message = f"*'{series_name}' - '{author}'*\n"
+
+		# Format each book into a bulleted list
+		for row in rows:
+			book = row[0]
+			num_in_series = row[2]
+			message += f"- {book} (#{num_in_series})\n"
+	else:
+		message = "No books found in the specified series."
+
+	await send_and_delete(ctx, message)
+
+	cursor.close()
+	pool.putconn(conn)
+
+@bot.command()
+async def columns(ctx):
+	conn = pool.getconn()  # Get a connection from the pool
+	cursor = conn.cursor()  # Open a cursor to perform database operations
+
+	# Query to get the column names of the syllabus table
+	query = """
+	SELECT column_name 
+	FROM information_schema.columns 
+	WHERE table_name = 'syllabus' 
+	ORDER BY ordinal_position;
+	"""
+
+	try:
+		cursor.execute(query)
+		columns = cursor.fetchall()  # Fetch all results
+		column_names = [col[0] for col in columns]  # Extract column names from tuples
+
+		# Format the column names into a string
+		message = "Column names in the syllabus table:\n- " + "\n- ".join(column_names)
+	except Exception as e:
+		message = f"Failed to retrieve column names: {e}"
+
+	await send_and_delete(ctx, message)  # Send the formatted message
+
+	cursor.close()  # Don't forget to close the cursor
+	pool.putconn(conn)  # Return the connection to the pool
+
 # The command to display available commands
 @bot.command()
 async def cmds(ctx):
@@ -388,3 +450,17 @@ except discord.HTTPException as e:
 		)
 	else:
 		raise e
+
+		# Todo
+# add support for subgroups (book series or authors)
+# add support for the !help command which apparently will give a description automatically...
+# see what happens if all of the @bots are changed to @client
+# add a feature to determine who gets to chooose the next book, who chose the last, and who has chosen how many, also a randomizer for who is next in the case of a tie
+
+# sources:
+# https://docs.replit.com/tutorials/python/discord-role-bot
+# https://docs.replit.com/tutorials/python/build-basic-discord-bot-python
+# https://docs.replit.com/hosting/deployments/about-deployments
+# https://discordpy.readthedocs.io/en/latest/ext/commands/api.html#discord.ext.commands.Bot.commands
+# https://discordpy.readthedocs.io/en/latest/ext/commands/api.html#commands
+# hosting: https://billing.sparkedhost.com/clientarea.php
