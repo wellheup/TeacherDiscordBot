@@ -1,10 +1,10 @@
 import os
 import discord
 import psycopg2.pool
+import asyncio
 from discord.ext import commands
 from replit import db
 from keep_alive import keep_alive
-import asyncio
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -24,14 +24,16 @@ async def send_and_delete(ctx, message, minutes=1):
 	if len(message) > 2000:
 		message_parts = [message[i:i + 2000] for i in range(0, len(message), 2000)]
 		for part in message_parts:
-			await ctx.send(part, delete_after=minutes * 60)
+			await ctx.send(part, delete_after=0 if ctx.channel.name == 'office-hours' else minutes * 60)
+		# await ctx.message.delete()
 		await ctx.message.add_reaction('👍')
 	else:
-		await ctx.send(message, delete_after=minutes * 60)
+		await ctx.send(message, delete_after=0 if ctx.channel.name == 'office-hours' else minutes * 60)
+		# await ctx.message.delete()
 		await ctx.message.add_reaction('👍')
 
 command_descriptions = """
-**!add <book> [author] [series]**: Adds a new book with optional author and series to the syllabus.
+**!add <book> [author] [series]	**: Adds a new book with optional author and series to the syllabus.
 **!remove <item>**: Removes an item from the syllabus by name or unique ID.
 **!complete <identifier>**: Marks an item as complete or incomplete by its name or unique ID.
 **!syllabus [minutes]**: Lists all items in the syllabus, optionally deletes the message after specified minutes. Use 0 for infinite time.
@@ -42,7 +44,6 @@ command_descriptions = """
 **!list_series <series_name>**: Lists all books in a specific series, formatted with authors and order.
 **!columns**: Lists all column names in the syllabus table.
 **!cmds**: Displays available bot commands. (you already know this one)
-**!bug <description>**: Adds a described bug to the bug list.
 **!report_bug <description>**: Allows users to report a bug, which then gets inserted into the database.
 """
 
@@ -67,7 +68,6 @@ async def add(ctx, book: str, author: str = None, series: str = None):
 	# Send a message to the chat confirming the addition
 	message = f"Added {book} to the syllabus"
 	await send_and_delete(ctx, message)
-
 
 # The commmand to remove an item from the syllabus by name or unique_id
 @bot.command()
@@ -446,7 +446,7 @@ async def on_message(message):
 	if message.author == bot.user:
 		return
 	elif bot.user.mentioned_in(message):
-		await message.channel.send(
+		reply = (
 			f"I am a keeper of the First House and a servant to the Necrolord Highest, "
 			f"and you must call me {bot.user.name}; not due to my own merits of learning, "
 			f"but because I stand in the stead of the merciful God Above Death, "
@@ -454,6 +454,7 @@ async def on_message(message):
 			f"And may I call you then, {message.author.mention}! "
 			f"Should you require further instruction type !cmds."
 		)
+		send_and_delete(message.channel, reply)
 	await bot.process_commands(message)
 
 try:
@@ -476,9 +477,15 @@ except discord.HTTPException as e:
 		raise e
 
 # Todo
+# organize the different commands in to different files or something so there's less scrolling
+# follow tutorial https://www.youtube.com/watch?v=nW8c7vT6Hl4&list=PLW3GfRiBCHOhfVoiDZpSz8SM_HybXRPzZ&ab_channel=Lucas to make modifications
 # add support for the !help command which apparently will give a description automatically...
 # see what happens if all of the @bots are changed to @client
-# add a feature to determine who gets to chooose the next book, who chose the last, and who has chosen how many, also a randomizer for who is next in the case of a tie
+# add a feature to determine who gets to choose the next book, who chose the last, and who has chosen how many, also a randomizer for who is next in the case of a tie
+# add a feature to add a table for each book and then keep a list of or character fan-cast ideas for each book
+# add a command to add a book to a season
+# add a command to print all of the books in a season
+# add a command to print all of the seasons and their books in the order the seasons occurred
 
 # sources:
 # https://docs.replit.com/tutorials/python/discord-role-bot
