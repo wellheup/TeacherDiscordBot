@@ -20,17 +20,20 @@ async def on_ready():
 	print(bot.user)
 
 # function to send message to channel then delete after num minutes
-async def send_and_delete(ctx, message, minutes=1):
+async def send_and_delete(ctx, message, minutes=5):
 	if len(message) > 2000:
 		message_parts = [message[i:i + 2000] for i in range(0, len(message), 2000)]
 		for part in message_parts:
-			await ctx.send(part, delete_after=0 if ctx.channel.name == 'office-hours' else minutes * 60)
-		# await ctx.message.delete()
-		await ctx.message.add_reaction('👍')
+			if ctx.channel.name == 'office-hours':
+				await ctx.send(part)
+			else:
+				await ctx.send(part, delete_after=minutes * 60)
 	else:
-		await ctx.send(message, delete_after=0 if ctx.channel.name == 'office-hours' else minutes * 60)
-		# await ctx.message.delete()
-		await ctx.message.add_reaction('👍')
+		if ctx.channel.name == 'office-hours':
+			await ctx.send(message)
+		else:
+			await ctx.send(message, delete_after=minutes * 60)
+	await ctx.message.add_reaction('👍')
 
 command_descriptions = """
 **!add <book> [author] [series]	**: Adds a new book with optional author and series to the syllabus.

@@ -20,7 +20,7 @@ def display_syllabus():
 		syllabus_str += f'<th style="border: 1px solid black;">{column.name}</th>'
 	syllabus_str += '</tr>'
 	for index, row in enumerate(rows):
-		syllabus_str += f'<tr style="background-color: {"#f0f0f0" if index % 2 != 0 else "#ffffff"};">'
+		syllabus_str += f'<tr style="background-color: {"#f0f0f0" if index % 2 != 0 else "#999999"};">'
 		for item in row:
 			syllabus_str += f'<td style="border: 1px solid black;">{item}</td>'
 		syllabus_str += '</tr>'
