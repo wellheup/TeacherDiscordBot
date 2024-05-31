@@ -22,18 +22,31 @@ async def on_ready():
 # function to send message to channel then delete after num minutes
 async def send_and_delete(ctx, message, minutes=5):
 	if len(message) > 2000:
-		message_parts = [message[i:i + 2000] for i in range(0, len(message), 2000)]
-		for part in message_parts:
-			if ctx.channel.name == 'office-hours':
+		message_parts = []
+		current_part = ""
+		for line in message.split('\n'):
+			if line.startswith('**'):
+				if current_part:
+					message_parts.append(current_part)
+					current_part = ""
+			current_part += f"{line}\n"
+		message_parts.append(current_part)
+
+		if ctx.channel.name == 'office-hours':
+			await ctx.message.add_reaction('👍')
+			for part in message_parts:
 				await ctx.send(part)
-			else:
+		else:
+			await ctx.message.delete()
+			for part in message_parts:
 				await ctx.send(part, delete_after=minutes * 60)
 	else:
 		if ctx.channel.name == 'office-hours':
 			await ctx.send(message)
+			await ctx.message.add_reaction('👍')
 		else:
+			await ctx.message.delete()
 			await ctx.send(message, delete_after=minutes * 60)
-	await ctx.message.add_reaction('👍')
 
 command_descriptions = """
 **!add <book> [author] [series]	**: Adds a new book with optional author and series to the syllabus.
@@ -49,7 +62,6 @@ command_descriptions = """
 **!cmds**: Displays available bot commands. (you already know this one)
 **!report_bug <description>**: Allows users to report a bug, which then gets inserted into the database.
 """
-
 
 # The command to add a new item to the syllabus
 @bot.command()
@@ -151,7 +163,7 @@ async def syllabus(ctx, minutes: int = 5):
 		if row[5] == 1:
 			book += ' ✅'
 		if author != currentAuthor:
-			syllabus_str += f'{author}\n'
+			syllabus_str += f'**{author}**\n'
 			currentAuthor = author
 		if series == '':
 			currentSeries = series
@@ -190,7 +202,7 @@ async def todo(ctx, minutes: int = 5):
 		if row[5] == 1:
 			book += ' ✅'
 		if author != currentAuthor:
-			syllabus_str += f'{author}\n'
+			syllabus_str += f'**{author}**\n'
 			currentAuthor = author
 		if series == '':
 			currentSeries = series
@@ -428,15 +440,14 @@ async def report_bug(ctx, *, description: str):
 				added_by VARCHAR(255) NOT NULL
 			);
 		""")
-
+	# Send a confirmation message
+	await send_and_delete(ctx, "Bug report submitted successfully!")
+	
 	# Insert the new bug report into the 'bugs' table
 	cursor.execute("""
 		INSERT INTO bugs (description, added_by) VALUES (%s, %s);
 	""", (description, ctx.author.name))
 	conn.commit()  # Commit the transaction
-
-	# Send a confirmation message
-	send_and_delete(ctx, "Bug report submitted successfully!")
 
 	cursor.close()  # Close the cursor
 	pool.putconn(conn)  # Return the connection to the pool
@@ -479,7 +490,7 @@ except discord.HTTPException as e:
 	else:
 		raise e
 
-# Todo
+# Todo:
 # organize the different commands in to different files or something so there's less scrolling
 # follow tutorial https://www.youtube.com/watch?v=nW8c7vT6Hl4&list=PLW3GfRiBCHOhfVoiDZpSz8SM_HybXRPzZ&ab_channel=Lucas to make modifications
 # add support for the !help command which apparently will give a description automatically...
@@ -496,4 +507,5 @@ except discord.HTTPException as e:
 # https://docs.replit.com/hosting/deployments/about-deployments
 # https://discordpy.readthedocs.io/en/latest/ext/commands/api.html#discord.ext.commands.Bot.commands
 # https://discordpy.readthedocs.io/en/latest/ext/commands/api.html#commands
-# hosting: https://billing.sparkedhost.com/clientarea.php
+# Location for bot in discord: https://discord.com/developers/applications
+# hosted: hosted on replit.com
