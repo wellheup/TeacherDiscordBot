@@ -35,18 +35,18 @@ async def send_and_delete(ctx, message, minutes=5):
 		if ctx.channel.name == 'office-hours':
 			await ctx.message.add_reaction('👍')
 			for part in message_parts:
-				await ctx.send(part)
+				await ctx.send(part, allowed_mentions=discord.AllowedMentions.none())
 		else:
 			await ctx.message.delete()
 			for part in message_parts:
-				await ctx.send(part, delete_after=minutes * 60)
-	else:
+				await ctx.send(part, delete_after=minutes * 60, allowed_mentions=discord.AllowedMentions.none())
+		else:
 		if ctx.channel.name == 'office-hours':
-			await ctx.send(message)
+			await ctx.send(message, allowed_mentions=discord.AllowedMentions.none())
 			await ctx.message.add_reaction('👍')
 		else:
 			await ctx.message.delete()
-			await ctx.send(message, delete_after=minutes * 60)
+			await ctx.send(message, delete_after=minutes * 60, allowed_mentions=discord.AllowedMentions.none())
 
 command_descriptions = """
 **!add <book> [author] [series]	**: Adds a new book with optional author and series to the syllabus.
