@@ -47,7 +47,7 @@ async def send_and_delete(ctx, message, minutes=5):
 			await ctx.send(message, delete_after=minutes * 60)
 
 command_descriptions = """
-**!add <book> [author] [series]	**: Adds a new book with optional author and series to the syllabus.
+**!add <book> [author] [series]**: Adds a new book with optional author and series to the syllabus.
 **!remove <item>**: Removes an item from the syllabus by name or unique ID.
 **!complete <identifier>**: Marks an item as complete or incomplete by its name or unique ID.
 **!syllabus [minutes]**: Lists all items in the syllabus, optionally deletes the message after specified minutes. Use 0 for infinite time.
