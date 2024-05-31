@@ -31,7 +31,6 @@ async def send_and_delete(ctx, message, minutes=5):
 					current_part = ""
 			current_part += f"{line}\n"
 		message_parts.append(current_part)
-
 		if ctx.channel.name == 'office-hours':
 			await ctx.message.add_reaction('👍')
 			for part in message_parts:
@@ -40,7 +39,7 @@ async def send_and_delete(ctx, message, minutes=5):
 			await ctx.message.delete()
 			for part in message_parts:
 				await ctx.send(part, delete_after=minutes * 60, allowed_mentions=discord.AllowedMentions.none())
-		else:
+	else:
 		if ctx.channel.name == 'office-hours':
 			await ctx.send(message, allowed_mentions=discord.AllowedMentions.none())
 			await ctx.message.add_reaction('👍')
