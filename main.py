@@ -16,11 +16,11 @@ cursor = conn.cursor()
 
 @bot.event
 async def on_ready():
-	print("I'm a bot")
-	print(bot.user)
+	print("I am " +bot.user.name)
 
 # function to send message to channel then delete after num minutes
 async def send_and_delete(ctx, message, minutes=5):
+	allowed_mentions = discord.AllowedMentions.none()  # Prevent mentions
 	if len(message) > 2000:
 		message_parts = []
 		current_part = ""
@@ -34,18 +34,18 @@ async def send_and_delete(ctx, message, minutes=5):
 		if ctx.channel.name == 'office-hours':
 			await ctx.message.add_reaction('👍')
 			for part in message_parts:
-				await ctx.send(part, allowed_mentions=discord.AllowedMentions.none())
+				await ctx.send("@silent " + part, allowed_mentions=allowed_mentions)
 		else:
 			await ctx.message.delete()
 			for part in message_parts:
-				await ctx.send(part, delete_after=minutes * 60, allowed_mentions=discord.AllowedMentions.none())
+				await ctx.send("@silent " + part, delete_after=minutes * 60, allowed_mentions=allowed_mentions)
 	else:
 		if ctx.channel.name == 'office-hours':
-			await ctx.send(message, allowed_mentions=discord.AllowedMentions.none())
+			await ctx.send("@silent " + message, allowed_mentions=allowed_mentions)
 			await ctx.message.add_reaction('👍')
 		else:
 			await ctx.message.delete()
-			await ctx.send(message, delete_after=minutes * 60, allowed_mentions=discord.AllowedMentions.none())
+			await ctx.send("@silent " + message, delete_after=minutes * 60, allowed_mentions=allowed_mentions)
 
 command_descriptions = """
 **!add <book> [author] [series]	**: Adds a new book with optional author and series to the syllabus.
