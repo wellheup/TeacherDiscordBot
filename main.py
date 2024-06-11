@@ -1,7 +1,5 @@
 import os
 import discord
-import psycopg2.pool
-import asyncio
 from discord.ext import commands
 from replit import db
 from keep_alive import keep_alive
@@ -66,20 +64,16 @@ async def on_message(message):
 	await bot.process_commands(message)
 
 try:
-	token = os.getenv("DISCORD_BOT_SECRET") or ""
-	if token == "":
+	token = os.getenv("DISCORD_BOT_SECRET")
+	if not token:
 		raise Exception("Please add your token to the Secrets pane.")
 	keep_alive()
 	bot.run(token)
 
 except discord.HTTPException as e:
 	if e.status == 429:
-		print(
-			"The Discord servers denied the connection for making too many requests"
-		)
-		print(
-			"Get help from https://stackoverflow.com/questions/66724687/in-discord-py-how-to-solve-the-error-for-toomanyrequests"
-		)
+		print("The Discord servers denied the connection for making too many requests")
+		print("Get help from https://stackoverflow.com/questions/66724687/in-discord-py-how-to-solve-the-error-for-toomanyrequests")
 	else:
 		raise e
 
