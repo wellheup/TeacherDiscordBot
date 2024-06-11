@@ -70,7 +70,6 @@ try:
 	if token == "":
 		raise Exception("Please add your token to the Secrets pane.")
 	keep_alive()
-	# # Run the bot
 	bot.run(token)
 
 except discord.HTTPException as e:
@@ -94,6 +93,7 @@ except discord.HTTPException as e:
 # add a command to print all of the seasons and their books in the order the seasons occurred
 # add to add_book to include date added
 # add to complete to include date completed
+# update the keep_alive.py file to use SQLAlchemy and a database
 
 # sources:
 # https://docs.replit.com/tutorials/python/discord-role-bot
