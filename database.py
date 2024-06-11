@@ -9,7 +9,7 @@ DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@localhost/d
 if not DATABASE_URL:
 	raise ValueError("DATABASE_URL environment variable is not set")
 if not DATABASE_URL.startswith("postgresql://"):
-	raise ValueError("DATABASE_URL must start with 'postgresql://'")
+	raise ValueError("DATABASE_URL must start with 'postgresql://'" + DATABASE_URL)
 
 try:
 	connection = psycopg2.connect(DATABASE_URL)
