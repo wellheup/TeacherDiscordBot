@@ -10,7 +10,7 @@ command_descriptions = """
 **!complete "bookOrId#"**: Marks an item as complete or incomplete by its name or unique ID.
 **!graveyard "minutes"**: Lists all completed items, optionally deletes the message after specified minutes.
 **!list_series "series_name"**: Lists all books in a specific series, formatted with authors and order.
-# **!poll "item"**: Initiates a poll for a specific item.
+~~**!poll "item"**: Initiates a poll for a specific item.~~
 **!remove "item"**: Removes an item from the syllabus by name or unique ID.
 **!report_bug "description"**: Allows users to report a bug, which then gets inserted into the database.
 **!syllabus "minutes"**: Lists all items in the syllabus, optionally deletes the message after specified minutes. Use 0 for infinite time.
