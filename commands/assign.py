@@ -10,7 +10,7 @@ async def assign(ctx, description: str):
     db: Session = SessionLocal()
     is_demo = 'demo' in ctx.channel.name
     table_name = 'demo_assignments' if is_demo else 'assignments'
-    date = await datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     try:
         if check_table_existing(db, table_name) == False:
             try:
