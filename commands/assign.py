@@ -12,23 +12,17 @@ async def assign(ctx, description: str):
     table_name = 'demo_assignments' if is_demo else 'assignments'
     date = await datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     try:
-        if not check_table_existing(db, table_name):
+        if check_table_existing(db, table_name) == False:
             try:
                 create_assignments_table(db, table_name)
             except Exception as e:
-                message = f"Error creating table: {e}"
-                print(message)
-                await send_and_delete(ctx, message)
-                return
+                print(f"Error creating table: {e}")
         assignment = add_assignment(db, description, date, is_demo)
-
+        
         message = f"The new assignment is: {assignment.description}"
     except Exception as e:
-        message = f"An error occurred in adding the assignment: {e}"
+        message = f"An error occurred in adding assignment: {e}"
         print(message)
     finally:
-        try:
-            db.close()
-        except Exception as e:
-            print(f"Failed to close the session: {e}")
+        db.close()
     await send_and_delete(ctx, message)
