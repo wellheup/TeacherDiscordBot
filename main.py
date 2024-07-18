@@ -6,7 +6,8 @@ from replit import db
 # Web App
 from app import app as flask_app
 def run_flask():
-	flask_app.run(host='0.0.0.0', port=5000)
+	port = 80 if os.getenv('REPLIT_DEPLOYMENT') == '1' else 5000
+	flask_app.run(host='0.0.0.0', port=port)
 
 # Discord bot 
 import discord
@@ -33,7 +34,9 @@ def run_discord_bot():
 	
 	intents = discord.Intents.default()
 	intents.message_content = True
-	bot = commands.Bot(command_prefix='.', intents=intents)
+	prefix = '!' if os.getenv('REPLIT_DEPLOYMENT') == '1' else '.'
+	flask_app.run(host='0.0.0.0', port=port)
+	bot = commands.Bot(command_prefix=prefix, intents=intents)
 	
 	# Register commands with the bot
 	bot.add_command(add)
