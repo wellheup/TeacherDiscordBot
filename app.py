@@ -16,7 +16,7 @@ from models import DemoAssignments
 
 app = Flask(__name__)
 
-is_demo = False
+is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
 
 @app.route('/')
 def index():
@@ -105,3 +105,4 @@ def delete():
 # add a series list tab
 # add a bug report form
 # add a todo page
+# add an "are you sure you want to delete this?" popup

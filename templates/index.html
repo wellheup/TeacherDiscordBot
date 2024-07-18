@@ -61,13 +61,11 @@
 											{% endif %}
 										</td>
 									{% endfor %}
-								<td style="padding: 4px; font-size: 12px; white-space: nowrap;">
-									<button type="button" style="font-size: 12px; display: inline-block; margin-right: 10px;" onclick="openEditEntryPopup(this, {{ loop.index0 }})">Edit</button>
-									<form method="POST" action="/delete" style="display: inline-block;">
-										<input type="hidden" name="unique_id" value="{{ book['unique_id'] }}">
-										<button type="submit" style="font-size: 12px;">Delete</button>
-									</form>
-								</td>
+									<td style="padding: 4px; font-size: 12px; white-space: nowrap;">
+										<button type="button" style="font-size: 12px; display: inline-block; margin-right: 10px;" onclick="openEditEntryPopup(this, {{ loop.index0 }})">Edit</button>
+										<button type="button" style="font-size: 12px; display: inline-block; margin-right: 10px;" onclick="openConfirmDeletePopup(this, {{ book.unique_id }})">Delete</button>
+									</td>
+								</form>
 							</tr>
 					{% endfor %}
 				</tbody>
@@ -124,11 +122,23 @@
 							{% endif %}
 						</div>
 					{% endif %}
-					<input type="number" name="unique_id" id="editEntryForm-unique_id}" min="0" max="100" value="columns['unique_id']" style="display:none;"" />
+					<input type="number" name="unique_id" id="editEntryForm-unique_id" min="0" max="100" value="columns['unique_id']" style="display:none;"/>
 				{% endfor %}
 				<div style="text-align: center;">
 					<button type="submit" style="font-size: 14px;">✔</button>
 					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('editEntryForm'))">✖</button>
+				</div>
+			</form>
+		</div>
+
+		<!-- Confirm Delete form in a Pop-up -->
+		<div id="confirmDeleteForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black;">
+			<p>Are you sure you'd like to delete this entry?</p>
+			<form method="POST" action="/delete" style="display: inline-block;">
+				<input type="number" name="unique_id" value='' style="display:none;" />
+				<div style="text-align: center;">
+					<button type="submit" style="font-size: 14px;">✔</button>
+					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('confirmDeleteForm'))">✖</button>
 				</div>
 			</form>
 		</div>

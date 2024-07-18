@@ -37,6 +37,15 @@ function openEditEntryPopup(button, index) {
   popup.style.display = 'block';
 }
 
+function openConfirmDeletePopup(button, index) {
+  console.log(index);
+  const popup = document.getElementById('confirmDeleteForm');
+  const unique_id = popup.querySelector('input[name="unique_id"]');
+  unique_id.value = index;
+  
+  popup.style.display = 'block';
+}
+
 function closePopup(popup) {
   popup.style.display = 'none';
 }
