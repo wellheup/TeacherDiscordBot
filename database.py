@@ -9,13 +9,13 @@ DATABASE_URL = os.getenv("DATABASE_URL", "postgres://user:password@localhost/dbn
 if DATABASE_URL.startswith("postgres://"):
 	DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# Verify psycopg2 connection
-try:
-	connection = psycopg2.connect(DATABASE_URL)
-	connection.close()
-	print("psycopg2 driver detected and working")
-except Exception as e:
-	raise ImportError("Error: psycopg2 not installed or database URL incorrect") from e
+# # Verify psycopg2 connection
+# try:
+# 	connection = psycopg2.connect(DATABASE_URL)
+# 	connection.close()
+# 	print("psycopg2 driver detected and working")
+# except Exception as e:
+# 	raise ImportError("Error: psycopg2 not installed or database URL incorrect") from e
 
 # Create SQLAlchemy engine and handle potential connection issues
 try:

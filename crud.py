@@ -46,20 +46,29 @@ def create_assignments_table(db: Session, table_name: str):
         raise
         
 
-def add_book(db: Session, book: str, author: str, series: str, added_by: str, is_demo: bool):
-    try:
-        if is_demo:
-            db_book = DemoSyllabus(book=book, author=author, series=series, added_by=added_by)
-        else:
-            db_book = Syllabus(book=book, author=author, series=series, added_by=added_by)
-        db.add(db_book)
-        db.commit()
-        db.refresh(db_book)
-        return db_book
-    except Exception as e:
-        db.rollback()  # Rollback on error
-        print(f"Error adding book: {e}")
-        raise
+def add_book(db: Session, 
+			book: str, 
+			author: str, 
+			series: str, 
+			added_by: str, 
+			season: int,
+			is_demo: bool, 
+			genre: str,
+			num_in_series: int = None,
+			is_extra_credit: bool = False):
+	try:
+		if is_demo:
+			db_book = DemoSyllabus(book=book, author=author, series=series, added_by=added_by, num_in_series=num_in_series, genre=genre, season=season, is_extra_credit=is_extra_credit)
+		else:
+			db_book = Syllabus(book=book, author=author, series=series, added_by=added_by, num_in_series=num_in_series, genre=genre, season=season, is_extra_credit=is_extra_credit)
+		db.add(db_book)
+		db.commit()
+		db.refresh(db_book)
+		return db_book
+	except Exception as e:
+		db.rollback()  # Rollback on error
+		print(f"Error adding book: {e}")
+		raise
 
 
 def get_current_assignment(db: Session, is_demo: bool):
@@ -86,6 +95,15 @@ def get_columns(db: Session, is_demo: bool):
         raise
 
 
+def get_pretty_columns(db: Session):
+    columns = {
+        'unique_id': 'ID', 'book': 'Book', 'author': 'Author', 'series': 'Series', 'num_in_series': 'Volume', 
+        'date_added': 'Added On', 'is_completed': 'Done?', 'added_by': 'Added By', 'season': 'Season', 
+        'is_extra_credit': 'Extra', 'date_completed': 'Completed On', 'up_votes': 'Upvotes', 'down_votes': 'Downvotes', 'genre': 'Genre'
+    }
+    return columns
+    
+
 def complete(db: Session, book_name: str, is_demo: bool):
     try:
         if is_demo:
@@ -100,7 +118,7 @@ def complete(db: Session, book_name: str, is_demo: bool):
         db.rollback()  # Rollback on error
         print(f"Error completing book: {e}")
         raise
-
+        
 
 def get_graveyard(db: Session, is_demo: bool):
     try:
@@ -221,6 +239,7 @@ def add_bug(db: Session, description: str, added_by: str, is_demo: bool):
         print(f"Error adding bug: {e}")
         raise
 
+
 def check_table_existing(db: Session, table_name: str):
     try:
         inspector = inspect(db.bind)
@@ -263,6 +282,19 @@ def get_syllabus(db: Session, is_demo: bool):
             return db.query(Syllabus.book, Syllabus.author, Syllabus.series, Syllabus.num_in_series, Syllabus.unique_id, Syllabus.is_completed) \
                 .order_by(Syllabus.author, Syllabus.series, Syllabus.num_in_series) \
                 .all()
+    except Exception as e:
+        db.rollback()  # Rollback on error
+        print(f"Error getting syllabus: {e}")
+        raise
+
+def get_syllabus_all(db: Session, is_demo: bool):
+    try:
+        if is_demo:
+            return db.query(DemoSyllabus) \
+                .order_by(DemoSyllabus.author, DemoSyllabus.series, DemoSyllabus.num_in_series) \
+                .all()
+        else:
+            return db.query(Syllabus).order_by(Syllabus.author, Syllabus.series, Syllabus.num_in_series).all()
     except Exception as e:
         db.rollback()  # Rollback on error
         print(f"Error getting syllabus: {e}")
@@ -320,6 +352,7 @@ def update_current_assignment(db: Session, new_value: str, is_demo: bool):
         print(f"Error updating assignment: {e}")
         raise
 
+
 def update_id(db: Session, book_id: int, column: str, new_value: str, is_demo: bool):
     try:
         if is_demo:
@@ -328,6 +361,53 @@ def update_id(db: Session, book_id: int, column: str, new_value: str, is_demo: b
             db_book = db.query(Syllabus).filter(Syllabus.unique_id == book_id).first()
         if db_book:
             setattr(db_book, column, new_value)
+            db.commit()
+            db.refresh(db_book)
+            print(db_book)
+        return db_book
+    except Exception as e:
+        db.rollback()  # Rollback on error
+        print(f"Error updating book: {e}")
+        raise
+
+
+def update_database(
+    db: Session, 
+    unique_id: int,
+    book: str, 
+    author: str, 
+    series: str, 
+    is_completed: bool, 
+    added_by: str, 
+    season: int, 
+    num_in_series: int,
+    is_extra_credit: bool, 
+    date_completed: str, 
+    up_votes: int, 
+    down_votes: int, 
+    genre: str, 
+    is_demo: bool
+):
+    
+    try:
+        if is_demo:
+            db_book = db.query(DemoSyllabus).filter(DemoSyllabus.unique_id == unique_id).first()
+        else:
+            db_book = db.query(Syllabus).filter(Syllabus.unique_id == unique_id).first()
+        if db_book:
+            db_book.book = book
+            db_book.author = author
+            db_book.series = series
+            db_book.is_completed = is_completed
+            db_book.added_by = added_by
+            db_book.season = season
+            db_book.num_in_series = num_in_series
+            db_book.is_extra_credit = is_extra_credit
+            if date_completed:
+                db_book.date_completed = date_completed
+            db_book.up_votes = up_votes
+            db_book.down_votes = down_votes
+            db_book.genre = genre
             db.commit()
             db.refresh(db_book)
             print(db_book)

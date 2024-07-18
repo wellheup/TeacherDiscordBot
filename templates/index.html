@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>syllabus</title>
+	</head>
+	<body>
+		<div class="tab">
+			<button class="tablinks" onclick="openTab(event, 'Syllabus')">Syllabus</button>
+			<button class="tablinks" onclick="openTab(event, 'Bugs')">Bugs</button>
+		</div>
+
+		<div id="Syllabus" class="tabcontent">
+			<h3>RAPID READING HOMEWORK</h3>
+			<p><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}}</p>
+			
+			<table style="border-collapse: collapse; width: 100%; table-layout: auto;">
+				<thead>
+					<tr>
+						{% for column in columns %}
+							<th style="border: 1px solid black; padding: 4px; font-size: 12px; white-space: nowrap;">{{ pretty_columns[column] }}</th>
+						{% endfor %}
+						<th style="padding: 4px; font-size: 12px; white-space: nowrap; text-align: left;"><button onclick="document.getElementById('newEntryForm').style.display='block'">Add New</button></th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for book in syllabus %}
+							<tr style="background-color: {{ loop.cycle('#d3d3d3', 'white') }};">
+								<form method="POST" action="/update">
+									{% for column in columns %}
+										<td style="border: 1px solid black; padding: 4px; font-size: 12px; white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %};">
+											{% if column in [ 'unique_id', 'date_added'] %}
+												<div name="{{column}}">
+													{{ book[column] }}
+												</div>
+											{% elif column == 'num_in_series' %}
+												<div name="{{column}}" style="text-align: center;">
+													{{ book[column] if book[column] is not none else '0' }}
+												</div>
+											{% elif column in ['num_in_series', 'season'] %}
+												<div name="{{column}}" style="text-align: {{ 'center' if column == 'season' else 'left' }};">
+													{{ book[column] if book[column] is not none else '0' }}
+												</div>
+											{% elif column in ['is_completed', 'is_extra_credit'] %}
+												<div name="{{column}}" style="text-align: center;">
+													{{ '✔' if book[column] else '✘' }}
+												</div>
+											{% elif column == 'genre' %}
+												<div name="{{column}}">
+													{% if book[column] is not none %}{{ book[column] }}{% endif %}
+												</div>
+											{% elif column == 'date_completed' %}
+												<div name="{{column}}">
+													{% if book[column] is not none %}{{ book[column] }}{% endif %}
+												</div>
+											{% else %}
+												<div name="{{column}}">
+													{{ book[column] }}
+												</div>
+											{% endif %}
+										</td>
+									{% endfor %}
+								<td style="padding: 4px; font-size: 12px; white-space: nowrap;">
+									<button type="button" style="font-size: 12px; display: inline-block; margin-right: 10px;" onclick="openEditEntryPopup(this, {{ loop.index0 }})">Edit</button>
+									<form method="POST" action="/delete" style="display: inline-block;">
+										<input type="hidden" name="unique_id" value="{{ book['unique_id'] }}">
+										<button type="submit" style="font-size: 12px;">Delete</button>
+									</form>
+								</td>
+							</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+		<!-- New Entry form in a Pop-up -->
+		<div id="newEntryForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black;">
+			<form method="POST" action="/add">
+				{% for column in columns %}
+					{% if column != 'unique_id' and column != 'date_added' %}
+						<div style="margin-bottom: 10px; display:flex; align-items:center;">
+							<label for="newEntryForm-{{ column }}" style="margin-right: 10px;">{{ pretty_columns[column] }}</label>
+							{% if column in [ 'is_completed', 'is_extra_credit'] %}
+								<input type="checkbox" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; font-size: 14px; width: 100%;" />
+							{% elif column == 'date_completed' %}
+								<input type="date" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; font-size: 14px; width: 100%;" />
+							{% elif column == 'genre' %}
+								<input type="text" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; font-size: 14px; width: 100%;" />
+							{% elif column in ['num_in_series', 'season'] %}
+								<input type="number" id="newEntryForm-{{column}}" name="{{ column }}" min="0" max="100" style="border: 1px solid black; font-size: 14px; width: 100%;" />
+							{% else %}
+								<input type="text" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; font-size: 14px; width: 100%;" />
+							{% endif %}
+						</div>
+					{% else %}
+						<!-- {{ column }} -->
+					{% endif %}
+				{% endfor %}
+				<div style="text-align: center;">
+					<button type="submit" style="font-size: 14px;">✔</button>
+					<button type="button" style="font-size: 14px;" onclick="document.getElementById('newEntryForm').style.display='none'">✖</button>
+				</div>
+			</form>
+		</div>
+
+		<!-- Edit Entry form in a Pop-up -->
+		<div id="editEntryForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black;">
+			<form method="POST" action="/update">
+				{% for column in columns %}
+					{% if column not in ['unique_id', 'date_added'] %}
+						<div style="margin-bottom: 10px;">
+							<label for="editEntryForm-{{ column }}">{{ pretty_columns[column] }}</label>
+							{% if column in ['is_completed', 'is_extra_credit'] %}
+								<input type="checkbox" name="{{ column }}" id="editEntryForm-{{ column }}" />
+							{% elif column == 'date_completed' %}
+								<input type="date" name="{{ column }}" id="editEntryForm-{{ column }}" />
+							{% elif column == 'genre' %}
+								<input type="text" name="{{ column }}" id="editEntryForm-{{ column }}" />
+							{% elif column in ['num_in_series', 'season', 'up_votes', 'down_votes'] %}
+								<input type="number" name="{{ column }}" id="editEntryForm-{{ column }}" min="0" max="100" value="0" />
+							{% else %}
+								<input type="text" name="{{ column }}" id="editEntryForm-{{ column }}" />
+							{% endif %}
+						</div>
+					{% endif %}
+					<input type="number" name="unique_id" id="editEntryForm-unique_id}" min="0" max="100" value="columns['unique_id']" style="display:none;"" />
+				{% endfor %}
+				<div style="text-align: center;">
+					<button type="submit" style="font-size: 14px;">✔</button>
+					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('editEntryForm'))">✖</button>
+				</div>
+			</form>
+		</div>
+		
+		<div id="Bugs" class="tabcontent" style="display:none">
+			<h3>BUGS</h3>
+			<ul style="list-style-type: disc; font-size: 18px;">
+				{% for bug in bugs %}
+					<li style="font-size: 18px;">{{ bug.description }} -- added by {{bug.added_by}}</li>
+				{% endfor %}
+			</ul>
+		</div>
+
+		<!-- Include the external JavaScript file -->
+		<script src="{{ url_for('static', filename='scripts.js') }}"></script>
+	</body>
+</html>

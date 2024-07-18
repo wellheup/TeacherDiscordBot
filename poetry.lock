@@ -72,6 +72,16 @@ files = [
 aiohttp = "*"
 
 [[package]]
+name = "app"
+version = "0.0.1"
+description = "a simple egg"
+optional = false
+python-versions = "*"
+files = [
+    {file = "app-0.0.1.zip", hash = "sha256:214549e746d777292d807eec7713c2cea332e08e037c923cd61ee1d5ab7a127f"},
+]
+
+[[package]]
 name = "argon2-cffi"
 version = "23.1.0"
 description = "Argon2 for Python"
@@ -487,6 +497,21 @@ Werkzeug = ">=3.0.0"
 [package.extras]
 async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
+
+[[package]]
+name = "flask-sqlalchemy"
+version = "3.1.1"
+description = "Add SQLAlchemy support to your Flask application."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "flask_sqlalchemy-3.1.1-py3-none-any.whl", hash = "sha256:4ba4be7f419dc72f4efd8802d69974803c37259dd42f3913b0dcf75c9447e0a0"},
+    {file = "flask_sqlalchemy-3.1.1.tar.gz", hash = "sha256:e4b68bb881802dda1a7d878b2fc84c06d1ee57fb40b874d3dc97dabfa36b8312"},
+]
+
+[package.dependencies]
+flask = ">=2.2.5"
+sqlalchemy = ">=2.0.16"
 
 [[package]]
 name = "greenlet"
@@ -1199,4 +1224,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10.0,<3.11"
-content-hash = "cab62db315f2f18e615e5ef460f53a22adb86ab765ec675c3540d3c61fabeb10"
+content-hash = "32f4456ca3230114493cb84f6464a32826c70d502465a4477ac16154e5754e4c"
