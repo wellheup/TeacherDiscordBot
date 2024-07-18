@@ -35,7 +35,6 @@ def run_discord_bot():
 	intents = discord.Intents.default()
 	intents.message_content = True
 	prefix = '!' if os.getenv('REPLIT_DEPLOYMENT') == '1' else '.'
-	flask_app.run(host='0.0.0.0', port=port)
 	bot = commands.Bot(command_prefix=prefix, intents=intents)
 	
 	# Register commands with the bot
