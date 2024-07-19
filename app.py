@@ -13,7 +13,6 @@ from models import Assignments
 from models import DemoSyllabus
 from models import DemoBugs
 from models import DemoAssignments
-from datetime import datetime
 
 app = Flask(__name__)
 
@@ -101,36 +100,35 @@ def delete():
 
 @app.route('/assign', methods=['POST'])
 def assign():
-    db: Session = SessionLocal()
-    is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
-    date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    try:
-        print("in assign")
-        assignment_data = request.form.get('assignment_data')
-        add_assignment(db, assignment_data, date, is_demo)
-        return redirect(url_for('index'))
-    except Exception as e:
-        db.rollback()
-        return str(e), 500
-    finally:
-        db.close()
+	db: Session = SessionLocal()
+	is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
+	try:
+		print("in assign")
+		assignment_data = request.form.get('assignment_data')
+		add_assignment(db, assignment_data, is_demo)
+		return redirect(url_for('index'))
+	except Exception as e:
+		db.rollback()
+		return str(e), 500
+	finally:
+		db.close()
 
 @app.route('/bug', methods=['POST'])
 def report_bug():
-    db: Session = SessionLocal()
-    is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
-    try:
-        description = request.form.get('description')
-        print(f"description: {description}")
-        added_by = request.form.get('added_by')
-        print(f"added_by: {added_by}")
-        add_bug(db, description, added_by, is_demo)
-        return redirect(url_for('index'))
-    except Exception as e:
-        db.rollback()
-        return str(e), 500
-    finally:
-        db.close()
+	db: Session = SessionLocal()
+	is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
+	try:
+		description = request.form.get('description')
+		print(f"description: {description}")
+		added_by = request.form.get('added_by')
+		print(f"added_by: {added_by}")
+		add_bug(db, description, added_by, is_demo)
+		return redirect(url_for('index'))
+	except Exception as e:
+		db.rollback()
+		return str(e), 500
+	finally:
+		db.close()
 
 # TODO: 
 # add a graveyard tab
@@ -139,3 +137,8 @@ def report_bug():
 # add a complete button for each assignment
 # add a delete button for bugs
 # add an "are you sure you want to delete this?" popup for bugs
+# make actual CRUD for all of the tables
+# 	Create -post
+# 	read - get
+# 	update - put
+# 	delete - delete

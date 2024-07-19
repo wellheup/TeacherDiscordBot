@@ -29,45 +29,45 @@
 				</thead>
 				<tbody>
 					{% for book in syllabus %}
-							<tr style="background-color: {{ loop.cycle('#d3d3d3', 'white') }};">
-									{% for column in columns %}
-										<td style="border: 1px solid black; padding: 4px; font-size: 12px; white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %};">
-											{% if column in [ 'unique_id', 'date_added'] %}
-												<div name="{{column}}">
-													{{ book[column] }}
-												</div>
-											{% elif column == 'num_in_series' %}
-												<div name="{{column}}" style="text-align: center;">
-													{{ book[column] if book[column] is not none else '0' }}
-												</div>
-											{% elif column in ['num_in_series', 'season'] %}
-												<div name="{{column}}" style="text-align: {{ 'center' if column == 'season' else 'left' }};">
-													{{ book[column] if book[column] is not none else '0' }}
-												</div>
-											{% elif column in ['is_completed', 'is_extra_credit'] %}
-												<div name="{{column}}" style="text-align: center;">
-													{{ '✔' if book[column] else '✘' }}
-												</div>
-											{% elif column == 'genre' %}
-												<div name="{{column}}">
-													{% if book[column] is not none %}{{ book[column] }}{% endif %}
-												</div>
-											{% elif column == 'date_completed' %}
-												<div name="{{column}}">
-													{% if book[column] is not none %}{{ book[column] }}{% endif %}
-												</div>
-											{% else %}
-												<div name="{{column}}">
-													{{ book[column] }}
-												</div>
-											{% endif %}
-										</td>
-									{% endfor %}
-									<td style="padding: 4px; font-size: 12px; white-space: nowrap;">
-										<button type="button" style="font-size: 12px; display: inline-block; margin-right: 10px;" onclick="openEditEntryPopup(this, {{ loop.index0 }})">Edit</button>
-										<button type="button" style="font-size: 12px; display: inline-block; margin-right: 10px;" onclick="openConfirmDeletePopup(this, {{ book.unique_id }})">Delete</button>
-									</td>
-							</tr>
+						<tr style="background-color: {{ loop.cycle('#d3d3d3', 'white') }};">
+							{% for column in columns %}
+								<td style="border: 1px solid black; padding: 4px; font-size: 12px; white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %};">
+									{% if column in [ 'unique_id', 'date_added'] %}
+										<div name="{{column}}">
+											{{ book[column] }}
+										</div>
+									{% elif column == 'num_in_series' %}
+										<div name="{{column}}" style="text-align: center;">
+											{{ book[column] if book[column] is not none else '0' }}
+										</div>
+									{% elif column in ['num_in_series', 'season'] %}
+										<div name="{{column}}" style="text-align: {{ 'center' if column == 'season' else 'left' }};">
+											{{ book[column] if book[column] is not none else '0' }}
+										</div>
+									{% elif column in ['is_completed', 'is_extra_credit'] %}
+										<div name="{{column}}" style="text-align: center;">
+											{{ '✔' if book[column] else '✘' }}
+										</div>
+									{% elif column == 'genre' %}
+										<div name="{{column}}">
+											{% if book[column] is not none %}{{ book[column] }}{% endif %}
+										</div>
+									{% elif column == 'date_completed' %}
+										<div name="{{column}}">
+											{% if book[column] is not none %}{{ book[column] }}{% endif %}
+										</div>
+									{% else %}
+										<div name="{{column}}">
+											{{ book[column] }}
+										</div>
+									{% endif %}
+								</td>
+							{% endfor %}
+							<td style="padding: 4px; font-size: 12px; white-space: nowrap;">
+								<button type="button" style="font-size: 12px; display: inline-block; margin-right: 10px;" onclick="openEditEntryPopup(this, {{ loop.index0 }})">Edit</button>
+								<button type="button" style="font-size: 12px; display: inline-block; margin-right: 10px;" onclick="openConfirmDeletePopup(this, {{ book.unique_id }})">Delete</button>
+							</td>
+						</tr>
 					{% endfor %}
 				</tbody>
 			</table>
@@ -155,14 +155,25 @@
 		</div>
 
 		<!-- Bugs tab -->
-		<div id="Bugs" class="tabcontent" style="display:none">
-			<h3>BUGS</h3>
+		<div id="Bugs" class="tabcontent" style="display:none; width: 50%;">
+			<h3>BUGS & FEATURE REQUESTS</h3>
 			<button type="button" style="font-size: 12px; display: inline-block;" onclick="openNewBugPopup(this)">New Bug</button>
-			<ul style="list-style-type: disc; font-size: 18px;">
-				{% for bug in bugs %}
-					<li style="font-size: 18px;">{{ bug.description }} -- added by {{bug.added_by}}</li>
-				{% endfor %}
-			</ul>
+			<table style="border-collapse: collapse; width: 100%; table-layout: auto; font-size: 18px;">
+				<thead>
+					<tr>
+						<th style="border: 1px solid black; padding: 4px; white-space: nowrap;">Bug</th>
+						<th style="border: 1px solid black; padding: 4px; white-space: nowrap;">Added by</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for bug in bugs %}
+					<tr>
+						<td style="border: 1px solid black; padding: 4px; white-space: nowrap;">{{ bug.description }}</td>
+						<td style="border: 1px solid black; padding: 4px; white-space: nowrap;">{{ bug.added_by }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
 		</div>
 
 		<!-- New Bug Pop-up -->
