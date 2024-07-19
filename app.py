@@ -83,7 +83,7 @@ def add():
 	finally:
 		db.close()
 
-
+# Deletes book from syllabus
 @app.route('/delete', methods=['POST'])
 def delete():
 	db: Session = SessionLocal()
@@ -97,6 +97,22 @@ def delete():
 		return str(e), 500
 	finally:
 		db.close()
+
+
+@app.route('/complete', methods=['POST'])
+def complete_task():
+	db: Session = SessionLocal()
+	is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
+	try:
+		book = request.form.get('book')
+		complete(db, book, is_demo)
+		return redirect(url_for('index'))
+	except Exception as e:
+		db.rollback()
+		return str(e), 500
+	finally:
+		db.close()
+
 
 @app.route('/assign', methods=['POST'])
 def assign():
@@ -130,13 +146,22 @@ def report_bug():
 	finally:
 		db.close()
 
+
+@app.route('/delete_bug', methods=['POST'])
+def delete_bug_route():
+    db: Session = SessionLocal()
+    is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
+    try:
+        bug_id = int(request.form.get('bug_id'))
+        delete_bug(db, bug_id, is_demo)
+        return redirect(url_for('index'))
+    except Exception as e:
+        db.rollback()
+        return str(e), 500
+    finally:
+        db.close()
+
 # TODO: 
-# add a graveyard tab
-# add a series list tab
-# add a todo page
-# add a complete button for each assignment
-# add a delete button for bugs
-# add an "are you sure you want to delete this?" popup for bugs
 # make actual CRUD for all of the tables
 # 	Create -post
 # 	read - get

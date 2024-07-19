@@ -7,31 +7,31 @@
 	</head>
 	<body>
 		<div class="tab">
-			<button class="tablinks" onclick="openTab(event, 'Syllabus')">Syllabus</button>
-			<button class="tablinks" onclick="openTab(event, 'Bugs')">Bugs</button>
+			<button class="tablinks" style="font-size: 18px; padding: 10px 20px; margin-right: 10px;" onclick="openTab(event, 'Syllabus')">Syllabus</button>
+			<button class="tablinks" style="font-size: 18px; padding: 10px 20px;" onclick="openTab(event, 'Bugs')">Bugs</button>
 		</div>
 
 		<div id="Syllabus" class="tabcontent">
-			<h3>RAPID READING HOMEWORK</h3>
+			<h2>RAPID READING HOMEWORK</h2>
 			<div>
-			<p style="display: inline-block; margin-right: 10px;"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}}</p>
-				<button type="button" style="font-size: 12px; display: inline-block;" onclick="openNewAssignmentPopup(this)">New Assignment</button>
+			<p style="display: inline-block; margin-right: 10px; font-size: 18px;"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}}</p>
+				<button type="button" style="font-size: 18px; padding: 10px 20px;" onclick="openNewAssignmentPopup(this)">New Assignment</button>
 			</div>
 				
 			<table style="border-collapse: collapse; width: 100%; table-layout: auto;">
 				<thead>
 					<tr>
 						{% for column in columns %}
-							<th style="border: 1px solid black; padding: 4px; font-size: 12px; white-space: nowrap;">{{ pretty_columns[column] }}</th>
+							<th style="border: 1px solid black; padding: 4px; font-size: 14px; white-space: nowrap;">{{ pretty_columns[column] }}</th>
 						{% endfor %}
-						<th style="padding: 4px; font-size: 12px; white-space: nowrap; text-align: left;"><button onclick="document.getElementById('newEntryForm').style.display='block'">Add New</button></th>
+						<th style="padding: 4px; font-size: 14px; white-space: nowrap; text-align: left;"><button style="font-size: 18px; padding: 10px 20px;" onclick="document.getElementById('newEntryForm').style.display='block'">Add New</button></th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for book in syllabus %}
 						<tr style="background-color: {{ loop.cycle('#d3d3d3', 'white') }};">
 							{% for column in columns %}
-								<td style="border: 1px solid black; padding: 4px; font-size: 12px; white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %};">
+								<td style="border: 1px solid black; padding: 4px; font-size: 14px; white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %};">
 									{% if column in [ 'unique_id', 'date_added'] %}
 										<div name="{{column}}">
 											{{ book[column] }}
@@ -53,8 +53,16 @@
 											{% if book[column] is not none %}{{ book[column] }}{% endif %}
 										</div>
 									{% elif column == 'date_completed' %}
-										<div name="{{column}}">
-											{% if book[column] is not none %}{{ book[column] }}{% endif %}
+					 
+										<div name="{{column}}" style="font-size: 14px;">
+											{% if book[column] is not none %}
+												{{ book[column] }}
+											{% else %}
+												<form method="POST" style="display: inline;" action="complete">
+													<input type="hidden" name="book" value="{{ book.book }}" />
+													<button type="submit" style="font-size: 14px;">Mark Book Complete</button>
+												</form>
+											{% endif %}
 										</div>
 									{% else %}
 										<div name="{{column}}">
@@ -63,31 +71,35 @@
 									{% endif %}
 								</td>
 							{% endfor %}
-							<td style="padding: 4px; font-size: 12px; white-space: nowrap;">
-								<button type="button" style="font-size: 12px; display: inline-block; margin-right: 10px;" onclick="openEditEntryPopup(this, {{ loop.index0 }})">Edit</button>
-								<button type="button" style="font-size: 12px; display: inline-block; margin-right: 10px;" onclick="openConfirmDeletePopup(this, {{ book.unique_id }})">Delete</button>
+							<td style="padding: 4px; font-size: 14px; white-space: nowrap;">
+								<form style="display: inline;" action="edit" method="POST">
+									<button type="submit" style="font-size: 14px;" name="edit" value="{{ loop.index0 }}">Edit</button>
+								</form>
+								<form style="display: inline;" action="delete" method="POST">
+									<button type="submit" style="font-size: 14px;" name="delete" value="{{ book.unique_id }}">Delete</button>
+								</form>
 							</td>
 						</tr>
 					{% endfor %}
 				</tbody>
 			</table>
 		</div>
-
+		
 		<!-- New Entry form in a Pop-up -->
-		<div id="newEntryForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black;">
+		<div id="newEntryForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
 			<form method="POST" action="/add">
 				{% for column in columns %}
 					{% if column != 'unique_id' and column != 'date_added' %}
 						<div style="margin-bottom: 10px; display:flex; align-items:center;">
 							<label for="newEntryForm-{{ column }}" style="margin-right: 10px;">{{ pretty_columns[column] }}</label>
 							{% if column in [ 'is_completed', 'is_extra_credit'] %}
-								<input type="checkbox" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; font-size: 14px; width: 100%;" />
+								<input type="checkbox" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; width: 100%; font-size: 14px;" />
 							{% elif column == 'date_completed' %}
-								<input type="date" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; font-size: 14px; width: 100%;" />
+								<input type="date" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; width: 100%; font-size: 14px;" />
 							{% elif column in ['num_in_series', 'season', 'up_votes', 'down_votes'] %}
-								<input type="number" id="newEntryForm-{{column}}" name="{{ column }}" min="0" max="100" value="0" style="border: 1px solid black; font-size: 14px; width: 100%;" />
+								<input type="number" id="newEntryForm-{{column}}" name="{{ column }}" min="0" max="100" value="0" style="border: 1px solid black; width: 100%; font-size: 14px;" />
 							{% else %}
-								<input type="text" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; font-size: 14px; width: 100%;" />
+								<input type="text" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; width: 100%; font-size: 14px;" />
 							{% endif %}
 						</div>
 					{% else %}
@@ -102,26 +114,26 @@
 		</div>
 
 		<!-- Edit Entry form in a Pop-up -->
-		<div id="editEntryForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black;">
+		<div id="editEntryForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
 			<form method="POST" action="/update">
 				{% for column in columns %}
 					{% if column not in ['unique_id', 'date_added'] %}
 						<div style="margin-bottom: 10px;">
 							<label for="editEntryForm-{{ column }}">{{ pretty_columns[column] }}</label>
 							{% if column in ['is_completed', 'is_extra_credit'] %}
-								<input type="checkbox" name="{{ column }}" id="editEntryForm-{{ column }}" />
+								<input type="checkbox" name="{{ column }}" id="editEntryForm-{{ column }}" style="font-size: 14px;"/>
 							{% elif column == 'date_completed' %}
-								<input type="date" name="{{ column }}" id="editEntryForm-{{ column }}" />
+								<input type="date" name="{{ column }}" id="editEntryForm-{{ column }}" style="font-size: 14px;"/>
 							{% elif column == 'genre' %}
-								<input type="text" name="{{ column }}" id="editEntryForm-{{ column }}" />
+								<input type="text" name="{{ column }}" id="editEntryForm-{{ column }}" style="font-size: 14px;"/>
 							{% elif column in ['num_in_series', 'season', 'up_votes', 'down_votes'] %}
-								<input type="number" name="{{ column }}" id="editEntryForm-{{ column }}" min="0" max="100" value="0" />
+								<input type="number" name="{{ column }}" id="editEntryForm-{{ column }}" min="0" max="100" value="0" style="font-size: 14px;"/>
 							{% else %}
-								<input type="text" name="{{ column }}" id="editEntryForm-{{ column }}" />
+								<input type="text" name="{{ column }}" id="editEntryForm-{{ column }}" style="font-size: 14px;"/>
 							{% endif %}
 						</div>
 					{% endif %}
-					<input type="number" name="unique_id" id="editEntryForm-unique_id" min="0" max="100" value="columns['unique_id']" style="display:none;"/>
+					<input type="number" name="unique_id" id="editEntryForm-unique_id" min="0" max="100" value="columns['unique_id']" style="display:none; font-size: 14px;"/>
 				{% endfor %}
 				<div style="text-align: center;">
 					<button type="submit" style="font-size: 14px;">✔</button>
@@ -131,10 +143,10 @@
 		</div>
 
 		<!-- Confirm Delete form in a Pop-up -->
-		<div id="confirmDeleteForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black;">
+		<div id="confirmDeleteForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
 			<p>Are you sure you'd like to delete this entry?</p>
 			<form method="POST" action="/delete" style="display: inline-block;">
-				<input type="number" name="unique_id" value='' style="display:none;" />
+				<input type="number" name="unique_id" value='' style="display:none; font-size: 14px;"/>
 				<div style="text-align: center;">
 					<button type="submit" style="font-size: 14px;">✔</button>
 					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('confirmDeleteForm'))">✖</button>
@@ -143,10 +155,10 @@
 		</div>
 
 		<!-- New Assignment Pop-up -->
-		<div id="newAssignmentForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black;">
+		<div id="newAssignmentForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
 			<p>Please enter the new assignment:</p>
 			<form method="POST" action="/assign" style="display: inline-block;">
-				<input type="text" name="assignment_data" style="width: 100%;" />
+				<input type="text" name="assignment_data" style="width: 100%; font-size: 14px;"/>
 				<div style="text-align: center;">
 					<button type="submit" style="font-size: 14px;">✔</button>
 					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('newAssignmentForm'))">✖</button>
@@ -157,10 +169,11 @@
 		<!-- Bugs tab -->
 		<div id="Bugs" class="tabcontent" style="display:none; width: 50%;">
 			<h3>BUGS & FEATURE REQUESTS</h3>
-			<button type="button" style="font-size: 12px; display: inline-block;" onclick="openNewBugPopup(this)">New Bug</button>
-			<table style="border-collapse: collapse; width: 100%; table-layout: auto; font-size: 18px;">
+			<button type="button" style="font-size: 14px; display: inline-block;" onclick="openNewBugPopup(this)">New Bug</button>
+			<table style="border-collapse: collapse; width: 100%; table-layout: auto; font-size: 16px;">
 				<thead>
 					<tr>
+						<th style="padding: 4px; white-space: nowrap;"></th>
 						<th style="border: 1px solid black; padding: 4px; white-space: nowrap;">Bug</th>
 						<th style="border: 1px solid black; padding: 4px; white-space: nowrap;">Added by</th>
 					</tr>
@@ -168,7 +181,15 @@
 				<tbody>
 					{% for bug in bugs %}
 					<tr>
-						<td style="border: 1px solid black; padding: 4px; white-space: nowrap;">{{ bug.description }}</td>
+						<td style="padding: 4px; white-space: nowrap; text-align: center;">
+							<form method="POST" action="/delete_bug" style="display: inline-block;">
+								<input type="hidden" name="bug_id" value="{{ bug.bug_id }}" />
+								<button type="submit" style="font-size: 16px;">✔</button>
+							</form>
+						</td>
+						<td style="border: 1px solid black; padding: 4px; white-space: nowrap;">
+							{{ bug.description }}
+						</td>
 						<td style="border: 1px solid black; padding: 4px; white-space: nowrap;">{{ bug.added_by }}</td>
 					</tr>
 					{% endfor %}
@@ -177,20 +198,19 @@
 		</div>
 
 		<!-- New Bug Pop-up -->
-		<div id="newBugForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black;">
+		<div id="newBugForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
 			<p>Please enter the bug description:</p>
 			<form method="POST" action="/bug" style="display: inline-block;">
 				<label for="description">Bug Descripton</label>
-				<input type="text" name="description" style="width: 100%;" />
+				<input type="text" name="description" style="width: 100%; font-size: 14px;"/>
 				<label for="added_by">Added by</label>
-				<input type="text" name="added_by" value="anonymous" style="width: 100%;" />
+				<input type="text" name="added_by" value="anonymous" style="width: 100%; font-size: 14px;"/>
 				<div style="text-align: center;">
 					<button type="submit" style="font-size: 14px;">✔</button>
 					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('newBugForm'))">✖</button>
 				</div>
 			</form>
 		</div>
-
 		<!-- Include the external JavaScript file -->
 		<script src="{{ url_for('static', filename='scripts.js') }}"></script>
 	</body>

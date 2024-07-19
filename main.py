@@ -97,14 +97,8 @@ if __name__ == '__main__':
 	flask_thread.join()
 	discord_thread.join()
 
-# Todo:
+# TODO:
 # follow tutorial to see more about bots https://www.youtube.com/watch?v=nW8c7vT6Hl4&list=PLW3GfRiBCHOhfVoiDZpSz8SM_HybXRPzZ&ab_channel=Lucas to make modifications
-# add support for the !help command which apparently will give a description automatically...
-# add a feature to determine who gets to choose the next book, who chose the last, and who has chosen how many, also a randomizer for who is next in the case of a tie
-# add a feature to add a table for each book and then keep a list of or character fan-cast ideas for each book?
-# add a command to print all of the books in a season
-# add a command to print all of the seasons and their books in the order the seasons occurred
-# upgrade to use gunicorn instead of flask?
 
 # sources:
 # https://docs.replit.com/tutorials/python/discord-role-bot

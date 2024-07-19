@@ -123,7 +123,24 @@ def complete(db: Session, book_name: str, is_demo: bool):
 		db.rollback()  # Rollback on error
 		print(f"Error completing book: {e}")
 		raise
-		
+
+
+def delete_bug(db: Session, bug_id: int, is_demo: bool):
+	try:
+		if is_demo:
+			db_bug = db.query(DemoBugs).filter(DemoBugs.bug_id == bug_id).first()
+		else:
+			db_bug = db.query(Bugs).filter(Bugs.bug_id == bug_id).first()
+		if db_bug:
+			db.delete(db_bug)
+			db.commit()
+			return db_bug
+		return None
+	except Exception as e:
+		db.rollback()  # Rollback on error
+		print(f"Error deleting bug: {e}")
+		raise
+
 
 def get_graveyard(db: Session, is_demo: bool):
 	try:
