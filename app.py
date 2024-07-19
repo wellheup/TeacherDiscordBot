@@ -13,25 +13,25 @@ from models import Assignments
 from models import DemoSyllabus
 from models import DemoBugs
 from models import DemoAssignments
+from datetime import datetime
 
 app = Flask(__name__)
-
-is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
 
 @app.route('/')
 def index():
 	db: Session = SessionLocal()
+	is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
 	syllabus = get_syllabus_all(db, is_demo)
-	columns = get_columns(db, False)
+	columns = get_columns(db, is_demo)
 	pretty_columns = get_pretty_columns(db)
-	bugs = get_bugs(db)
-	assignment = get_current_assignment(db, False)
+	bugs = get_bugs(db, is_demo)
+	assignment = get_current_assignment(db, is_demo)
 	return render_template('index.html', syllabus=syllabus, columns = columns, pretty_columns = pretty_columns, bugs = bugs, assignment = assignment)
 
 @app.route('/update', methods=[ 'POST'])
 def update():
 	db: Session = SessionLocal()
-	print('i tried')
+	is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
 	try:
 		unique_id = int(request.form.get('unique_id'))
 		book = request.form.get('book')
@@ -63,13 +63,13 @@ def update():
 @app.route('/add', methods=['POST'])
 def add():
 	db: Session = SessionLocal()
+	is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
 	try:
 		book = request.form.get('book')
 		author = request.form.get('author')
 		series = request.form.get('series')
 		added_by = request.form.get('added_by')
 		season = int(request.form.get('season'))
-		is_demo = is_demo
 		genre = request.form.get('genre')
 		num_in_series = int(request.form.get('num_in_series'))
 		is_extra_credit = bool(request.form.get('is_extra_credit', False))
@@ -88,10 +88,10 @@ def add():
 @app.route('/delete', methods=['POST'])
 def delete():
 	db: Session = SessionLocal()
+	is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
 	try:
 		id = int(request.form.get('unique_id'))
 		remove_id(db, id, is_demo)
-		db.commit()
 		return redirect(url_for('index'))
 	except Exception as e:
 		db.rollback()
@@ -99,10 +99,43 @@ def delete():
 	finally:
 		db.close()
 
+@app.route('/assign', methods=['POST'])
+def assign():
+    db: Session = SessionLocal()
+    is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
+    date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    try:
+        print("in assign")
+        assignment_data = request.form.get('assignment_data')
+        add_assignment(db, assignment_data, date, is_demo)
+        return redirect(url_for('index'))
+    except Exception as e:
+        db.rollback()
+        return str(e), 500
+    finally:
+        db.close()
+
+@app.route('/bug', methods=['POST'])
+def report_bug():
+    db: Session = SessionLocal()
+    is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
+    try:
+        description = request.form.get('description')
+        print(f"description: {description}")
+        added_by = request.form.get('added_by')
+        print(f"added_by: {added_by}")
+        add_bug(db, description, added_by, is_demo)
+        return redirect(url_for('index'))
+    except Exception as e:
+        db.rollback()
+        return str(e), 500
+    finally:
+        db.close()
+
 # TODO: 
-# add a button and text box to update the current assignment
 # add a graveyard tab
 # add a series list tab
-# add a bug report form
 # add a todo page
-# add an "are you sure you want to delete this?" popup
+# add a complete button for each assignment
+# add a delete button for bugs
+# add an "are you sure you want to delete this?" popup for bugs

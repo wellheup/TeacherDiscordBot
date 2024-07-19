@@ -38,11 +38,22 @@ function openEditEntryPopup(button, index) {
 }
 
 function openConfirmDeletePopup(button, index) {
-  console.log(index);
   const popup = document.getElementById('confirmDeleteForm');
   const unique_id = popup.querySelector('input[name="unique_id"]');
   unique_id.value = index;
   
+  popup.style.display = 'block';
+}
+
+function openNewAssignmentPopup(button) {
+  const popup = document.getElementById('newAssignmentForm');
+
+  popup.style.display = 'block';
+}
+
+function openNewBugPopup(button) {
+  const popup = document.getElementById('newBugForm');
+
   popup.style.display = 'block';
 }
 

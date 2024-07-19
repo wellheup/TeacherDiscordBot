@@ -13,8 +13,11 @@
 
 		<div id="Syllabus" class="tabcontent">
 			<h3>RAPID READING HOMEWORK</h3>
-			<p><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}}</p>
-			
+			<div>
+			<p style="display: inline-block; margin-right: 10px;"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}}</p>
+				<button type="button" style="font-size: 12px; display: inline-block;" onclick="openNewAssignmentPopup(this)">New Assignment</button>
+			</div>
+				
 			<table style="border-collapse: collapse; width: 100%; table-layout: auto;">
 				<thead>
 					<tr>
@@ -27,7 +30,6 @@
 				<tbody>
 					{% for book in syllabus %}
 							<tr style="background-color: {{ loop.cycle('#d3d3d3', 'white') }};">
-								<form method="POST" action="/update">
 									{% for column in columns %}
 										<td style="border: 1px solid black; padding: 4px; font-size: 12px; white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %};">
 											{% if column in [ 'unique_id', 'date_added'] %}
@@ -65,7 +67,6 @@
 										<button type="button" style="font-size: 12px; display: inline-block; margin-right: 10px;" onclick="openEditEntryPopup(this, {{ loop.index0 }})">Edit</button>
 										<button type="button" style="font-size: 12px; display: inline-block; margin-right: 10px;" onclick="openConfirmDeletePopup(this, {{ book.unique_id }})">Delete</button>
 									</td>
-								</form>
 							</tr>
 					{% endfor %}
 				</tbody>
@@ -83,10 +84,8 @@
 								<input type="checkbox" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; font-size: 14px; width: 100%;" />
 							{% elif column == 'date_completed' %}
 								<input type="date" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; font-size: 14px; width: 100%;" />
-							{% elif column == 'genre' %}
-								<input type="text" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; font-size: 14px; width: 100%;" />
-							{% elif column in ['num_in_series', 'season'] %}
-								<input type="number" id="newEntryForm-{{column}}" name="{{ column }}" min="0" max="100" style="border: 1px solid black; font-size: 14px; width: 100%;" />
+							{% elif column in ['num_in_series', 'season', 'up_votes', 'down_votes'] %}
+								<input type="number" id="newEntryForm-{{column}}" name="{{ column }}" min="0" max="100" value="0" style="border: 1px solid black; font-size: 14px; width: 100%;" />
 							{% else %}
 								<input type="text" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; font-size: 14px; width: 100%;" />
 							{% endif %}
@@ -142,14 +141,43 @@
 				</div>
 			</form>
 		</div>
-		
+
+		<!-- New Assignment Pop-up -->
+		<div id="newAssignmentForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black;">
+			<p>Please enter the new assignment:</p>
+			<form method="POST" action="/assign" style="display: inline-block;">
+				<input type="text" name="assignment_data" style="width: 100%;" />
+				<div style="text-align: center;">
+					<button type="submit" style="font-size: 14px;">✔</button>
+					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('newAssignmentForm'))">✖</button>
+				</div>
+			</form>
+		</div>
+
+		<!-- Bugs tab -->
 		<div id="Bugs" class="tabcontent" style="display:none">
 			<h3>BUGS</h3>
+			<button type="button" style="font-size: 12px; display: inline-block;" onclick="openNewBugPopup(this)">New Bug</button>
 			<ul style="list-style-type: disc; font-size: 18px;">
 				{% for bug in bugs %}
 					<li style="font-size: 18px;">{{ bug.description }} -- added by {{bug.added_by}}</li>
 				{% endfor %}
 			</ul>
+		</div>
+
+		<!-- New Bug Pop-up -->
+		<div id="newBugForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black;">
+			<p>Please enter the bug description:</p>
+			<form method="POST" action="/bug" style="display: inline-block;">
+				<label for="description">Bug Descripton</label>
+				<input type="text" name="description" style="width: 100%;" />
+				<label for="added_by">Bug Descripton</label>
+				<input type="text" name="added_by" value="anonymous" style="width: 100%;" />
+				<div style="text-align: center;">
+					<button type="submit" style="font-size: 14px;">✔</button>
+					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('newBugForm'))">✖</button>
+				</div>
+			</form>
 		</div>
 
 		<!-- Include the external JavaScript file -->

@@ -229,7 +229,7 @@ def add_bug(db: Session, description: str, added_by: str, is_demo: bool):
         if is_demo:
             db_bug = DemoBugs(description=description, added_by=added_by)
         else:
-            db_bug = Bugs(bug=bug, added_by=added_by)
+            db_bug = Bugs(description=description, added_by=added_by)
         db.add(db_bug)
         db.commit()
         db.refresh(db_bug)
@@ -422,8 +422,15 @@ def get_author(db: Session, author_name: str):
     return db.query(Syllabus).filter(Syllabus.author == author_name).all()
 
         
-def get_bugs(db: Session):
-    return db.query(Bugs).all()
-
+def get_bugs(db: Session, is_demo: bool):
+    try:
+        if is_demo:
+            return db.query(DemoBugs).all()
+        else:
+            return db.query(Bugs).all()
+    except Exception as e:
+        db.rollback()  # Rollback on error
+        print(f"Error getting bugs: {e}")
+        raise
 
 
