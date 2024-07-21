@@ -1,7 +1,7 @@
 from discord.ext import commands
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from crud import get_graveyard
+from crud import get_graveyard_abbrev
 from utils import send_and_delete
 
 @commands.command()
@@ -9,7 +9,7 @@ async def graveyard(ctx, minutes: int = 5):
 	db: Session = SessionLocal()
 	is_demo = 'demo' in ctx.channel.name
 	try:
-		rows = get_graveyard(db, is_demo)
+		rows = get_graveyard_abbrev(db, is_demo)
 		currentAuthor = ''
 		currentSeries = ''
 		message = '**The following assignments have already been completed: **\n'

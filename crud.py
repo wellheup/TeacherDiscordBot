@@ -48,6 +48,7 @@ def create_assignments_table(db: Session, table_name: str):
 		raise
 		
 
+
 def add_book(db: Session, 
 			book: str, 
 			author: str, 
@@ -142,7 +143,7 @@ def delete_bug(db: Session, bug_id: int, is_demo: bool):
 		raise
 
 
-def get_graveyard(db: Session, is_demo: bool):
+def get_graveyard_abbrev(db: Session, is_demo: bool):
 	try:
 		if is_demo:
 			return db.query(DemoSyllabus.book, DemoSyllabus.author, DemoSyllabus.series, DemoSyllabus.num_in_series, DemoSyllabus.unique_id, DemoSyllabus.is_completed) \
@@ -151,6 +152,24 @@ def get_graveyard(db: Session, is_demo: bool):
 				.all()
 		else:
 			return db.query(Syllabus.book, Syllabus.author, Syllabus.series, Syllabus.num_in_series, Syllabus.unique_id, Syllabus.is_completed) \
+				.filter(Syllabus.is_completed == True) \
+				.order_by(Syllabus.author, Syllabus.series, Syllabus.num_in_series) \
+				.all()
+	except Exception as e:
+		db.rollback()  # Rollback on error
+		print(f"Error getting graveyard: {e}")
+		raise
+
+
+def get_graveyard(db: Session, is_demo: bool):
+	try:
+		if is_demo:
+			return db.query(DemoSyllabus) \
+				.filter(DemoSyllabus.is_completed == True) \
+				.order_by(DemoSyllabus.author, DemoSyllabus.series, DemoSyllabus.num_in_series) \
+				.all()
+		else:
+			return db.query(Syllabus) \
 				.filter(Syllabus.is_completed == True) \
 				.order_by(Syllabus.author, Syllabus.series, Syllabus.num_in_series) \
 				.all()
@@ -294,7 +313,7 @@ def create_bugs_table(db: Session, table_name: str):
 		raise
 
 
-def get_syllabus(db: Session, is_demo: bool):
+def get_syllabus_abbrev(db: Session, is_demo: bool):
 	try:
 		if is_demo:
 			return db.query(DemoSyllabus.book, DemoSyllabus.author, DemoSyllabus.series, DemoSyllabus.num_in_series, DemoSyllabus.unique_id, DemoSyllabus.is_completed) \
@@ -309,7 +328,8 @@ def get_syllabus(db: Session, is_demo: bool):
 		print(f"Error getting syllabus: {e}")
 		raise
 
-def get_syllabus_all(db: Session, is_demo: bool):
+
+def get_syllabus(db: Session, is_demo: bool):
 	try:
 		if is_demo:
 			return db.query(DemoSyllabus) \
@@ -410,7 +430,6 @@ def update_database(
 	genre: str, 
 	is_demo: bool
 ):
-	
 	try:
 		if is_demo:
 			db_book = db.query(DemoSyllabus).filter(DemoSyllabus.unique_id == unique_id).first()

@@ -20,12 +20,26 @@ app = Flask(__name__)
 def index():
 	db: Session = SessionLocal()
 	is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
-	syllabus = get_syllabus_all(db, is_demo)
+	syllabus = get_syllabus(db, is_demo)
 	columns = get_columns(db, is_demo)
 	pretty_columns = get_pretty_columns(db)
 	bugs = get_bugs(db, is_demo)
 	assignment = get_current_assignment(db, is_demo)
-	return render_template('index.html', syllabus=syllabus, columns = columns, pretty_columns = pretty_columns, bugs = bugs, assignment = assignment)
+	graveyard = get_graveyard(db, is_demo)
+	todo_unformatted = get_todo(db, is_demo)
+	todo = format_todo(todo_unformatted)
+
+	return render_template(
+		'index.html', 
+		syllabus=syllabus, 
+		columns=columns, 
+		pretty_columns=pretty_columns, 
+		bugs=bugs, 
+		assignment=assignment, 
+		graveyard=graveyard,
+		todo=todo
+	)
+
 
 @app.route('/update', methods=[ 'POST'])
 def update():
@@ -90,6 +104,7 @@ def delete():
 	is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
 	try:
 		id = int(request.form.get('unique_id'))
+		print(id)
 		remove_id(db, id, is_demo)
 		return redirect(url_for('index'))
 	except Exception as e:
@@ -149,17 +164,31 @@ def report_bug():
 
 @app.route('/delete_bug', methods=['POST'])
 def delete_bug_route():
-    db: Session = SessionLocal()
-    is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
-    try:
-        bug_id = int(request.form.get('bug_id'))
-        delete_bug(db, bug_id, is_demo)
-        return redirect(url_for('index'))
-    except Exception as e:
-        db.rollback()
-        return str(e), 500
-    finally:
-        db.close()
+	db: Session = SessionLocal()
+	is_demo = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
+	try:
+		bug_id = int(request.form.get('bug_id'))
+		delete_bug(db, bug_id, is_demo)
+		return redirect(url_for('index'))
+	except Exception as e:
+		db.rollback()
+		return str(e), 500
+	finally:
+		db.close()
+
+def format_todo(todo):
+	todo_formatted = {}
+	# temp = {author: {series: []}}
+	for row in todo:
+		if row.author in todo_formatted.keys():
+			if row.series in todo_formatted[row.author].keys():
+				todo_formatted[row.author][row.series].append({'book':row.book, 'id':row.unique_id})
+			else:
+				todo_formatted[row.author][row.series] =  [{'book':row.book, 'id':row.unique_id}]
+		else:
+			todo_formatted[row.author] = {row.series: [{'book':row.book, 'id':row.unique_id}]}
+	
+	return todo_formatted
 
 # TODO: 
 # make actual CRUD for all of the tables

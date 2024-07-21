@@ -1,7 +1,7 @@
 from discord.ext import commands
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from crud import get_syllabus
+from crud import get_syllabus_abbrev
 from utils import send_and_delete
 
 @commands.command()
@@ -9,7 +9,7 @@ async def syllabus(ctx, minutes: int = 5):
 	db: Session = SessionLocal()
 	is_demo = 'demo' in ctx.channel.name
 	try:
-		rows = get_syllabus(db, is_demo)
+		rows = get_syllabus_abbrev(db, is_demo)
 		currentAuthor = ''
 		currentSeries = ''
 		message = '**The current syllabus is as follows: **\n'

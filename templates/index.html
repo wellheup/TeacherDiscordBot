@@ -8,11 +8,14 @@
 	<body>
 		<div class="tab">
 			<button class="tablinks" style="font-size: 18px; padding: 10px 20px; margin-right: 10px;" onclick="openTab(event, 'Syllabus')">Syllabus</button>
-			<button class="tablinks" style="font-size: 18px; padding: 10px 20px;" onclick="openTab(event, 'Bugs')">Bugs</button>
+			<button class="tablinks" style="font-size: 18px; padding: 10px 20px; margin-right: 10px" onclick="openTab(event, 'Bugs')">Bugs</button>
+			<button class="tablinks" style="font-size: 18px; padding: 10px 20px; margin-right: 10px" onclick="openTab(event, 'Todo')">To Do</button>
+			<button class="tablinks" style="font-size: 18px; padding: 10px 20px;" onclick="openTab(event, 'Graveyard')">Graveyard</button>
 		</div>
+		
 
 		<div id="Syllabus" class="tabcontent">
-			<h2>RAPID READING HOMEWORK</h2>
+			<h1>RAPID READING HOMEWORK</h1>
 			<div>
 			<p style="display: inline-block; margin-right: 10px; font-size: 18px;"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}}</p>
 				<button type="button" style="font-size: 18px; padding: 10px 20px;" onclick="openNewAssignmentPopup(this)">New Assignment</button>
@@ -72,12 +75,8 @@
 								</td>
 							{% endfor %}
 							<td style="padding: 4px; font-size: 14px; white-space: nowrap;">
-								<form style="display: inline;" action="edit" method="POST">
-									<button type="submit" style="font-size: 14px;" name="edit" value="{{ loop.index0 }}">Edit</button>
-								</form>
-								<form style="display: inline;" action="delete" method="POST">
-									<button type="submit" style="font-size: 14px;" name="delete" value="{{ book.unique_id }}">Delete</button>
-								</form>
+								<button type="button" style="font-size: 14px;" name="edit" value="{{ loop.index0 }}"  onclick="openEditEntryPopup(this, {{ loop.index0 }})">Edit</button>
+								<button type="button" style="font-size: 14px;" name="delete" value="{{ book.unique_id }}"  onclick="openConfirmDeletePopup(this, {{ book.unique_id }})">Delete</button>
 							</td>
 						</tr>
 					{% endfor %}
@@ -133,7 +132,7 @@
 							{% endif %}
 						</div>
 					{% endif %}
-					<input type="number" name="unique_id" id="editEntryForm-unique_id" min="0" max="100" value="columns['unique_id']" style="display:none; font-size: 14px;"/>
+					<input type="number" name="unique_id" id="editEntryForm-unique_id" min="0" max="100" value="{{columns['unique_id']}}" style="display:none; font-size: 14px;"/>
 				{% endfor %}
 				<div style="text-align: center;">
 					<button type="submit" style="font-size: 14px;">✔</button>
@@ -146,7 +145,7 @@
 		<div id="confirmDeleteForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
 			<p>Are you sure you'd like to delete this entry?</p>
 			<form method="POST" action="/delete" style="display: inline-block;">
-				<input type="number" name="unique_id" value='' style="display:none; font-size: 14px;"/>
+				<input type="number" name="unique_id" style="display:none; font-size: 14px;"/>
 				<div style="text-align: center;">
 					<button type="submit" style="font-size: 14px;">✔</button>
 					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('confirmDeleteForm'))">✖</button>
@@ -168,12 +167,11 @@
 
 		<!-- Bugs tab -->
 		<div id="Bugs" class="tabcontent" style="display:none; width: 50%;">
-			<h3>BUGS & FEATURE REQUESTS</h3>
-			<button type="button" style="font-size: 14px; display: inline-block;" onclick="openNewBugPopup(this)">New Bug</button>
+			<h1>BUGS & FEATURE REQUESTS</h1>
 			<table style="border-collapse: collapse; width: 100%; table-layout: auto; font-size: 16px;">
 				<thead>
 					<tr>
-						<th style="padding: 4px; white-space: nowrap;"></th>
+						<th style="padding: 4px; white-space: nowrap;"><button type="button" style="font-size: 14px; display: inline-block;" onclick="openNewBugPopup(this)">New Bug</button></th>
 						<th style="border: 1px solid black; padding: 4px; white-space: nowrap;">Bug</th>
 						<th style="border: 1px solid black; padding: 4px; white-space: nowrap;">Added by</th>
 					</tr>
@@ -211,6 +209,39 @@
 				</div>
 			</form>
 		</div>
+
+		<!-- Graveyard tab -->
+		<div id="Graveyard" class="tabcontent" style="display:none; width: 50%;">
+			<h1>GRAVEYARD</h1>
+			<p>The following assignments have already been completed:</p>
+			{% for book in graveyard %}
+			<ul>
+				<li>{{ book.book }} by {{ book.author }}</li>
+			</ul>
+			{% endfor %}
+		</div>
+
+<!-- Todo tab -->
+		<div id="Todo" class="tabcontent" style="display:none; width: 50%; font-size: 16px;">
+			<h1>To Do</h1>
+			<p style="font-size: 16px;">The following assignments have yet to be completed:</p>
+			<ul style="font-size: 16px;">
+			{% for author in todo.keys() %}
+				<li><b>{{author}}</b><ul style="font-size: 16px;">
+					{% for series in todo[author].keys() %}
+						<li>{{series}}<ul style="font-size: 16px;">
+							{% for book in todo[author][series] %}
+								<li><i>{{book['book']}}</i> ({{book['id']}})</li>
+							{% endfor %}
+							</ul>
+						</li>
+					{% endfor %}
+					</ul>
+				</li>
+			{% endfor %}
+			</ul>
+		</div>
+
 		<!-- Include the external JavaScript file -->
 		<script src="{{ url_for('static', filename='scripts.js') }}"></script>
 	</body>
