@@ -1,13 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from utils import daily_update_url, get_current_url
-import os
-from crud import *
-from sqlalchemy.orm import Session
-import crud
 from replit import db as replit_db
+import os
 
-
+from crud import *
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import text
 from sqlalchemy import (Column, Integer, String, Text, MetaData, Table, inspect)
@@ -194,7 +191,7 @@ def delete_bug(url_suffix):
 	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
 	try:
 		bug_id = int(request.form.get('bug_id'))
-		delete_bug(db, bug_id, is_demo)
+		delete_bug_id(db, bug_id, is_demo)
 		
 		return redirect(url_for(f'index', url_suffix="/"+url_suffix+"/" if url_suffix else ""))
 		

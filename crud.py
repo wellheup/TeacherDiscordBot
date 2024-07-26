@@ -126,7 +126,7 @@ def complete_book(db: Session, book_name: str, is_demo: bool):
 		raise
 
 
-def delete_bug(db: Session, bug_id: int, is_demo: bool):
+def delete_bug_id(db: Session, bug_id: int, is_demo: bool):
 	try:
 		if is_demo:
 			db_bug = db.query(DemoBugs).filter(DemoBugs.bug_id == bug_id).first()
