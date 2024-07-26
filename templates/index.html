@@ -180,7 +180,7 @@
 					{% for bug in bugs %}
 					<tr>
 						<td style="padding: 4px; white-space: nowrap; text-align: center;">
-							<form method="POST" action="/delete_bug" style="display: inline-block;">
+							<form method="POST" action="/delete_bug{{url_suffix}}" style="display: inline-block;">
 								<input type="hidden" name="bug_id" value="{{ bug.bug_id }}" />
 								<button type="submit" style="font-size: 16px;">✔</button>
 							</form>
@@ -198,7 +198,7 @@
 		<!-- New Bug Pop-up -->
 		<div id="newBugForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
 			<p>Please enter the bug description:</p>
-			<form method="POST" action="/bug" style="display: inline-block;">
+			<form method="POST" action="/bug{{url_suffix}}" style="display: inline-block;">
 				<label for="description">Bug Descripton</label>
 				<input type="text" name="description" style="width: 100%; font-size: 14px;"/>
 				<label for="added_by">Added by</label>
