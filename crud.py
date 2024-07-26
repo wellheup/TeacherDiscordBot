@@ -108,13 +108,13 @@ def get_pretty_columns(db: Session):
 	return columns
 	
 
-def complete(db: Session, book_name: str, is_demo: bool):
+def complete_book(db: Session, book_name: str, is_demo: bool):
 	date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 	try:
 		if is_demo:
-			db_book = db.query(Syllabus).filter(Syllabus.book == book_name).first()
-		else:
 			db_book = db.query(DemoSyllabus).filter(DemoSyllabus.book == book_name).first()
+		else:
+			db_book = db.query(Syllabus).filter(Syllabus.book == book_name).first()
 		db_book.is_completed = True
 		db_book.date_completed = date
 		db.commit()
