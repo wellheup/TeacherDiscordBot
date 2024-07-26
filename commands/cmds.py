@@ -2,6 +2,7 @@ from discord.ext import commands
 from utils import send_and_delete
 
 command_descriptions = """
+**!url or !web** - Get the current URL at which the syllabus is hosted
 **!add "book" "author" "series"**: Adds a new book with optional author and series to the syllabus.
 **!assign "descriptionOfAssignment"**: Assigns a new assignment for the class."
 **!assignment**: Prints the current assignment for the class.

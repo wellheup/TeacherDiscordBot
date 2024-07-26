@@ -61,7 +61,7 @@
 											{% if book[column] is not none %}
 												{{ book[column] }}
 											{% else %}
-												<form method="POST" style="display: inline;" action="complete">
+												<form method="POST" style="display: inline;" action="/complete{{url_suffix}}">
 													<input type="hidden" name="book" value="{{ book.book }}" />
 													<button type="submit" style="font-size: 14px;">Mark Book Complete</button>
 												</form>
@@ -86,7 +86,7 @@
 		
 		<!-- New Entry form in a Pop-up -->
 		<div id="newEntryForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
-			<form method="POST" action="/add">
+			<form method="POST" action="/add{{url_suffix}}">
 				{% for column in columns %}
 					{% if column != 'unique_id' and column != 'date_added' %}
 						<div style="margin-bottom: 10px; display:flex; align-items:center;">
@@ -114,7 +114,7 @@
 
 		<!-- Edit Entry form in a Pop-up -->
 		<div id="editEntryForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
-			<form method="POST" action="/update">
+			<form method="POST" action="/update{{url_suffix}}">
 				{% for column in columns %}
 					{% if column not in ['unique_id', 'date_added'] %}
 						<div style="margin-bottom: 10px;">
@@ -144,7 +144,7 @@
 		<!-- Confirm Delete form in a Pop-up -->
 		<div id="confirmDeleteForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
 			<p>Are you sure you'd like to delete this entry?</p>
-			<form method="POST" action="/delete" style="display: inline-block;">
+			<form method="POST" action="/delete{{url_suffix}}" style="display: inline-block;">
 				<input type="number" name="unique_id" style="display:none; font-size: 14px;"/>
 				<div style="text-align: center;">
 					<button type="submit" style="font-size: 14px;">✔</button>
@@ -156,7 +156,7 @@
 		<!-- New Assignment Pop-up -->
 		<div id="newAssignmentForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
 			<p>Please enter the new assignment:</p>
-			<form method="POST" action="/assign" style="display: inline-block;">
+			<form method="POST" action="/assign{{url_suffix}}" style="display: inline-block;">
 				<input type="text" name="assignment_data" style="width: 100%; font-size: 14px;"/>
 				<div style="text-align: center;">
 					<button type="submit" style="font-size: 14px;">✔</button>
@@ -221,9 +221,9 @@
 			{% endfor %}
 		</div>
 
-<!-- Todo tab -->
+		<!-- Todo tab -->
 		<div id="Todo" class="tabcontent" style="display:none; width: 50%; font-size: 16px;">
-			<h1>To Do</h1>
+			<h1>TO DO</h1>
 			<p style="font-size: 16px;">The following assignments have yet to be completed:</p>
 			<ul style="font-size: 16px;">
 			{% for author in todo.keys() %}

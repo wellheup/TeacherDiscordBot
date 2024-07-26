@@ -2,10 +2,12 @@ import threading
 import os
 from keep_alive import keep_alive
 from replit import db
+from utils import daily_update_url
 
 # Web App
 from app import app as flask_app
 def run_flask():
+	daily_update_url()
 	port = 80 if os.getenv('REPLIT_DEPLOYMENT') == '1' else 5000
 	flask_app.run(host='0.0.0.0', port=port)
 
@@ -15,6 +17,7 @@ from discord.ext import commands
 from utils import send_and_delete
 
 def run_discord_bot():
+	daily_update_url()
 	# Import commands from separate modules
 	from commands.add import add
 	from commands.assign import assign
@@ -31,6 +34,7 @@ def run_discord_bot():
 	from commands.todo import todo
 	from commands.update_assignment import update_assignment
 	from commands.update import update
+	from commands.url import url
 	
 	intents = discord.Intents.default()
 	intents.message_content = True
@@ -53,6 +57,7 @@ def run_discord_bot():
 	bot.add_command(todo)
 	bot.add_command(update_assignment)
 	bot.add_command(update)
+	bot.add_command(url)
 	
 	@bot.event
 	async def on_ready():
