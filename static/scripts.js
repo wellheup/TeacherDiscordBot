@@ -1,3 +1,4 @@
+// tab switching
 function openTab(evt, tabName) {
 	var i, tabcontent, tablinks;
 
@@ -15,48 +16,53 @@ function openTab(evt, tabName) {
 	evt.currentTarget.className += " active";
 }
 
-function openEditEntryPopup(button, index) {
-	const popup = document.getElementById('editEntryForm');
-	const row = button.closest('tr');
-	const cells = row.querySelectorAll('td > div');
-	const popupInputs = popup.querySelectorAll('input');
-
-	popupInputs.forEach(input => {
-		const columnName = input.name;
-		const cell = Array.from(cells).find(cell => cell.getAttribute('name') === columnName);
-
-		if (input.type === 'checkbox') {
-			input.checked = cell.textContent.trim() === '✔';
-		} else if(input.type === 'date') {
-			input.value = cell.textContent.trim() || '';
-		} else if (input.tagName.toLowerCase() === 'input') {
-			input.value = cell.textContent.trim();
-		}
+// new assignment pop-up
+$(document).ready(function () {
+	$('#newAssignmentButton').on('click', function () {
+		$('#newAssignmentForm').modal('show');
 	});
+});
 
-	popup.style.display = 'block';
-}
+// new book pop-up
+$(document).ready(function () {
+	$('#addNewBookButton').on('click', function () {
+		$('#newEntryForm').modal('show');
+	});
+});
 
-function openConfirmDeletePopup(button, index) {
-	const popup = document.getElementById('confirmDeleteForm');
-	const unique_id = popup.querySelector('input[type="number"]');
-	unique_id.value = index;
-	
-	popup.style.display = 'block';
-}
+// edit book button
+$(document).ready(function () {
+	$('[id^="edit-"]').on('click', function () {
+		const popup = $('#editEntryForm');
+		const row = $(this).closest('tr')[0];
+		const cells = row.querySelectorAll('td > div');
+		popup.find('input, checkbox, select').each(function () {
+			const inputName = $(this).attr('name');
+			const cell = Array.from(cells).find(cell => cell.getAttribute('name') === inputName);
+			if ($(this).is(':checkbox')) {
+				$(this).prop('checked', cell.textContent.trim() === '✔');
+			} else {
+				$(this).val(cell.textContent.trim());
+			}
+		});
+		popup.modal('show');
+	});
+});
 
-function openNewAssignmentPopup(button) {
-	const popup = document.getElementById('newAssignmentForm');
+// delete book button
+$(document).ready(function () {
+	$('[id^="delete-"]').on('click', function () {
+		const index = $(this).attr('id').split('-')[1];
+		const popup = $('#confirmDeleteForm');
+		popup.find('input[type="number"]').val(index);
+		popup.modal('show');
+	});
+});
 
-	popup.style.display = 'block';
-}
+// new bug pop-up
+$(document).ready(function () {
+	$('#newBugButton').on('click', function () {
+		$('#newBugForm').modal('show');
+	});
+});
 
-function openNewBugPopup(button) {
-	const popup = document.getElementById('newBugForm');
-
-	popup.style.display = 'block';
-}
-
-function closePopup(popup) {
-	popup.style.display = 'none';
-}

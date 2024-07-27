@@ -3,192 +3,254 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<title>syllabus</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+		<title>Syllabus</title>
 	</head>
 	<body>
-		<div class="tab">
-			<button class="tablinks" style="font-size: 18px; padding: 10px 20px; margin-right: 10px;" onclick="openTab(event, 'Syllabus')">Syllabus</button>
-			<button class="tablinks" style="font-size: 18px; padding: 10px 20px; margin-right: 10px" onclick="openTab(event, 'Bugs')">Bugs</button>
-			<button class="tablinks" style="font-size: 18px; padding: 10px 20px; margin-right: 10px" onclick="openTab(event, 'Todo')">To Do</button>
-			<button class="tablinks" style="font-size: 18px; padding: 10px 20px;" onclick="openTab(event, 'Graveyard')">Graveyard</button>
-		</div>
+		<div class="container mt-5">
+
+			<ul class="nav nav-tabs">
+				<li class="nav-item">
+					<a class="nav-link active" href="#" onclick="openTab(event, 'Syllabus')">Syllabus</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#" onclick="openTab(event, 'Bugs')">Bugs</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#" onclick="openTab(event, 'Todo')">To Do</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#" onclick="openTab(event, 'Graveyard')">Graveyard</a>
+				</li>
+			</ul>
 		
 
-		<div id="Syllabus" class="tabcontent">
-			<h1>RAPID READING HOMEWORK</h1>
-			<div>
-			<p style="display: inline-block; margin-right: 10px; font-size: 18px;"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}}</p>
-				<button type="button" style="font-size: 18px; padding: 10px 20px;" onclick="openNewAssignmentPopup(this)">New Assignment</button>
+		<div id="Syllabus" class="tabcontent mt-3">
+			<h1>{{demo}}RAPID READING HOMEWORK</h1>
+			<div class="d-flex justify-content-between">
+				<!-- <p class="h4"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}} <button type="btn btn-primary" onclick="openNewAssignmentPopup(this)">New Assignment</button></p> -->
+				<p class="h4"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}} <button type="btn btn-primary" id="newAssignmentButton">New Assignment</button></p>
 			</div>
 				
-			<table style="border-collapse: collapse; width: 100%; table-layout: auto;">
-				<thead>
-					<tr>
-						{% for column in columns %}
-							<th style="border: 1px solid black; padding: 4px; font-size: 14px; white-space: nowrap;">{{ pretty_columns[column] }}</th>
-						{% endfor %}
-						<th style="padding: 4px; font-size: 14px; white-space: nowrap; text-align: left;"><button style="font-size: 18px; padding: 10px 20px;" onclick="document.getElementById('newEntryForm').style.display='block'">Add New</button></th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for book in syllabus %}
-						<tr style="background-color: {{ loop.cycle('#d3d3d3', 'white') }};">
+			<div style="display: flex; justify-content: center;">
+				<table class="table table-bordered mt-3" style="text-align: center;">
+					<thead class="thead-light">
+						<tr>
 							{% for column in columns %}
-								<td style="border: 1px solid black; padding: 4px; font-size: 14px; white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %};">
-									{% if column in [ 'unique_id', 'date_added'] %}
-										<div name="{{column}}">
-											{{ book[column] }}
-										</div>
-									{% elif column == 'num_in_series' %}
-										<div name="{{column}}" style="text-align: center;">
-											{{ book[column] if book[column] is not none else '0' }}
-										</div>
-									{% elif column in ['num_in_series', 'season'] %}
-										<div name="{{column}}" style="text-align: {{ 'center' if column == 'season' else 'left' }};">
-											{{ book[column] if book[column] is not none else '0' }}
-										</div>
-									{% elif column in ['is_completed', 'is_extra_credit'] %}
-										<div name="{{column}}" style="text-align: center;">
-											{{ '✔' if book[column] else '✘' }}
-										</div>
-									{% elif column == 'genre' %}
-										<div name="{{column}}">
-											{% if book[column] is not none %}{{ book[column] }}{% endif %}
-										</div>
-									{% elif column == 'date_completed' %}
-					 
-										<div name="{{column}}" style="font-size: 14px;">
-											{% if book[column] is not none %}
-												{{ book[column] }}
-											{% else %}
-												<form method="POST" style="display: inline;" action="/complete{{url_suffix}}">
-													<input type="hidden" name="book" value="{{ book.book }}" />
-													<button type="submit" style="font-size: 14px;">Mark Book Complete</button>
-												</form>
-											{% endif %}
-										</div>
-									{% else %}
-										<div name="{{column}}">
-											{{ book[column] }}
-										</div>
-									{% endif %}
-								</td>
+								<th>{{ pretty_columns[column] }}</th>
 							{% endfor %}
-							<td style="padding: 4px; font-size: 14px; white-space: nowrap;">
-								<button type="button" style="font-size: 14px;" name="edit" value="{{ loop.index0 }}"  onclick="openEditEntryPopup(this, {{ loop.index0 }})">Edit</button>
-								<button type="button" style="font-size: 14px;" name="delete" value="{{ book.unique_id }}"  onclick="openConfirmDeletePopup(this, {{ book.unique_id }})">Delete</button>
-							</td>
+							<!-- <th><button class="btn btn-success" onclick="document.getElementById('newEntryForm').style.display='block'">Add New</button></th> -->
+							<th><button class="btn btn-success" id="addNewBookButton" style="white-space: nowrap;">Add New</button></th>
 						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						{% for book in syllabus %}
+							<tr style="background-color: {{ loop.cycle('#d3d3d3', 'white') }};">
+								{% for column in columns %}
+									<td style=" white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %};">
+										{% if column in [ 'unique_id', 'date_added'] %}
+											<div name="{{column}}">
+												{{ book[column] }}
+											</div>
+										{% elif column == 'num_in_series' %}
+											<div name="{{column}}" style="text-align: center;">
+												{{ book[column] if book[column] is not none else '0' }}
+											</div>
+										{% elif column in ['num_in_series', 'season'] %}
+											<div name="{{column}}" style="text-align: {{ 'center' if column == 'season' else 'left' }};">
+												{{ book[column] if book[column] is not none else '0' }}
+											</div>
+										{% elif column in ['is_completed', 'is_extra_credit'] %}
+											<div name="{{column}}" style="text-align: center;">
+												{{ '✔' if book[column] else '✘' }}
+											</div>
+										{% elif column == 'genre' %}
+											<div name="{{column}}">
+												{% if book[column] is not none %}{{ book[column] }}{% endif %}
+											</div>
+										{% elif column == 'date_completed' %}
+											<div name="{{column}}">
+												{% if book[column] is not none %}
+													{{ book[column] }}
+												{% else %}
+													<form method="POST" class="d-inline" action="/complete{{url_suffix}}">
+														<input type="hidden" name="book" value="{{ book.book }}" />
+														<button class="btn btn-sm btn-success" type=submit >Mark Book Complete</button>
+													</form>
+												{% endif %}
+											</div>
+										{% else %}
+											<div name="{{column}}">
+												{{ book[column] }}
+											</div>
+										{% endif %}
+									</td>
+								{% endfor %}
+								<td style="white-space: nowrap;">
+									<button class="btn btn-sm btn-info" name="edit" value="{{ loop.index0 }}" id="edit-{{ loop.index0 }}-Button">Edit</button>
+									<button class="btn btn-sm btn-danger" name="delete" value="{{ book.unique_id }}" id="delete-{{ book.unique_id }}-Button">Delete</button>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
 		</div>
 		
 		<!-- New Entry form in a Pop-up -->
-		<div id="newEntryForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
-			<form method="POST" action="/add{{url_suffix}}">
-				{% for column in columns %}
-					{% if column != 'unique_id' and column != 'date_added' %}
-						<div style="margin-bottom: 10px; display:flex; align-items:center;">
-							<label for="newEntryForm-{{ column }}" style="margin-right: 10px;">{{ pretty_columns[column] }}</label>
-							{% if column in [ 'is_completed', 'is_extra_credit'] %}
-								<input type="checkbox" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; width: 100%; font-size: 14px;" />
-							{% elif column == 'date_completed' %}
-								<input type="date" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; width: 100%; font-size: 14px;" />
-							{% elif column in ['num_in_series', 'season', 'up_votes', 'down_votes'] %}
-								<input type="number" id="newEntryForm-{{column}}" name="{{ column }}" min="0" max="100" value="0" style="border: 1px solid black; width: 100%; font-size: 14px;" />
-							{% else %}
-								<input type="text" id="newEntryForm-{{column}}" name="{{ column }}" style="border: 1px solid black; width: 100%; font-size: 14px;" />
-							{% endif %}
-						</div>
-					{% else %}
-						<!-- {{ column }} -->
-					{% endif %}
-				{% endfor %}
-				<div style="text-align: center;">
-					<button type="submit" style="font-size: 14px;">✔</button>
-					<button type="button" style="font-size: 14px;" onclick="document.getElementById('newEntryForm').style.display='none'">✖</button>
+		<div id="newEntryForm" class="modal fade" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Add New Entry</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form method="POST" action="/add{{url_suffix}}">
+							{% for column in columns %}
+								{% if column != 'unique_id' and column != 'date_added' %}
+									<div class="form-group">
+										<label for="newEntryForm-{{ column }}">{{ pretty_columns[column] }}</label>
+										{% if column in [ 'is_completed', 'is_extra_credit'] %}
+											<input type="checkbox" id="newEntryForm-{{column}}" name="{{ column }}" />
+										{% elif column == 'date_completed' %}
+											<input type="date" id="newEntryForm-{{column}}" name="{{ column }}" />
+										{% elif column in ['num_in_series', 'season', 'up_votes', 'down_votes'] %}
+											<input type="number" id="newEntryForm-{{column}}" name="{{ column }}" min="0" max="100" value="0" />
+										{% else %}
+											<input type="text" id="newEntryForm-{{column}}" name="{{ column }}" />
+										{% endif %}
+									</div>
+								{% else %}
+									<!-- {{ column }} -->
+								{% endif %}
+							{% endfor %}
+							<div class="text-center">
+								<button type="submit" class="btn btn-primary">Save</button>
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					</div>
 				</div>
-			</form>
+			</div>
 		</div>
 
-		<!-- Edit Entry form in a Pop-up -->
-		<div id="editEntryForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
-			<form method="POST" action="/update{{url_suffix}}">
-				{% for column in columns %}
-					{% if column not in ['unique_id', 'date_added'] %}
-						<div style="margin-bottom: 10px;">
-							<label for="editEntryForm-{{ column }}">{{ pretty_columns[column] }}</label>
-							{% if column in ['is_completed', 'is_extra_credit'] %}
-								<input type="checkbox" name="{{ column }}" id="editEntryForm-{{ column }}" style="font-size: 14px;"/>
-							{% elif column == 'date_completed' %}
-								<input type="date" name="{{ column }}" id="editEntryForm-{{ column }}" style="font-size: 14px;"/>
-							{% elif column == 'genre' %}
-								<input type="text" name="{{ column }}" id="editEntryForm-{{ column }}" style="font-size: 14px;"/>
-							{% elif column in ['num_in_series', 'season', 'up_votes', 'down_votes'] %}
-								<input type="number" name="{{ column }}" id="editEntryForm-{{ column }}" min="0" max="100" value="0" style="font-size: 14px;"/>
-							{% else %}
-								<input type="text" name="{{ column }}" id="editEntryForm-{{ column }}" style="font-size: 14px;"/>
-							{% endif %}
+
+			<!-- Edit Entry form in a Pop-up -->
+			<div id="editEntryForm" class="modal fade" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Edit Entry</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
 						</div>
-					{% endif %}
-					<input type="number" name="unique_id" id="editEntryForm-unique_id" min="0" max="100" value="{{columns['unique_id']}}" style="display:none; font-size: 14px;"/>
-				{% endfor %}
-				<div style="text-align: center;">
-					<button type="submit" style="font-size: 14px;">✔</button>
-					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('editEntryForm'))">✖</button>
+						<div class="modal-body">
+							<form method="POST" action="/update{{url_suffix}}">
+								<input type="hidden" name="unique_id" value="{{ columns['unique_id'] }}" />
+								{% for column in columns %}
+									{% if column != 'unique_id' and column != 'date_added' %}
+										<div class="form-group">
+											<label for="editEntryForm-{{ column }}">{{ pretty_columns[column] }}</label>
+											{% if column in ['is_completed', 'is_extra_credit'] %}
+												<input type="checkbox" name="{{ column }}" id="editEntryForm-{{ column }}"/>
+											{% elif column == 'date_completed' %}
+												<input type="date" name="{{ column }}" id="editEntryForm-{{ column }}"/>
+											{% elif column == 'genre' %}
+												<input type="text" name="{{ column }}" id="editEntryForm-{{ column }}"/>
+											{% elif column in ['num_in_series', 'season', 'up_votes', 'down_votes'] %}
+												<input type="number" name="{{ column }}" id="editEntryForm-{{ column }}" min="0" max="100" value="0"/>
+											{% else %}
+												<input type="text" name="{{ column }}" id="editEntryForm-{{ column }}"/>
+											{% endif %}
+										</div>
+									{% else %}
+										<!-- {{ column }} -->
+									{% endif %}
+								{% endfor %}
+								<div class="text-center">
+									<button type="submit" class="btn btn-primary">Save</button>
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+								</div>
+							</form>
+						</div>
+					</div>
 				</div>
-			</form>
-		</div>
+			</div>
 
 		<!-- Confirm Delete form in a Pop-up -->
-		<div id="confirmDeleteForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
-			<p>Are you sure you'd like to delete this entry?</p>
-			<form method="POST" action="/delete{{url_suffix}}" style="display: inline-block;">
-				<input type="number" name="unique_id" style="display:none; font-size: 14px;"/>
-				<div style="text-align: center;">
-					<button type="submit" style="font-size: 14px;">✔</button>
-					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('confirmDeleteForm'))">✖</button>
+		<div id="confirmDeleteForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="confirmDeleteLabel">Confirm Delete</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<p>Are you sure you'd like to delete this entry?</p>
+						<form method="POST" action="/delete{{url_suffix}}">
+							<input type="number" name="unique_id" class="d-none" />
+							<div class="text-center">
+								<button type="submit" class="btn btn-danger">✔</button>
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					</div>
 				</div>
-			</form>
+			</div>
 		</div>
 
 		<!-- New Assignment Pop-up -->
-		<div id="newAssignmentForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
-			<p>Please enter the new assignment:</p>
-			<form method="POST" action="/assign{{url_suffix}}" style="display: inline-block;">
-				<input type="text" name="assignment_data" style="width: 100%; font-size: 14px;"/>
-				<div style="text-align: center;">
-					<button type="submit" style="font-size: 14px;">✔</button>
-					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('newAssignmentForm'))">✖</button>
+		<div id="newAssignmentForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newAssignmentLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="newAssignmentLabel">New Assignment</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<p>Please enter the new assignment:</p>
+						<form method="POST" action="/assign{{url_suffix}}">
+							<input type="text" name="assignment_data" class="form-control" />
+							<div class="text-center mt-3">
+								<button type="submit" class="btn btn-success">✔</button>
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					</div>
 				</div>
-			</form>
+			</div>
 		</div>
 
 		<!-- Bugs tab -->
 		<div id="Bugs" class="tabcontent" style="display:none; width: 50%;">
 			<h1>BUGS & FEATURE REQUESTS</h1>
-			<table style="border-collapse: collapse; width: 100%; table-layout: auto; font-size: 16px;">
-				<thead>
+			<table class="table table-bordered" style="font-size: 16px;">
+				<thead class="thead-light">
 					<tr>
-						<th style="padding: 4px; white-space: nowrap;"><button type="button" style="font-size: 14px; display: inline-block;" onclick="openNewBugPopup(this)">New Bug</button></th>
-						<th style="border: 1px solid black; padding: 4px; white-space: nowrap;">Bug</th>
-						<th style="border: 1px solid black; padding: 4px; white-space: nowrap;">Added by</th>
+						<th><button type="button" class="btn btn-primary" id="newBugButton">New Bug</button></th>
+						<th>Bug</th>
+						<th>Added by</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for bug in bugs %}
 					<tr>
-						<td style="padding: 4px; white-space: nowrap; text-align: center;">
+						<td class="text-center">
 							<form method="POST" action="/delete_bug{{url_suffix}}" style="display: inline-block;">
 								<input type="hidden" name="bug_id" value="{{ bug.bug_id }}" />
-								<button type="submit" style="font-size: 16px;">✔</button>
+								<button type="submit" class="btn btn-success" >✔</button>
 							</form>
 						</td>
-						<td style="border: 1px solid black; padding: 4px; white-space: nowrap;">
-							{{ bug.description }}
-						</td>
-						<td style="border: 1px solid black; padding: 4px; white-space: nowrap;">{{ bug.added_by }}</td>
+						<td>{{ bug.description }}</td>
+						<td>{{ bug.added_by }}</td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -196,22 +258,38 @@
 		</div>
 
 		<!-- New Bug Pop-up -->
-		<div id="newBugForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; background-color:white; padding:20px; border:2px solid black; font-size: 14px;">
-			<p>Please enter the bug description:</p>
-			<form method="POST" action="/bug{{url_suffix}}" style="display: inline-block;">
-				<label for="description">Bug Descripton</label>
-				<input type="text" name="description" style="width: 100%; font-size: 14px;"/>
-				<label for="added_by">Added by</label>
-				<input type="text" name="added_by" value="anonymous" style="width: 100%; font-size: 14px;"/>
-				<div style="text-align: center;">
-					<button type="submit" style="font-size: 14px;">✔</button>
-					<button type="button" style="font-size: 14px;" onclick="closePopup(document.getElementById('newBugForm'))">✖</button>
+		<div id="newBugForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newBugLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="newBugLabel">New Bug</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<p>Please enter the bug description:</p>
+						<form method="POST" action="/bug{{url_suffix}}">
+							<div class="form-group">
+								<label for="description">Bug Description</label>
+								<input type="text" name="description" class="form-control" />
+							</div>
+							<div class="form-group">
+								<label for="added_by">Added by</label>
+								<input type="text" name="added_by" value="anonymous" class="form-control" />
+							</div>
+							<div class="text-center mt-3">
+								<button type="submit" class="btn btn-success">Submit</button>
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					</div>
 				</div>
-			</form>
+			</div>
 		</div>
 
 		<!-- Graveyard tab -->
-		<div id="Graveyard" class="tabcontent" style="display:none; width: 50%;">
+		<div id="Graveyard" class="tabcontent" >
 			<h1>GRAVEYARD</h1>
 			<p>The following assignments have already been completed:</p>
 			{% for book in graveyard %}
@@ -222,14 +300,14 @@
 		</div>
 
 		<!-- Todo tab -->
-		<div id="Todo" class="tabcontent" style="display:none; width: 50%; font-size: 16px;">
+		<div id="Todo" class="tabcontent">
 			<h1>TO DO</h1>
-			<p style="font-size: 16px;">The following assignments have yet to be completed:</p>
-			<ul style="font-size: 16px;">
+			<p>The following assignments have yet to be completed:</p>
+			<ul>
 			{% for author in todo.keys() %}
-				<li><b>{{author}}</b><ul style="font-size: 16px;">
+				<li><b>{{author}}</b><ul>
 					{% for series in todo[author].keys() %}
-						<li>{{series}}<ul style="font-size: 16px;">
+						<li>{{series}}<ul>
 							{% for book in todo[author][series] %}
 								<li><i>{{book['book']}}</i> ({{book['id']}})</li>
 							{% endfor %}
@@ -241,8 +319,11 @@
 			{% endfor %}
 			</ul>
 		</div>
-
+		</div>
 		<!-- Include the external JavaScript file -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 		<script src="{{ url_for('static', filename='scripts.js') }}"></script>
 	</body>
 </html>

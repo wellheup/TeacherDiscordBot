@@ -1,23 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_bootstrap import Bootstrap
 from utils import daily_update_url, get_current_url
 from replit import db as replit_db
 import os
-
 from crud import *
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import text
-from sqlalchemy import (Column, Integer, String, Text, MetaData, Table, inspect)
 from database import SessionLocal, Base
-from models import Syllabus
-from models import Bugs
-from models import Assignments
-from models import DemoSyllabus
-from models import DemoBugs
-from models import DemoAssignments
+from models import Syllabus, Bugs, Assignments, DemoSyllabus, DemoBugs, DemoAssignments
 
 app = Flask(__name__)
-	
+bootstrap = Bootstrap(app)
+
 current_url_suffix = replit_db.get('url_suffix')
 is_live = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
 
@@ -44,7 +39,8 @@ def index(url_suffix):
 		assignment=assignment, 
 		graveyard=graveyard,
 		todo=todo,
-		url_suffix="/"+url_suffix+"/" if url_suffix else ""
+		url_suffix="/"+url_suffix+"/" if url_suffix else "",
+		demo = "" if is_demo else "DEMO "
 	)
 
 
@@ -54,20 +50,34 @@ def update(url_suffix):
 	db: Session = SessionLocal()
 	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
 	try:
-		unique_id = int(request.form.get('unique_id'))
-		book = request.form.get('book')
-		author = request.form.get('author')
-		series = request.form.get('series')
-		is_completed = bool(request.form.get('is_completed', False))
-		added_by = request.form.get('added_by')
-		season = int(request.form.get('season'))
-		num_in_series = int(request.form.get('num_in_series'))
-		is_extra_credit = bool(request.form.get('is_extra_credit', False))
-		date_completed = request.form.get('date_completed')
-		up_votes = int(request.form.get('up_votes'))
-		down_votes = int(request.form.get('down_votes'))
-		genre = request.form.get('genre')
 
+		book = request.form.get('book')
+		print(f"book: {book}")
+		author = request.form.get('author')
+		print(f"author: {author}")
+		series = request.form.get('series')
+		print(f"series: {series}")
+		is_completed = bool(request.form.get('is_completed', False))
+		print(f"is_completed: {is_completed}")
+		added_by = request.form.get('added_by')
+		print(f"added_by: {added_by}")
+		season = int(request.form.get('season'))
+		print(f"season: {season}")
+		num_in_series = int(request.form.get('num_in_series'))
+		print(f"num_in_series: {num_in_series}")
+		is_extra_credit = bool(request.form.get('is_extra_credit', False))
+		print(f"is_extra_credit: {is_extra_credit}")
+		date_completed = request.form.get('date_completed')
+		print(f"date_completed: {date_completed}")
+		up_votes = int(request.form.get('up_votes'))
+		print(f"up_votes: {up_votes}")
+		down_votes = int(request.form.get('down_votes'))
+		print(f"down_votes: {down_votes}")
+		genre = request.form.get('genre')
+		print(f"genre: {genre}")
+		unique_id = int(request.form.get('unique_id'))
+		print(f"unique_id: {unique_id}")
+		
 		update_database(
 			db, unique_id, book, author, series, is_completed,
 			added_by, season, num_in_series, is_extra_credit,
