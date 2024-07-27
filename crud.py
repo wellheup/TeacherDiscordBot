@@ -103,7 +103,7 @@ def get_pretty_columns(db: Session):
 	columns = {
 		'unique_id': 'ID', 'book': 'Book', 'author': 'Author', 'series': 'Series', 'num_in_series': 'Volume', 
 		'date_added': 'Added On', 'is_completed': 'Done?', 'added_by': 'Added By', 'season': 'Season', 
-		'is_extra_credit': 'Extra', 'date_completed': 'Completed On', 'up_votes': 'Upvotes', 'down_votes': 'Downvotes', 'genre': 'Genre'
+		'is_extra_credit': 'Extra', 'date_completed': 'Completed On', 'up_votes': '👍', 'down_votes': '👎', 'genre': 'Genre'
 	}
 	return columns
 	
