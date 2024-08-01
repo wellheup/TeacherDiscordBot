@@ -173,8 +173,8 @@ def assign(url_suffix):
 		db.close()
 		
 
-@app.route('/report_bug', defaults={'url_suffix': ''}, methods=['POST'])
-@app.route('/report_bug/<path:url_suffix>/', methods=['POST'])
+@app.route('/add_bug', defaults={'url_suffix': ''}, methods=['POST'])
+@app.route('/add_bug/<path:url_suffix>/', methods=['POST'])
 def report_bug(url_suffix):
 	db: Session = SessionLocal()
 	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
@@ -182,7 +182,6 @@ def report_bug(url_suffix):
 		description = request.form.get('description')
 		print(f"description: {description}")
 		added_by = request.form.get('added_by')
-		print(f"added_by: {added_by}")
 		add_bug(db, description, added_by, is_demo)
 		
 		return redirect(url_for(f'index', url_suffix="/"+url_suffix+"/" if url_suffix else ""))
@@ -194,8 +193,8 @@ def report_bug(url_suffix):
 		db.close()
 
 
-@app.route('/delete_bug', defaults={'url_suffix': ''}, methods=['POST'])
-@app.route('/delete_bug/<path:url_suffix>/', methods=['POST'])
+@app.route('/delete_bug_id', defaults={'url_suffix': ''}, methods=['POST'])
+@app.route('/delete_bug_id/<path:url_suffix>/', methods=['POST'])
 def delete_bug(url_suffix):
 	db: Session = SessionLocal()
 	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False

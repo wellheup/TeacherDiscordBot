@@ -1,19 +1,22 @@
 // tab switching
 function openTab(evt, tabName) {
-	var i, tabcontent, tablinks;
+	var i, tabcontent, tablinks, listItems;
 
 	tabcontent = document.getElementsByClassName("tabcontent");
 	for (i = 0; i < tabcontent.length; i++) {
-	tabcontent[i].style.display = "none";
+		tabcontent[i].style.display = "none";
 	}
 
-	tablinks = document.getElementsByClassName("tablinks");
+	tablinks = document.getElementsByClassName("nav-link");
 	for (i = 0; i < tablinks.length; i++) {
-	tablinks[i].className = tablinks[i].className.replace(" active", "");
+		tablinks[i].style.backgroundColor = "white";
+		tablinks[i].className = tablinks[i].className.replace(" active", "");
 	}
 
 	document.getElementById(tabName).style.display = "block";
+	evt.currentTarget.style.backgroundColor = "lightgrey";
 	evt.currentTarget.className += " active";
+
 }
 
 // new assignment pop-up
