@@ -26,26 +26,24 @@
 			<div id="Syllabus" class="tabcontent mt-3">
 				<h1>{{demo}}RAPID READING HOMEWORK</h1>
 				<div class="d-flex justify-content-between">
-					<!-- <p class="h4"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}} <button type="btn btn-primary" onclick="openNewAssignmentPopup(this)">New Assignment</button></p> -->
 					<p class="h4"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}} <button type="btn btn-primary" id="newAssignmentButton">New Assignment</button></p>
 				</div>
-					
+				
 				<div style="display: flex; justify-content: center;">
-					<table class="table table-bordered mt-3" style="text-align: center;">
+					<table class="table table-bordered mt-3" style="text-align: center; padding: 5px;">
 						<thead class="thead-light">
 							<tr>
 								{% for column in columns %}
-									<th>{{ pretty_columns[column] }}</th>
+									<th style="padding: 5px;">{{ pretty_columns[column] }}</th>
 								{% endfor %}
-								<!-- <th><button class="btn btn-success" onclick="document.getElementById('newEntryForm').style.display='block'">Add New</button></th> -->
-								<th><button class="btn btn-success" id="addNewBookButton" style="white-space: nowrap;">Add New</button></th>
+								<th style="padding: 5px;"><button class="btn btn-success" id="addNewBookButton" style="white-space: nowrap;">Add New</button></th>
 							</tr>
 						</thead>
 						<tbody>
 							{% for book in syllabus %}
 								<tr style="background-color: {{ loop.cycle('#d3d3d3', 'white') }};">
 									{% for column in columns %}
-										<td style=" white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %};">
+										<td style=" white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %}; padding: 5px;">
 											{% if column in [ 'unique_id', 'date_added'] %}
 												<div name="{{column}}">
 													{{ book[column] }}
@@ -84,7 +82,7 @@
 											{% endif %}
 										</td>
 									{% endfor %}
-									<td style="white-space: nowrap;">
+									<td style="white-space: nowrap; padding: 5px;">
 										<button class="btn btn-sm btn-info" name="edit" value="{{ loop.index0 }}" id="edit-{{ loop.index0 }}-Button">Edit</button>
 										<button class="btn btn-sm btn-danger" name="delete" value="{{ book.unique_id }}" id="delete-{{ book.unique_id }}-Button">Delete</button>
 									</td>

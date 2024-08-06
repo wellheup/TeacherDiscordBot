@@ -40,7 +40,7 @@ def index(url_suffix):
 		graveyard=graveyard,
 		todo=todo,
 		url_suffix="/"+url_suffix+"/" if url_suffix else "",
-		demo = "" if is_demo else "DEMO "
+		demo = "DEMO " if is_demo else ""
 	)
 
 
