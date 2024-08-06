@@ -7,23 +7,24 @@
 		<title>Syllabus</title>
 	</head>
 	<body>
-		<div class="container mt-5">
+		<div class="container mt-5" id="myTab" role="tablist">
 			<ul class="nav nav-tabs">
-				<li class="nav-item" style="background-color: lightgrey;">
-					<a class="nav-link" href="#" onclick="openTab(event, 'Syllabus')">Syllabus</a>
+				<li class="nav-item">
+					<a class="nav-link {% if current_tab == 'syllabus' %}active{% endif %}" id="syllabus-tab" href="#" data-tabname="syllabus" role="tab">Syllabus</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="#" onclick="openTab(event, 'Bugs')">Bugs</a>
+					<a class="nav-link {% if current_tab == 'graveyard' %}active{% endif %}" id="graveyard-tab" href="#" data-tabname="graveyard" role="tab">Graveyard</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="#" onclick="openTab(event, 'Todo')">To Do</a>
+					<a class="nav-link {% if current_tab == 'todo' %}active{% endif %}" id="todo-tab" href="#" data-tabname="todo" role="tab">To Do</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="#" onclick="openTab(event, 'Graveyard')">Graveyard</a>
+					<a class="nav-link {% if current_tab == 'bugs' %}active{% endif %}" id="bugs-tab" href="#" data-tabname="bugs" role="tab">Bugs</a>
 				</li>
 			</ul>
 
-			<div id="Syllabus" class="tabcontent mt-3">
+			<!-- Syllabus tab -->
+			<div class="tab-pane fade {% if current_tab == 'syllabus' %}show active{% endif %} tab-content mt-3" id="syllabus" role="tabpanel" aria-labelledby="syllabus-tab">
 				<h1>{{demo}}RAPID READING HOMEWORK</h1>
 				<div class="d-flex justify-content-between">
 					<p class="h4"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}} <button type="btn btn-primary" id="newAssignmentButton">New Assignment</button></p>
@@ -94,7 +95,7 @@
 			</div>
 			
 			<!-- New Entry form in a Pop-up -->
-			<div id="newEntryForm" class="modal fade" tabindex="-1" role="dialog">
+			<div id="newEntryForm" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -133,9 +134,8 @@
 				</div>
 			</div>
 	
-	
 			<!-- Edit Entry form in a Pop-up -->
-			<div id="editEntryForm" class="modal fade" tabindex="-1" role="dialog">
+			<div id="editEntryForm" class="modal fade" tabindex="-1" role="dialog"mstyle="display: none;">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -178,7 +178,7 @@
 			</div>
 	
 			<!-- Confirm Delete form in a Pop-up -->
-			<div id="confirmDeleteForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+			<div id="confirmDeleteForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true" style="display: none;">
 				<div class="modal-dialog modal-dialog-centered" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -202,7 +202,7 @@
 			</div>
 	
 			<!-- New Assignment Pop-up -->
-			<div id="newAssignmentForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newAssignmentLabel" aria-hidden="true">
+			<div id="newAssignmentForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newAssignmentLabel" aria-hidden="true" style="display: none;">
 				<div class="modal-dialog modal-dialog-centered" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -225,9 +225,41 @@
 				</div>
 			</div>
 	
+			<!-- Graveyard tab -->
+			<div class="tab-pane fade {% if current_tab == 'graveyard' %}show active{% endif %} tabcontent mt-3" id="graveyard" role="tabpanel" aria-labelledby="graveyard-tab" style="display: none;">
+				<h1>{{demo}}GRAVEYARD</h1>
+				<p>The following assignments have already been completed:</p>
+				{% for book in graveyard %}
+				<ul>
+					<li>{{ book.book }} by {{ book.author }}</li>
+				</ul>
+				{% endfor %}
+			</div>
+	
+			<!-- Todo tab -->
+			<div class="tab-pane fade {% if current_tab == 'todo' %}show active{% endif %} tabcontent mt-3" id="todo" role="tabpanel" aria-labelledby="todo-tab" style="display: none;">
+				<h1>{{demo}}TO DO</h1>
+				<p>The following assignments have yet to be completed:</p>
+				<ul>
+				{% for author in todo.keys() %}
+					<li><b>{{author}}</b><ul>
+						{% for series in todo[author].keys() %}
+							<li>{{series}}<ul>
+								{% for book in todo[author][series] %}
+									<li><i>{{book['book']}}</i> ({{book['id']}})</li>
+								{% endfor %}
+								</ul>
+							</li>
+						{% endfor %}
+						</ul>
+					</li>
+				{% endfor %}
+				</ul>
+			</div>
+
 			<!-- Bugs tab -->
-			<div id="Bugs" class="tabcontent" style="display:none; width: 50%;">
-				<h1>BUGS & FEATURE REQUESTS</h1>
+			<div class="tab-pane fade {% if current_tab == 'bugs' %}show active{% endif %} tabcontent mt-3" id="bugs" role="tabpanel" aria-labelledby="bugs-tab" style="display: none;">
+				<h1>{{demo}}BUGS & FEATURE REQUESTS</h1>
 				<table class="table table-bordered" style="font-size: 16px;">
 					<thead class="thead-light">
 						<tr>
@@ -253,9 +285,9 @@
 					</tbody>
 				</table>
 			</div>
-	
+
 			<!-- New Bug Pop-up -->
-			<div id="newBugForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newBugLabel" aria-hidden="true">
+			<div id="newBugForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newBugLabel" aria-hidden="true" style="display: none;">
 				<div class="modal-dialog modal-dialog-centered" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -284,38 +316,7 @@
 					</div>
 				</div>
 			</div>
-	
-			<!-- Graveyard tab -->
-			<div id="Graveyard" class="tabcontent" style="display:none;">
-				<h1>GRAVEYARD</h1>
-				<p>The following assignments have already been completed:</p>
-				{% for book in graveyard %}
-				<ul>
-					<li>{{ book.book }} by {{ book.author }}</li>
-				</ul>
-				{% endfor %}
-			</div>
-	
-			<!-- Todo tab -->
-			<div id="Todo" class="tabcontent" style="display:none;">
-				<h1>TO DO</h1>
-				<p>The following assignments have yet to be completed:</p>
-				<ul>
-				{% for author in todo.keys() %}
-					<li><b>{{author}}</b><ul>
-						{% for series in todo[author].keys() %}
-							<li>{{series}}<ul>
-								{% for book in todo[author][series] %}
-									<li><i>{{book['book']}}</i> ({{book['id']}})</li>
-								{% endfor %}
-								</ul>
-							</li>
-						{% endfor %}
-						</ul>
-					</li>
-				{% endfor %}
-				</ul>
-			</div>
+		
 		</div>
 		<!-- Include the external JavaScript file -->
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+		<title>Syllabus</title>
+	</head>
+	<body>
+		<div class="container mt-5">
+			<!-- Bugs tab -->
+			<div class="tab-pane fade {% if current_tab == 'Bugs' %}show active{% endif %} tabcontent" id="Bugs" role="tabpanel" aria-labelledby="bugs-tab">
+				<h1>BUGS & FEATURE REQUESTS</h1>
+				<table class="table table-bordered" style="font-size: 16px;">
+					<thead class="thead-light">
+						<tr>
+							<th style="text-align: center; white-space: nowrap;"><button type="button" class="btn btn-primary" id="newBugButton">New Bug</button></th>
+							<th>Bug</th>
+							<th>Added by</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for bug in bugs %}
+						<tr>
+							<td class="text-center">
+								<!-- Delete/Complete Button -->
+								<form method="POST" action="/delete_bug_id{{url_suffix}}" style="display: inline-block;">
+									<input type="hidden" name="bug_id" value="{{ bug.bug_id }}" />
+									<button type="submit" class="btn btn-success" >✔</button>
+								</form>
+							</td>
+							<td>{{ bug.description }}</td>
+							<td>{{ bug.added_by }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+	
+			<!-- New Bug Pop-up -->
+			<div id="newBugForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newBugLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="newBugLabel">New Bug</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<p>Please enter the bug description:</p>
+							<form method="POST" action="/add_bug{{url_suffix}}">
+								<div class="form-group">
+									<label for="description">Bug Description</label>
+									<input type="text" name="description" class="form-control" />
+								</div>
+								<div class="form-group">
+									<label for="added_by">Added by</label>
+									<input type="text" name="added_by" value="anonymous" class="form-control" />
+								</div>
+								<div class="text-center mt-3">
+									<button type="submit" class="btn btn-success">Submit</button>
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Include the external JavaScript file -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+		<script src="{{ url_for('static', filename='scripts.js') }}"></script>
+	</body>
+</html>

@@ -24,21 +24,22 @@ def index(url_suffix):
 	syllabus = get_syllabus(db, is_demo)
 	columns = get_columns(db, is_demo)
 	pretty_columns = get_pretty_columns(db)
-	bugs = get_bugs(db, is_demo)
 	assignment = get_current_assignment(db, is_demo)
 	graveyard = get_graveyard(db, is_demo)
 	todo_unformatted = get_todo(db, is_demo)
 	todo = format_todo(todo_unformatted)
+	bugs = get_bugs(db, is_demo)
 
 	return render_template(
 		'index.html', 
 		syllabus=syllabus, 
 		columns=columns, 
 		pretty_columns=pretty_columns, 
-		bugs=bugs, 
 		assignment=assignment, 
 		graveyard=graveyard,
 		todo=todo,
+		bugs=bugs,
+		current_tab = request.args.get('current_tab', 'syllabus'),
 		url_suffix="/"+url_suffix+"/" if url_suffix else "",
 		demo = "DEMO " if is_demo else ""
 	)
@@ -50,33 +51,19 @@ def update(url_suffix):
 	db: Session = SessionLocal()
 	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
 	try:
-
 		book = request.form.get('book')
-		print(f"book: {book}")
 		author = request.form.get('author')
-		print(f"author: {author}")
 		series = request.form.get('series')
-		print(f"series: {series}")
 		is_completed = bool(request.form.get('is_completed', False))
-		print(f"is_completed: {is_completed}")
 		added_by = request.form.get('added_by')
-		print(f"added_by: {added_by}")
 		season = int(request.form.get('season'))
-		print(f"season: {season}")
 		num_in_series = int(request.form.get('num_in_series'))
-		print(f"num_in_series: {num_in_series}")
 		is_extra_credit = bool(request.form.get('is_extra_credit', False))
-		print(f"is_extra_credit: {is_extra_credit}")
 		date_completed = request.form.get('date_completed')
-		print(f"date_completed: {date_completed}")
 		up_votes = int(request.form.get('up_votes'))
-		print(f"up_votes: {up_votes}")
 		down_votes = int(request.form.get('down_votes'))
-		print(f"down_votes: {down_votes}")
 		genre = request.form.get('genre')
-		print(f"genre: {genre}")
 		unique_id = int(request.form.get('unique_id'))
-		print(f"unique_id: {unique_id}")
 		
 		update_database(
 			db, unique_id, book, author, series, is_completed,
@@ -171,7 +158,27 @@ def assign(url_suffix):
 		return str(e), 500
 	finally:
 		db.close()
-		
+
+@app.route('/bugs', defaults={'url_suffix': ''}, methods=['GET'])
+@app.route('/<path:url_suffix>/')
+def bugs(url_suffix):
+	db: Session = SessionLocal()
+	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+
+	try:
+		bugs = get_bugs(db, is_demo)
+		return render_template(
+			'bugs.html', 
+			bugs=bugs,
+			current_tab = 'bugs',
+			url_suffix="/bugs/"+url_suffix+"/" if url_suffix else "",
+		)
+
+	except Exception as e:
+		db.rollback()
+		return str(e) + ". Failed to load bugs tab.", 500
+	finally:
+		db.close()
 
 @app.route('/add_bug', defaults={'url_suffix': ''}, methods=['POST'])
 @app.route('/add_bug/<path:url_suffix>/', methods=['POST'])
