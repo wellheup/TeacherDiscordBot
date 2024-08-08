@@ -1,0 +1,202 @@
+
+<!-- Syllabus tab -->
+	<div class="tab-pane fade show active tab-content mt-3" id="syllabus" role="tabpanel" aria-labelledby="syllabus-tab">
+		<h1>{{demo}}RAPID READING HOMEWORK</h1>
+		<div class="d-flex justify-content-between">
+			<p class="h4"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}} <button type="btn btn-primary" id="newAssignmentButton">New Assignment</button></p>
+		</div>
+
+		<div style="display: flex; justify-content: center;">
+			<table class="table table-bordered mt-3" style="text-align: center; padding: 5px;">
+				<thead class="thead-light">
+					<tr>
+						{% for column in columns %}
+							<th style="padding: 5px;">{{ pretty_columns[column] }}</th>
+						{% endfor %}
+						<th style="padding: 5px;"><button class="btn btn-success" id="addNewBookButton" style="white-space: nowrap;">Add New</button></th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for book in syllabus %}
+						<tr style="background-color: {{ loop.cycle('#d3d3d3', 'white') }};">
+							{% for column in columns %}
+								<td style=" white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %}; padding: 5px;">
+									{% if column in [ 'unique_id', 'date_added'] %}
+										<div name="{{column}}">
+											{{ book[column] }}
+										</div>
+									{% elif column == 'num_in_series' %}
+										<div name="{{column}}" style="text-align: center;">
+											{{ book[column] if book[column] is not none else '0' }}
+										</div>
+									{% elif column in ['num_in_series', 'season'] %}
+										<div name="{{column}}" style="text-align: {{ 'center' if column == 'season' else 'left' }};">
+											{{ book[column] if book[column] is not none else '0' }}
+										</div>
+									{% elif column in ['is_completed', 'is_extra_credit'] %}
+										<div name="{{column}}" style="text-align: center;">
+											{{ '✔' if book[column] else '✘' }}
+										</div>
+									{% elif column == 'genre' %}
+										<div name="{{column}}">
+											{% if book[column] is not none %}{{ book[column] }}{% endif %}
+										</div>
+									{% elif column == 'date_completed' %}
+										<div name="{{column}}">
+											{% if book[column] is not none %}
+												{{ book[column] }}
+											{% else %}
+												<form method="POST" class="d-inline" action="/complete{{url_suffix}}">
+													<input type="hidden" name="book" value="{{ book.book }}" />
+													<button class="btn btn-sm btn-success" type=submit >Mark Book Complete</button>
+												</form>
+											{% endif %}
+										</div>
+									{% else %}
+										<div name="{{column}}">
+											{{ book[column] }}
+										</div>
+									{% endif %}
+								</td>
+							{% endfor %}
+							<td style="white-space: nowrap; padding: 5px;">
+								<button class="btn btn-sm btn-info" name="edit" value="{{ loop.index0 }}" id="edit-{{ loop.index0 }}-Button">Edit</button>
+								<button class="btn btn-sm btn-danger" name="delete" value="{{ book.unique_id }}" id="delete-{{ book.unique_id }}-Button">Delete</button>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- New Entry form in a Pop-up -->
+	<div id="newEntryForm" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add New Entry</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="/add{{url_suffix}}">
+						{% for column in columns %}
+							{% if column != 'unique_id' and column != 'date_added' %}
+								<div class="form-group">
+									<label for="newEntryForm-{{ column }}">{{ pretty_columns[column] }}</label>
+									{% if column in [ 'is_completed', 'is_extra_credit'] %}
+										<input type="checkbox" id="newEntryForm-{{column}}" name="{{ column }}" />
+									{% elif column == 'date_completed' %}
+										<input type="date" id="newEntryForm-{{column}}" name="{{ column }}" />
+									{% elif column in ['num_in_series', 'season', 'up_votes', 'down_votes'] %}
+										<input type="number" id="newEntryForm-{{column}}" name="{{ column }}" min="0" max="100" value="0" />
+									{% else %}
+										<input type="text" id="newEntryForm-{{column}}" name="{{ column }}" />
+									{% endif %}
+								</div>
+							{% else %}
+								<!-- {{ column }} -->
+							{% endif %}
+						{% endfor %}
+						<div class="text-center">
+							<button type="submit" class="btn btn-primary">Save</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Edit Entry form in a Pop-up -->
+	<div id="editEntryForm" class="modal fade" tabindex="-1" role="dialog"mstyle="display: none;">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Entry</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="/update{{url_suffix}}">
+						<input type="hidden" name="unique_id" value="{{ columns['unique_id'] }}" />
+						{% for column in columns %}
+							{% if column != 'unique_id' and column != 'date_added' %}
+								<div class="form-group">
+									<label for="editEntryForm-{{ column }}">{{ pretty_columns[column] }}</label>
+									{% if column in ['is_completed', 'is_extra_credit'] %}
+										<input type="checkbox" name="{{ column }}" id="editEntryForm-{{ column }}"/>
+									{% elif column == 'date_completed' %}
+										<input type="date" name="{{ column }}" id="editEntryForm-{{ column }}"/>
+									{% elif column == 'genre' %}
+										<input type="text" name="{{ column }}" id="editEntryForm-{{ column }}"/>
+									{% elif column in ['num_in_series', 'season', 'up_votes', 'down_votes'] %}
+										<input type="number" name="{{ column }}" id="editEntryForm-{{ column }}" min="0" max="100" value="0"/>
+									{% else %}
+										<input type="text" name="{{ column }}" id="editEntryForm-{{ column }}"/>
+									{% endif %}
+								</div>
+							{% else %}
+								<!-- {{ column }} -->
+							{% endif %}
+						{% endfor %}
+						<div class="text-center">
+							<button type="submit" class="btn btn-primary">Save</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Confirm Delete form in a Pop-up -->
+	<div id="confirmDeleteForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true" style="display: none;">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="confirmDeleteLabel">Confirm Delete</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>Are you sure you'd like to delete this entry?</p>
+					<form method="POST" action="/delete{{url_suffix}}">
+						<input type="number" name="unique_id" class="d-none" />
+						<div class="text-center">
+							<button type="submit" class="btn btn-danger">✔</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- New Assignment Pop-up -->
+	<div id="newAssignmentForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newAssignmentLabel" aria-hidden="true" style="display: none;">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="newAssignmentLabel">New Assignment</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>Please enter the new assignment:</p>
+					<form method="POST" action="/assign{{url_suffix}}">
+						<input type="text" name="assignment_data" class="form-control" />
+						<div class="text-center mt-3">
+							<button type="submit" class="btn btn-success">✔</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>

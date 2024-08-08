@@ -1,0 +1,10 @@
+	<!-- Graveyard tab -->
+	<div class="tab-pane fade show active tabcontent mt-3" id="graveyard" role="tabpanel" aria-labelledby="graveyard-tab">
+		<h1>{{demo}}GRAVEYARD</h1>
+		<p>The following assignments have already been completed:</p>
+		{% for book in graveyard %}
+		<ul>
+			<li>{{ book.book }} by {{ book.author }}</li>
+		</ul>
+		{% endfor %}
+	</div>

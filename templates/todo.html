@@ -1,0 +1,20 @@
+	<!-- Todo tab -->
+	<div class="tab-pane fade show active tabcontent mt-3" id="todo" role="tabpanel" aria-labelledby="todo-tab">
+		<h1>{{demo}}TO DO</h1>
+		<p>The following assignments have yet to be completed:</p>
+		<ul>
+		{% for author in todo.keys() %}
+			<li><b>{{author}}</b><ul>
+				{% for series in todo[author].keys() %}
+					<li>{{series}}<ul>
+						{% for book in todo[author][series] %}
+							<li><i>{{book['book']}}</i> ({{book['id']}})</li>
+						{% endfor %}
+						</ul>
+					</li>
+				{% endfor %}
+				</ul>
+			</li>
+		{% endfor %}
+		</ul>
+	</div>
