@@ -205,7 +205,8 @@ def bugs_content():
 			'bugs.html', 
 			bugs=bugs,
 			current_tab = current_tab,
-			demo = "DEMO " if is_demo else ""
+			demo = "DEMO " if is_demo else "",
+			url_suffix = url_suffix
 		)
 	except Exception as e:
 		db.rollback()
