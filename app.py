@@ -16,10 +16,11 @@ bootstrap = Bootstrap(app)
 current_url_suffix = replit_db.get('url_suffix')
 is_live = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True
 
-@app.route('/', defaults={'url_suffix': ''}, methods=['GET'])
-@app.route('/<path:url_suffix>/', methods=['GET'])
-def index(url_suffix):
-	return render_template('index.html', current_tab=request.args.get('current_tab', 'syllabus'))
+@app.route('/', defaults={'url_suffix': '', 'current_tab': 'syllabus'}, methods=['GET'])
+@app.route('/<path:url_suffix>/', defaults={'current_tab': 'syllabus'}, methods=['GET'])
+@app.route('/<path:url_suffix>/<current_tab>/', methods=['GET'])
+def index(url_suffix, current_tab):
+    return render_template('index.html', current_tab=current_tab)
 
 
 @app.route('/syllabus', defaults={'url_suffix': ''}, methods=['GET'])
@@ -217,8 +218,9 @@ def report_bug(url_suffix):
 	try:
 		description = request.form.get('description')
 		added_by = request.form.get('added_by')
+		current_tab = request.form.get('current_tab')
 		add_bug(db, description, added_by, is_demo)
-		return redirect(url_for(f'index', url_suffix="/"+url_suffix+"/" if url_suffix else ""))
+		return redirect(url_for(f'index', url_suffix="/"+url_suffix+"/" if url_suffix else "", current_tab=current_tab))
 	except Exception as e:
 		db.rollback()
 		return str(e), 500
@@ -234,7 +236,8 @@ def delete_bug(url_suffix):
 	try:
 		bug_id = int(request.form.get('bug_id'))
 		delete_bug_id(db, bug_id, is_demo)
-		return redirect(url_for(f'index', url_suffix="/"+url_suffix+"/" if url_suffix else ""))
+		current_tab = request.form.get('current_tab')
+		return redirect(url_for(f'index', url_suffix="/"+url_suffix+"/" if url_suffix else "", current_tab=current_tab))
 	except Exception as e:
 		db.rollback()
 		return str(e), 500

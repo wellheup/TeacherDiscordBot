@@ -40,6 +40,7 @@
 				<div class="modal-body">
 					<p>Please enter the bug description:</p>
 					<form method="POST" action="/add_bug{{url_suffix}}">
+						<input type="hidden" name="current_tab" value="{{ current_tab }}" />
 						<div class="form-group">
 							<label for="description">Bug Description</label>
 							<input type="text" name="description" class="form-control" />
@@ -57,3 +58,22 @@
 			</div>
 		</div>
 	</div>
+
+<script>  // show new bug pop-up
+	$('#newBugButton').on('click', function() {
+		$('#newBugForm').modal('show');
+	});
+
+	// Handle Form submissions
+	$('form').on('submit', function(e) {
+		e.preventDefault();  // Prevent the default form submit behavior
+		var form = this;  // Reference to the form
+		var tabName = $('.nav-link.active').data('tabname');  // Get the active tab name
+		$.post(form.action, $(form).serialize(), function() {
+			loadTabContent(tabName);  // Reload the content of the current tab
+			if ($('#newBugForm').length) {
+				$('#newBugForm').modal('hide');  // Close the modal if it exists
+			}
+		});
+	});
+</script>
