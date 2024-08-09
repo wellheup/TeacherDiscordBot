@@ -46,8 +46,7 @@
 										{% if book[column] is not none %}
 											{{ book[column] }}
 										{% else %}
-											<form method="POST" class="d-inline" action="/complete{{url_suffix}}">
-												<input type="hidden" name="current_tab" value="{{ current_tab }}" />
+											<form method="POST" class="d-inline" action="/complete?url_suffix={{ url_suffix }}&current_tab={{ current_tab }}">
 												<input type="hidden" name="book" value="{{ book.book }}" />
 												<button class="btn btn-sm btn-success" type=submit >Mark Book Complete</button>
 											</form>
@@ -82,8 +81,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="/add{{url_suffix}}">
-					<input type="hidden" name="current_tab" value="{{ current_tab }}" />
+				<form method="POST" action="/add?url_suffix={{ url_suffix }}&current_tab={{ current_tab }}">
 					{% for column in columns %}
 						{% if column != 'unique_id' and column != 'date_added' %}
 							<div class="form-group">
@@ -123,9 +121,8 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="/update{{url_suffix}}">
+				<form method="POST" action="/update?url_suffix={{ url_suffix }}&current_tab={{ current_tab }}">
 					<input type="hidden" name="unique_id" value="{{ columns['unique_id'] }}" />
-					<input type="hidden" name="current_tab" value="{{ current_tab }}" />
 					{% for column in columns %}
 						{% if column != 'unique_id' and column != 'date_added' %}
 							<div class="form-group">
@@ -168,8 +165,7 @@
 			</div>
 			<div class="modal-body">
 				<p>Are you sure you'd like to delete this entry?</p>
-				<form method="POST" action="/delete{{url_suffix}}">
-					<input type="hidden" name="current_tab" value="{{ current_tab }}" />
+				<form method="POST" action="/delete?url_suffix={{ url_suffix }}&current_tab={{ current_tab }}">
 					<input type="number" name="unique_id" class="d-none" />
 					<div class="text-center">
 						<button type="submit" class="btn btn-danger">✔</button>

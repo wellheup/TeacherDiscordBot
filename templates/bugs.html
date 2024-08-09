@@ -14,7 +14,7 @@
 				<tr>
 					<td class="text-center">
 						<!-- Delete/Complete Button -->
-						<form method="POST" action="/delete_bug_id{{url_suffix}}" style="display: inline-block;">
+						<form method="POST" action="/delete_bug_id?url_suffix={{ url_suffix }}&current_tab={{ current_tab }}" style="display: inline-block;">
 							<input type="hidden" name="bug_id" value="{{ bug.bug_id }}" />
 							<button type="submit" class="btn btn-success" >✔</button>
 						</form>
@@ -39,8 +39,7 @@
 				</div>
 				<div class="modal-body">
 					<p>Please enter the bug description:</p>
-					<form method="POST" action="/add_bug{{url_suffix}}">
-						<input type="hidden" name="current_tab" value="{{ current_tab }}" />
+					<form method="POST" action="/add_bug?url_suffix={{ url_suffix }}&current_tab={{ current_tab }}">
 						<div class="form-group">
 							<label for="description">Bug Description</label>
 							<input type="text" name="description" class="form-control" />
