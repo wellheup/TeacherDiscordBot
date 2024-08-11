@@ -22,7 +22,6 @@ def index():
 	return render_template('index.html', is_demo=is_demo)
 
 # syllabus routes
-
 @app.route('/syllabus', methods=['GET'])
 def syllabus_content():
 	url_suffix = request.args.get('url_suffix', '')
@@ -197,7 +196,6 @@ def renderSyllabus(db, is_demo, url_suffix):
 	return jsonify({'html': html, 'close_modal': True})
 
 # bug routes
-
 @app.route('/bugs', methods=['GET'])
 def bugs_content():
 	url_suffix = request.args.get('url_suffix', '')
@@ -247,7 +245,6 @@ def delete_bug():
 		return jsonify({'error': str(e)}), 500
 	finally:
 		db.close()
-
 
 def renderBugs(db, is_demo, url_suffix):
 	bugs = get_bugs(db, is_demo)

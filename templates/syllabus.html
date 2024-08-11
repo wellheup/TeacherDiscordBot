@@ -10,31 +10,29 @@
 		background-color: white; /* Ensure the header has a background color */
 	}
 	.scrollable-table-container {
-		max-height: 80vh; /* Adjust the height as needed */
+		max-height: 70vh; /* Adjust the height as needed */
 		overflow-y: auto; /* Enable vertical scrolling */
 	}
-	/* Hide columns by default */
-	.col-unique_id, .col-date_added, .col-is_completed, .col-num_in_series,
-	.col-added_by, .col-season, .col-is_extra_credit, .col-genre {
-		display: none;
-	}
-	
 </style>
 
 <!-- syllabus.html -->
-<div class="tab-pane fade show active p-0" id="syllabus" role="tabpanel" aria-labelledby="syllabus-tab">
+<div class="tab-pane fade show active tab-content mt-3 p-0" id="syllabus" role="tabpanel" aria-labelledby="syllabus-tab">
 	<h1>{{demo}}RAPID READING HOMEWORK</h1>
 	<div class="d-flex justify-content-between">
-		<p class="h4"><b>Current assignment:</b> {{assignment.description}}, assigned on {{assignment.date_added}} <button type="button" class="btn btn-primary" id="newAssignmentButton">New Assignment</button></p>
+		<p class="h4"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}} <button type="btn btn-sm btn-info" id="newAssignmentButton">New Assignment</button></p>
 	</div>
 
 	<!-- Column Visibility Controls -->
 	<div class="column-controls mb-3">
 		{% for column in columns %}
-			<input type="checkbox" id="toggle-{{ column }}" class="column-toggle" data-column="{{ column }}"
-				   {% if column not in ['unique_id', 'date_added', 'is_completed', 'num_in_series', 'added_by', 'season', 'is_extra_credit', 'genre'] %}checked{% endif %}>
-			<label for="toggle-{{ column }}">{{ pretty_columns[column] }}</label>
+			{% if column not in ['book', 'author', 'series', 'is_completed', 'date_completed'] %}
+				<div class="form-check form-check-inline">
+					<input class="form-check-input column-toggle" type="checkbox" id="toggle-{{ column }}" data-column="{{ column }}" checked>
+					<label class="form-check-label" for="toggle-{{ column }}">{{ pretty_columns[column] }}</label>
+				</div>
+			{% endif %}
 		{% endfor %}
+		<button type="button" id="viewLessButton" class="btn btn-sm btn-info ml-3">View Less</button>
 	</div>
 
 	<div class="table-responsive scrollable-table-container">
@@ -79,7 +77,7 @@
 										{% else %}
 											<form method="POST" class="d-inline" action="/complete?url_suffix={{ url_suffix }}">
 												<input type="hidden" name="book" value="{{ book.book }}" />
-												<button class="btn btn-sm btn-success" type="submit">Complete</button>
+												<button class="btn btn-sm btn-success" type="submit">Mark Book Complete</button>
 											</form>
 										{% endif %}
 									</div>
@@ -266,5 +264,40 @@
 		const popup = $('#confirmDeleteForm');
 		popup.find('input[type="number"]').val(index);
 		popup.modal('show');
+	});
+
+	// Function to toggle column visibility based on checkboxes
+	function toggleColumnVisibility() {
+		const checkboxes = document.querySelectorAll('.column-toggle');
+		checkboxes.forEach(checkbox => {
+			const columnClass = 'col-' + checkbox.dataset.column;
+			const elements = document.querySelectorAll('.' + columnClass);
+			elements.forEach(el => {
+				el.style.display = checkbox.checked ? '' : 'none';
+			});
+		});
+	}
+	
+	$(document).ready(function() {
+		toggleColumnVisibility(); // Ensure initial state
+
+		
+		// Checkboxes to toggle columns
+		$(document).on('change', '.column-toggle', function() {
+			toggleColumnVisibility();
+		});
+		
+		// View Less button to hide columns
+		$('#viewLessButton').on('click', function(){
+			console.log('View Less button clicked');
+			const columnsToKeep = ['book', 'author', 'series', 'is_completed', 'date_completed'];
+			const checkboxes = document.querySelectorAll('.column-toggle');
+			checkboxes.forEach(checkbox => {
+				if (!columnsToKeep.includes(checkbox.dataset.column)) {
+					checkbox.removeAttribute('checked');
+				}
+			});
+			toggleColumnVisibility();
+		});
 	});
 </script>
