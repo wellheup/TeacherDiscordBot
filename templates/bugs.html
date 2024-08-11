@@ -15,9 +15,9 @@
 				<tr>
 					<td class="text-center" style="padding: 2px;">
 						<!-- Delete/Complete Button -->
-						<form method="POST" action="/delete_bug_id">
+						<form method="POST" class="d-inline" action="/delete_bug_id?url_suffix={{url_suffix}}">
 							<input type="hidden" name="bug_id" value="{{ bug.bug_id }}" />
-							<button type="submit" class="btn btn-success">✔</button>
+							<button type="submit" class="btn btn-sm btn-success">✔</button>
 						</form>
 					</td>
 					<td style="padding: 2px;">{{ bug.description }}</td>
@@ -43,7 +43,7 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<form method="POST" action="/add_bug">
+					<form method="POST" action="/add_bug?url_suffix={{url_suffix}}">
 						<div class="form-group">
 							<label for="description">Bug Description</label>
 							<input type="text" name="description" class="form-control" />
@@ -66,18 +66,5 @@
 <script>  // show new bug pop-up
 	$('#newBugButton').on('click', function() {
 		$('#newBugForm').modal('show');
-	});
-
-	// Handle Form submissions
-	$('form').on('submit', function(e) {
-		e.preventDefault();  // Prevent the default form submit behavior
-		var form = this;  // Reference to the form
-		var tabName = $('.nav-link.active').data('tabname');  // Get the active tab name
-		$.post(form.action, $(form).serialize(), function() {
-			loadTabContent(tabName);  // Reload the content of the current tab
-			if ($('#newBugForm').length) {
-				$('#newBugForm').modal('hide');  // Close the modal if it exists
-			}
-		});
 	});
 </script>

@@ -14,7 +14,6 @@ app = Flask(__name__)
 bootstrap = Bootstrap(app)
 
 current_url_suffix = replit_db.get('url_suffix')
-# is_live = False if os.getenv('REPLIT_DEPLOYMENT') == '1' else True # for replit deployment later
 
 @app.route('/', methods=['GET'])
 def index():
@@ -22,6 +21,7 @@ def index():
 	is_demo = not url_suffix or url_suffix != current_url_suffix
 	return render_template('index.html', is_demo=is_demo)
 
+# syllabus routes
 
 @app.route('/syllabus', methods=['GET'])
 def syllabus_content():
@@ -46,7 +46,6 @@ def syllabus_content():
 		return f"{e}. Failed to get syllabus data.", 500
 	finally:
 		db.close()
-
 
 @app.route('/update', methods=['POST'])
 def update():
@@ -77,7 +76,6 @@ def update():
 	finally:
 		db.close()
 
-
 @app.route('/add', methods=['POST'])
 def add():
 	url_suffix = request.args.get('url_suffix', '')
@@ -99,7 +97,6 @@ def add():
 		return str(e), 500
 	finally:
 		db.close()
-		
 
 @app.route('/delete', methods=['POST'])
 def delete():
@@ -116,7 +113,6 @@ def delete():
 	finally:
 		db.close()
 
-
 @app.route('/complete', methods=['POST'])
 def complete():
 	url_suffix = request.args.get('url_suffix', '')
@@ -132,7 +128,6 @@ def complete():
 	finally:
 		db.close()
 
-
 @app.route('/assign', methods=['POST'])
 def assign():
 	url_suffix = request.args.get('url_suffix', '')
@@ -147,7 +142,6 @@ def assign():
 		return str(e), 500
 	finally:
 		db.close()
-
 
 @app.route('/graveyard', methods=['GET'])
 def graveyard_content():
@@ -166,7 +160,6 @@ def graveyard_content():
 		return str(e) + ". Failed to load graveyard tab.", 500
 	finally:
 		db.close()
-
 
 @app.route('/todo', methods=['GET'])
 def todo_content():
@@ -187,6 +180,23 @@ def todo_content():
 	finally:
 		db.close()
 
+def renderSyllabus(db, is_demo, url_suffix):
+	syllabus = get_syllabus(db, is_demo)
+	columns = get_columns(db, is_demo)
+	pretty_columns = get_pretty_columns(db)
+	assignment = get_current_assignment(db, is_demo)
+	html = render_template(
+		'syllabus.html',
+		syllabus=syllabus, 
+		columns=columns, 
+		pretty_columns=pretty_columns,
+		assignment=assignment,
+		demo="DEMO " if is_demo else "",
+		url_suffix=url_suffix
+	)
+	return jsonify({'html': html, 'close_modal': True})
+
+# bug routes
 
 @app.route('/bugs', methods=['GET'])
 def bugs_content():
@@ -207,7 +217,6 @@ def bugs_content():
 	finally:
 		db.close()
 
-	
 @app.route('/add_bug', methods=['POST'])
 def report_bug():
 	url_suffix = request.args.get('url_suffix', '')
@@ -217,21 +226,12 @@ def report_bug():
 		description = request.form.get('description')
 		added_by = request.form.get('added_by')
 		add_bug(db, description, added_by, is_demo)
-		# Get updated bugs list and render template
-		bugs = get_bugs(db, is_demo)
-		html = render_template(
-			'bugs.html', 
-			bugs=bugs,
-			demo="DEMO " if is_demo else "",
-			url_suffix=url_suffix
-		)
-		return jsonify({'html': html, 'close_modal': True})
+		return renderBugs(db, is_demo, url_suffix)
 	except Exception as e:
 		db.rollback()
 		return jsonify({'error': str(e)}), 500
 	finally:
 		db.close()
-
 
 @app.route('/delete_bug_id', methods=['POST'])
 def delete_bug():
@@ -241,14 +241,7 @@ def delete_bug():
 	try:
 		bug_id = int(request.form.get('bug_id'))
 		delete_bug_id(db, bug_id, is_demo)
-		# Get updated bugs list and render template
-		bugs = get_bugs(db, is_demo)
-		html = render_template('bugs.html',
-			bugs=bugs,
-			demo="DEMO " if is_demo else "",
-			url_suffix=url_suffix
-		)
-		return jsonify({'html': html})
+		return renderBugs(db, is_demo, url_suffix)
 	except Exception as e:
 		db.rollback()
 		return jsonify({'error': str(e)}), 500
@@ -256,36 +249,26 @@ def delete_bug():
 		db.close()
 
 
-def format_todo(todo):
-	todo_formatted = {}
-	for row in todo:
-		if row.author in todo_formatted.keys():
-			if row.series in todo_formatted[row.author].keys():
-				todo_formatted[row.author][row.series].append({'book':row.book, 'id':row.unique_id})
-			else:
-				todo_formatted[row.author][row.series] =  [{'book':row.book, 'id':row.unique_id}]
-		else:
-			todo_formatted[row.author] = {row.series: [{'book':row.book, 'id':row.unique_id}]}
-	return todo_formatted
-
-def renderSyllabus( db, is_demo, url_suffix):
-	syllabus = get_syllabus(db, is_demo)
-	columns = get_columns(db, is_demo)
-	pretty_columns = get_pretty_columns(db)
-	assignment = get_current_assignment(db, is_demo)
-	html = render_template('syllabus.html',
-		syllabus=syllabus, 
-		columns=columns, 
-		pretty_columns=pretty_columns,
-		assignment=assignment,
+def renderBugs(db, is_demo, url_suffix):
+	bugs = get_bugs(db, is_demo)
+	html = render_template(
+		'bugs.html', 
+		bugs=bugs,
 		demo="DEMO " if is_demo else "",
 		url_suffix=url_suffix
 	)
 	return jsonify({'html': html, 'close_modal': True})
 
-# TODO: 
-# make actual CRUD for all of the tables
-# 	Create -post
-# 	read - get
-# 	update - put
-# 	delete - delete
+# Utility functions
+def format_todo(todo):
+	todo_formatted = {}
+	for row in todo:
+		if row.author in todo_formatted.keys():
+			if row.series in todo_formatted[row.author].keys():
+				todo_formatted[row.author][row.series].append({'book': row.book, 'id': row.unique_id})
+			else:
+				todo_formatted[row.author][row.series] = [{'book': row.book, 'id': row.unique_id}]
+		else:
+			todo_formatted[row.author] = {row.series: [{'book': row.book, 'id': row.unique_id}]}
+	return todo_formatted
+

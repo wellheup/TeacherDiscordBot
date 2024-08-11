@@ -22,10 +22,10 @@
 </style>
 
 <!-- syllabus.html -->
-<div class="tab-pane fade show active tab-content mt-3 p-0" id="syllabus" role="tabpanel" aria-labelledby="syllabus-tab">
+<div class="tab-pane fade show active p-0" id="syllabus" role="tabpanel" aria-labelledby="syllabus-tab">
 	<h1>{{demo}}RAPID READING HOMEWORK</h1>
 	<div class="d-flex justify-content-between">
-		<p class="h4"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}} <button type="btn btn-primary" id="newAssignmentButton">New Assignment</button></p>
+		<p class="h4"><b>Current assignment:</b> {{assignment.description}}, assigned on {{assignment.date_added}} <button type="button" class="btn btn-primary" id="newAssignmentButton">New Assignment</button></p>
 	</div>
 
 	<!-- Column Visibility Controls -->
@@ -77,9 +77,9 @@
 										{% if book[column] is not none %}
 											{{ book[column] }}
 										{% else %}
-											<form method="POST" class="d-inline" action="/complete?url_suffix={{ url_suffix }}&current_tab={{ current_tab }}">
+											<form method="POST" class="d-inline" action="/complete?url_suffix={{ url_suffix }}">
 												<input type="hidden" name="book" value="{{ book.book }}" />
-												<button class="btn btn-sm btn-success" type="submit">Mark Book Complete</button>
+												<button class="btn btn-sm btn-success" type="submit">Complete</button>
 											</form>
 										{% endif %}
 									</div>
@@ -101,7 +101,7 @@
 	</div>
 </div>
 
-<!-- New Entry form in a Pop-up -->
+<!-- Add New Entry form in a Pop-up -->
 <div id="newEntryForm" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
