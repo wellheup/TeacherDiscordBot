@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_bootstrap import Bootstrap
 from replit import db as replit_db
 import os
@@ -19,15 +19,13 @@ current_url_suffix = replit_db.get('url_suffix')
 @app.route('/', methods=['GET'])
 def index():
 	url_suffix = request.args.get('url_suffix', '')
-	current_tab = request.args.get('current_tab', 'syllabus')
 	is_demo = not url_suffix or url_suffix != current_url_suffix
-	return render_template('index.html', current_tab=current_tab, is_demo=is_demo)
+	return render_template('index.html', is_demo=is_demo)
 
 
 @app.route('/syllabus', methods=['GET'])
 def syllabus_content():
 	url_suffix = request.args.get('url_suffix', '')
-	current_tab = request.args.get('current_tab', 'syllabus')
 	db: Session = SessionLocal()
 	is_demo = not url_suffix or url_suffix != current_url_suffix
 	try:
@@ -38,10 +36,11 @@ def syllabus_content():
 		return render_template('syllabus.html',
 			syllabus=syllabus, 
 			columns=columns, 
-			pretty_columns=pretty_columns, 
-			assignment=assignment, 
+			pretty_columns=pretty_columns,
+			assignment=assignment,
 			demo="DEMO " if is_demo else "",
-			current_tab=current_tab)
+			url_suffix=url_suffix
+		)
 	except Exception as e:
 		db.rollback()
 		return f"{e}. Failed to get syllabus data.", 500
@@ -71,7 +70,7 @@ def update():
 			'unique_id': int(request.form.get('unique_id'))
 		}
 		update_database(db, **data, is_demo=is_demo)
-		return redirect(url_for('index', url_suffix=url_suffix))
+		return renderSyllabus(db, is_demo, url_suffix)
 	except Exception as e:
 		db.rollback()
 		return str(e) + ". Failed to post data.", 500
@@ -94,7 +93,7 @@ def add():
 		num_in_series = int(request.form.get('num_in_series'))
 		is_extra_credit = bool(request.form.get('is_extra_credit', False))
 		add_book(db, book, author, series, added_by, season, is_demo, genre, num_in_series, is_extra_credit)
-		return redirect(url_for('index', url_suffix=url_suffix))
+		return renderSyllabus(db, is_demo, url_suffix)
 	except Exception as e:
 		db.rollback()
 		return str(e), 500
@@ -110,7 +109,7 @@ def delete():
 	try:
 		id = int(request.form.get('unique_id'))
 		remove_id(db, id, is_demo)
-		return redirect(url_for('index', url_suffix=url_suffix))
+		return renderSyllabus(db, is_demo, url_suffix)
 	except Exception as e:
 		db.rollback()
 		return str(e), 500
@@ -126,7 +125,7 @@ def complete():
 	try:
 		book = request.form.get('book')
 		complete_book(db, book, is_demo)
-		return redirect(url_for('index', url_suffix=url_suffix))
+		return renderSyllabus(db, is_demo, url_suffix)
 	except Exception as e:
 		db.rollback()
 		return str(e), 500
@@ -142,7 +141,7 @@ def assign():
 	try:
 		assignment_data = request.form.get('assignment_data')
 		add_assignment(db, assignment_data, is_demo)
-		return redirect(url_for('index', url_suffix=url_suffix))			
+		return renderSyllabus(db, is_demo, url_suffix)
 	except Exception as e:
 		db.rollback()
 		return str(e), 500
@@ -153,7 +152,6 @@ def assign():
 @app.route('/graveyard', methods=['GET'])
 def graveyard_content():
 	url_suffix = request.args.get('url_suffix', '')
-	current_tab = request.args.get('current_tab', 'syllabus')
 	db: Session = SessionLocal()
 	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
 	try:
@@ -161,7 +159,6 @@ def graveyard_content():
 		return render_template(
 			'graveyard.html', 
 			graveyard=graveyard,
-			current_tab = current_tab,
 			demo = "DEMO " if is_demo else ""
 		)
 	except Exception as e:
@@ -174,7 +171,6 @@ def graveyard_content():
 @app.route('/todo', methods=['GET'])
 def todo_content():
 	url_suffix = request.args.get('url_suffix', '')
-	current_tab = request.args.get('current_tab', 'syllabus')
 	db: Session = SessionLocal()
 	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
 	try:
@@ -183,7 +179,6 @@ def todo_content():
 		return render_template(
 			'todo.html', 
 			todo=todo,
-			current_tab = current_tab,
 			demo = "DEMO " if is_demo else ""
 		)
 	except Exception as e:
@@ -196,7 +191,6 @@ def todo_content():
 @app.route('/bugs', methods=['GET'])
 def bugs_content():
 	url_suffix = request.args.get('url_suffix', '')
-	current_tab = request.args.get('current_tab', 'syllabus')
 	db: Session = SessionLocal()
 	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
 	try:
@@ -204,7 +198,6 @@ def bugs_content():
 		return render_template(
 			'bugs.html', 
 			bugs=bugs,
-			current_tab = current_tab,
 			demo = "DEMO " if is_demo else "",
 			url_suffix = url_suffix
 		)
@@ -218,18 +211,24 @@ def bugs_content():
 @app.route('/add_bug', methods=['POST'])
 def report_bug():
 	url_suffix = request.args.get('url_suffix', '')
-	current_tab = request.args.get('current_tab', 'syllabus')
 	db: Session = SessionLocal()
 	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
 	try:
 		description = request.form.get('description')
 		added_by = request.form.get('added_by')
-		current_tab = request.form.get('current_tab')
 		add_bug(db, description, added_by, is_demo)
-		return render_template('index.html', current_tab=current_tab, is_demo=is_demo)
+		# Get updated bugs list and render template
+		bugs = get_bugs(db, is_demo)
+		html = render_template(
+			'bugs.html', 
+			bugs=bugs,
+			demo="DEMO " if is_demo else "",
+			url_suffix=url_suffix
+		)
+		return jsonify({'html': html, 'close_modal': True})
 	except Exception as e:
 		db.rollback()
-		return str(e), 500
+		return jsonify({'error': str(e)}), 500
 	finally:
 		db.close()
 
@@ -237,17 +236,22 @@ def report_bug():
 @app.route('/delete_bug_id', methods=['POST'])
 def delete_bug():
 	url_suffix = request.args.get('url_suffix', '')
-	current_tab = request.args.get('current_tab', 'syllabus')
 	db: Session = SessionLocal()
 	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
 	try:
 		bug_id = int(request.form.get('bug_id'))
 		delete_bug_id(db, bug_id, is_demo)
-		current_tab = request.form.get('current_tab')
-		return render_template('index.html', current_tab=current_tab, is_demo=is_demo)
+		# Get updated bugs list and render template
+		bugs = get_bugs(db, is_demo)
+		html = render_template('bugs.html',
+			bugs=bugs,
+			demo="DEMO " if is_demo else "",
+			url_suffix=url_suffix
+		)
+		return jsonify({'html': html})
 	except Exception as e:
 		db.rollback()
-		return str(e), 500
+		return jsonify({'error': str(e)}), 500
 	finally:
 		db.close()
 
@@ -263,6 +267,21 @@ def format_todo(todo):
 		else:
 			todo_formatted[row.author] = {row.series: [{'book':row.book, 'id':row.unique_id}]}
 	return todo_formatted
+
+def renderSyllabus( db, is_demo, url_suffix):
+	syllabus = get_syllabus(db, is_demo)
+	columns = get_columns(db, is_demo)
+	pretty_columns = get_pretty_columns(db)
+	assignment = get_current_assignment(db, is_demo)
+	html = render_template('syllabus.html',
+		syllabus=syllabus, 
+		columns=columns, 
+		pretty_columns=pretty_columns,
+		assignment=assignment,
+		demo="DEMO " if is_demo else "",
+		url_suffix=url_suffix
+	)
+	return jsonify({'html': html, 'close_modal': True})
 
 # TODO: 
 # make actual CRUD for all of the tables

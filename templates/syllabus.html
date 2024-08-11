@@ -1,17 +1,48 @@
 
-<!-- Syllabus tab -->
-<div class="tab-pane fade show active tab-content mt-3" id="syllabus" role="tabpanel" aria-labelledby="syllabus-tab">
+<style>
+	.table-responsive {
+		overflow-x: auto;
+	}
+	.table-fixed-header thead tr th {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background-color: white; /* Ensure the header has a background color */
+	}
+	.scrollable-table-container {
+		max-height: 80vh; /* Adjust the height as needed */
+		overflow-y: auto; /* Enable vertical scrolling */
+	}
+	/* Hide columns by default */
+	.col-unique_id, .col-date_added, .col-is_completed, .col-num_in_series,
+	.col-added_by, .col-season, .col-is_extra_credit, .col-genre {
+		display: none;
+	}
+	
+</style>
+
+<!-- syllabus.html -->
+<div class="tab-pane fade show active tab-content mt-3 p-0" id="syllabus" role="tabpanel" aria-labelledby="syllabus-tab">
 	<h1>{{demo}}RAPID READING HOMEWORK</h1>
 	<div class="d-flex justify-content-between">
 		<p class="h4"><b>Current assignment: </b>{{assignment.description}}, assigned on {{assignment.date_added}} <button type="btn btn-primary" id="newAssignmentButton">New Assignment</button></p>
 	</div>
 
-	<div style="display: flex; justify-content: center;">
-		<table class="table table-bordered mt-3" style="text-align: center; padding: 5px;">
+	<!-- Column Visibility Controls -->
+	<div class="column-controls mb-3">
+		{% for column in columns %}
+			<input type="checkbox" id="toggle-{{ column }}" class="column-toggle" data-column="{{ column }}"
+				   {% if column not in ['unique_id', 'date_added', 'is_completed', 'num_in_series', 'added_by', 'season', 'is_extra_credit', 'genre'] %}checked{% endif %}>
+			<label for="toggle-{{ column }}">{{ pretty_columns[column] }}</label>
+		{% endfor %}
+	</div>
+
+	<div class="table-responsive scrollable-table-container">
+		<table class="table table-bordered table-fixed-header mt-3" style="text-align: center; padding: 5px;">
 			<thead class="thead-light">
 				<tr>
 					{% for column in columns %}
-						<th style="padding: 5px;">{{ pretty_columns[column] }}</th>
+						<th class="col-{{ column }}" style="padding: 5px;">{{ pretty_columns[column] }}</th>
 					{% endfor %}
 					<th style="padding: 5px;"><button class="btn btn-success" id="addNewBookButton" style="white-space: nowrap;">Add New</button></th>
 				</tr>
@@ -20,8 +51,8 @@
 				{% for book in syllabus %}
 					<tr style="background-color: {{ loop.cycle('#d3d3d3', 'white') }};">
 						{% for column in columns %}
-							<td style=" white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %}; padding: 5px;">
-								{% if column in [ 'unique_id', 'date_added'] %}
+							<td class="col-{{ column }}" style="white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %}; padding: 5px;">
+								{% if column in ['unique_id', 'date_added'] %}
 									<div name="{{column}}">
 										{{ book[column] }}
 									</div>
@@ -29,17 +60,17 @@
 									<div name="{{column}}" style="text-align: center;">
 										{{ book[column] if book[column] is not none else '0' }}
 									</div>
-								{% elif column in ['num_in_series', 'season'] %}
-									<div name="{{column}}" style="text-align: {{ 'center' if column == 'season' else 'left' }};">
+								{% elif column == 'season' %}
+									<div name="{{column}}" style="text-align: center;">
 										{{ book[column] if book[column] is not none else '0' }}
 									</div>
-								{% elif column in ['is_completed', 'is_extra_credit'] %}
+								{% elif column == 'is_completed' or column == 'is_extra_credit' %}
 									<div name="{{column}}" style="text-align: center;">
 										{{ '✔' if book[column] else '✘' }}
 									</div>
 								{% elif column == 'genre' %}
 									<div name="{{column}}">
-										{% if book[column] is not none %}{{ book[column] }}{% endif %}
+										{{ book[column] if book[column] is not none else '' }}
 									</div>
 								{% elif column == 'date_completed' %}
 									<div name="{{column}}">
@@ -48,7 +79,7 @@
 										{% else %}
 											<form method="POST" class="d-inline" action="/complete?url_suffix={{ url_suffix }}&current_tab={{ current_tab }}">
 												<input type="hidden" name="book" value="{{ book.book }}" />
-												<button class="btn btn-sm btn-success" type=submit >Mark Book Complete</button>
+												<button class="btn btn-sm btn-success" type="submit">Mark Book Complete</button>
 											</form>
 										{% endif %}
 									</div>
@@ -81,7 +112,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="/add?url_suffix={{ url_suffix }}&current_tab={{ current_tab }}">
+				<form method="POST" action="/add?url_suffix={{ url_suffix }}">
 					{% for column in columns %}
 						{% if column != 'unique_id' and column != 'date_added' %}
 							<div class="form-group">
@@ -121,7 +152,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="/update?url_suffix={{ url_suffix }}&current_tab={{ current_tab }}">
+				<form method="POST" action="/update?url_suffix={{ url_suffix }}">
 					<input type="hidden" name="unique_id" value="{{ columns['unique_id'] }}" />
 					{% for column in columns %}
 						{% if column != 'unique_id' and column != 'date_added' %}
@@ -165,7 +196,7 @@
 			</div>
 			<div class="modal-body">
 				<p>Are you sure you'd like to delete this entry?</p>
-				<form method="POST" action="/delete?url_suffix={{ url_suffix }}&current_tab={{ current_tab }}">
+				<form method="POST" action="/delete?url_suffix={{ url_suffix }}">
 					<input type="number" name="unique_id" class="d-none" />
 					<div class="text-center">
 						<button type="submit" class="btn btn-danger">✔</button>
@@ -189,8 +220,7 @@
 			</div>
 			<div class="modal-body">
 				<p>Please enter the new assignment:</p>
-				<form method="POST" action="/assign{{url_suffix}}">
-					<input type="hidden" name="current_tab" value="{{ current_tab }}" />
+				<form method="POST" action="/assign?url_suffix={{url_suffix}}">
 					<input type="text" name="assignment_data" class="form-control" />
 					<div class="text-center mt-3">
 						<button type="submit" class="btn btn-success">✔</button>
