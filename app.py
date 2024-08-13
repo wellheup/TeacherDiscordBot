@@ -26,7 +26,9 @@ def index():
 def syllabus_content():
 	url_suffix = request.args.get('url_suffix', '')
 	db: Session = SessionLocal()
-	is_demo = not url_suffix or url_suffix != current_url_suffix
+	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+	if not is_demo:
+		print(f"current_url_suffix is {current_url_suffix}")
 	try:
 		syllabus = get_syllabus(db, is_demo)
 		columns = get_columns(db, is_demo)
@@ -50,7 +52,7 @@ def syllabus_content():
 def update():
 	url_suffix = request.args.get('url_suffix', '')
 	db: Session = SessionLocal()
-	is_demo = not url_suffix or url_suffix != current_url_suffix
+	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
 	try:
 		data = {
 			'book': request.form.get('book'),

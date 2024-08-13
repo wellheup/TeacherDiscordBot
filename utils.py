@@ -50,11 +50,11 @@ def daily_update_url():
 		new_random_string = generate_random_string()
 		db['url_suffix'] = new_random_string
 		db['last_update'] = today
-	return f"{os.environ['TEACHER_URL']}?url_suffix={db.get('url_suffix', '')}&current_tab=syllabus"
+	return f"{os.environ['TEACHER_URL']}?url_suffix={db.get('url_suffix', '')}"
 		
 def get_current_url(is_demo=True):
 	"""Retrieve the current URL with the random suffix"""
 	if is_demo:
 		f"{os.environ['TEACHER_URL']}"
 	else:
-		return f"{os.environ['TEACHER_URL']}?url_suffix={db.get('url_suffix', '')}&current_tab=syllabus"
+		return f"{os.environ['TEACHER_URL']}?url_suffix={db.get('url_suffix', '')}"
