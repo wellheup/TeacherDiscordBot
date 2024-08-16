@@ -5,7 +5,7 @@ from replit import db
 from utils import daily_update_url
 
 # Web App
-from app import app as flask_app
+from my_flask_app import app as flask_app
 def run_flask():
 	daily_update_url()
 	port = 80 if os.getenv('REPLIT_DEPLOYMENT') == '1' else 5000
@@ -111,5 +111,5 @@ if __name__ == '__main__':
 # https://docs.replit.com/hosting/deployments/about-deployments
 # https://discordpy.readthedocs.io/en/latest/ext/commands/api.html#discord.ext.commands.Bot.commands
 # https://discordpy.readthedocs.io/en/latest/ext/commands/api.html#commands
-# Location for bot in discord: https://discord.com/developers/applications
+# Location for bot in discord: https://discord.com/developers/my_flask_apps
 # hosted: hosted on replit.com
