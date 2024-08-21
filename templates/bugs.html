@@ -1,0 +1,70 @@
+<!-- bugs.html -->
+<div class="tab-pane fade show active tab-content mt-3" id="bugs" role="tabpanel" aria-labelledby="bugs-tab">
+	<h1>{{ demo }}BUGS & FEATURE REQUESTS</h1>
+	<table class="table table-bordered" style="font-size: 16px; padding: 4px;">
+		<thead class="thead-light">
+			<tr>
+				<th style="text-align: center; white-space: nowrap; padding: 2px;"><button type="button" class="btn btn-primary" id="newBugButton">New Bug</button></th>
+				<th style="padding: 2px;">Bug</th>
+				<th style="padding: 2px;">Added by</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% if bugs %}
+				{% for bug in bugs %}
+				<tr>
+					<td class="text-center" style="padding: 2px;">
+						<!-- Delete/Complete Button -->
+						<form method="POST" class="d-inline" action="/delete_bug_id?url_suffix={{url_suffix}}">
+							<input type="hidden" name="bug_id" value="{{ bug.bug_id }}" />
+							<button type="submit" class="btn btn-sm btn-success">✔</button>
+						</form>
+					</td>
+					<td style="padding: 2px;">{{ bug.description }}</td>
+					<td style="padding: 2px;">{{ bug.added_by }}</td>
+				</tr>
+				{% endfor %}
+			{% else %}
+				<tr>
+					<td colspan="3">No bugs or feature requests found.</td>
+				</tr>
+			{% endif %}
+		</tbody>
+	</table>
+
+	<!-- New Bug Pop-up -->
+	<div id="newBugForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newBugLabel" aria-hidden="true" style="display: none;">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="newBugLabel">New Bug</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="/add_bug?url_suffix={{url_suffix}}">
+						<div class="form-group">
+							<label for="description">Bug Description</label>
+							<input type="text" name="description" class="form-control" />
+						</div>
+						<div class="form-group">
+							<label for="added_by">Added by</label>
+							<input type="text" name="added_by" value="anonymous" class="form-control" />
+						</div>
+						<div class="text-center mt-3">
+							<button type="submit" class="btn btn-success">Submit</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>  // show new bug pop-up
+	$('#newBugButton').on('click', function() {
+		$('#newBugForm').modal('show');
+	});
+</script>

@@ -103,7 +103,7 @@ def get_pretty_columns(db: Session):
 	columns = {
 		'unique_id': 'ID', 'book': 'Book', 'author': 'Author', 'series': 'Series', 'num_in_series': 'Volume', 
 		'date_added': 'Added On', 'is_completed': 'Done?', 'added_by': 'Added By', 'season': 'Season', 
-		'is_extra_credit': 'Extra', 'date_completed': 'Completed On', 'up_votes': 'Upvotes', 'down_votes': 'Downvotes', 'genre': 'Genre'
+		'is_extra_credit': 'Extra', 'date_completed': 'Completed On', 'up_votes': '👍', 'down_votes': '👎', 'genre': 'Genre'
 	}
 	return columns
 	
@@ -126,7 +126,7 @@ def complete_book(db: Session, book_name: str, is_demo: bool):
 		raise
 
 
-def delete_bug(db: Session, bug_id: int, is_demo: bool):
+def delete_bug_id(db: Session, bug_id: int, is_demo: bool):
 	try:
 		if is_demo:
 			db_bug = db.query(DemoBugs).filter(DemoBugs.bug_id == bug_id).first()

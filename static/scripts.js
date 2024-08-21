@@ -1,62 +1,82 @@
-function openTab(evt, tabName) {
-	var i, tabcontent, tablinks;
-
-	tabcontent = document.getElementsByClassName("tabcontent");
-	for (i = 0; i < tabcontent.length; i++) {
-	tabcontent[i].style.display = "none";
-	}
-
-	tablinks = document.getElementsByClassName("tablinks");
-	for (i = 0; i < tablinks.length; i++) {
-	tablinks[i].className = tablinks[i].className.replace(" active", "");
-	}
-
-	document.getElementById(tabName).style.display = "block";
-	evt.currentTarget.className += " active";
+function getUrlSuffix() {
+	return new URL(window.location.href).searchParams.get('url_suffix') || '';
+}
+// Function to load tab content
+function loadTabContent(tabName) {
+	const url_suffix = getUrlSuffix();
+	const url = `/${tabName}?url_suffix=${url_suffix}`;
+	$.get(url, function(data) {
+		$('#tab-content-container').html(data);
+		attachFormSubmitHandler(); // Re-attach form submit handler after loading new content
+	}).fail(function(jqXHR, textStatus, errorThrown) {
+		console.error('Failed to load content: ', textStatus, errorThrown);
+		$('#tab-content-container').html('Failed to load content. Please try again.');
+	});
 }
 
-function openEditEntryPopup(button, index) {
-	const popup = document.getElementById('editEntryForm');
-	const row = button.closest('tr');
-	const cells = row.querySelectorAll('td > div');
-	const popupInputs = popup.querySelectorAll('input');
+// Function to load the initial tab based on the hash fragment
+function loadInitialTab() {
+	const tabName = window.location.hash.substr(1) || 'syllabus'; // Get the hash fragment and remove '#'
+	$('.nav-link').removeClass('active');
+	$(`.nav-link[data-tabname="${tabName}"]`).addClass('active');
+	loadTabContent(tabName);
+}
 
-	popupInputs.forEach(input => {
-		const columnName = input.name;
-		const cell = Array.from(cells).find(cell => cell.getAttribute('name') === columnName);
+// Function to handle form submission via AJAX
+function handleFormSubmit(e) {
+	e.preventDefault();
+	const form = $(this);
 
-		if (input.type === 'checkbox') {
-			input.checked = cell.textContent.trim() === '✔';
-		} else if(input.type === 'date') {
-			input.value = cell.textContent.trim() || '';
-		} else if (input.tagName.toLowerCase() === 'input') {
-			input.value = cell.textContent.trim();
+	console.log('Handling form submission for action:', form.attr('action'));
+	const url_suffix = getUrlSuffix();
+	$.post(form.attr('action'), form.serialize(), function(response) {
+		if (response.html) {
+			$('#tab-content-container').html(response.html);
 		}
+		if (response.close_modal) {
+			$('.modal').modal('hide');
+			$('.modal-backdrop').remove();
+		}
+		console.log('Form submission completed for action:', form.attr('action'));
+	}).fail(function(jqXHR, textStatus, errorThrown) {
+		console.error('Form submission failed: ', textStatus, errorThrown);
+		$('#tab-content-container').html('Failed to submit form. Please try again.');
+	});
+}
+
+// Ensure single event listener for form submissions via AJAX
+function attachFormSubmitHandler() {
+	$(document).off('submit', 'form').on('submit', 'form', handleFormSubmit);
+}
+
+
+$(document).ready(function() {
+	loadInitialTab();
+
+	// Handle tab clicks
+	$('a[data-tabname]').on('click', function(e) {
+		e.preventDefault();
+		const tabName = $(this).data('tabname');
+		// const url_suffix = getUrlSuffix();
+		// window.location.hash = tabName; // Update URL hash
+		$('.nav-link').removeClass('active');
+		$(this).addClass('active');
+		loadTabContent(tabName);
 	});
 
-	popup.style.display = 'block';
-}
+	$(window).on('hashchange', function() {
+		loadInitialTab();
+	});
 
-function openConfirmDeletePopup(button, index) {
-	const popup = document.getElementById('confirmDeleteForm');
-	const unique_id = popup.querySelector('input[type="number"]');
-	unique_id.value = index;
-	
-	popup.style.display = 'block';
-}
+	attachFormSubmitHandler(); // Attach form submit handler initially
 
-function openNewAssignmentPopup(button) {
-	const popup = document.getElementById('newAssignmentForm');
+	// Show modal for new bug with a single event listener
+	$('#newBugButton').off('click').on('click', function() {
+		$('#newBugForm').modal('show');
+	});
 
-	popup.style.display = 'block';
-}
-
-function openNewBugPopup(button) {
-	const popup = document.getElementById('newBugForm');
-
-	popup.style.display = 'block';
-}
-
-function closePopup(popup) {
-	popup.style.display = 'none';
-}
+	// Show modal for new assignment with a single event listener
+	$('#newAssignmentButton').off('click').on('click', function() {
+		$('#newAssignmentForm').modal('show');
+	});
+});
