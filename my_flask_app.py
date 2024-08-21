@@ -181,6 +181,29 @@ def todo_content():
 	finally:
 		db.close()
 
+@app.route('/unitTest', methods=['GET'])
+def unitTest_content():
+	url_suffix = request.args.get('url_suffix', '')
+	db: Session = SessionLocal()
+	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+	try:
+		if (not is_demo):
+			with open('result.log', 'r') as file:
+				results = file.read()
+		else:
+			results="Unit test data would go here if you had the authorizing url_suffix"
+		return render_template(
+			'unitTest.html', 
+			results=results,
+			demo = "DEMO " if is_demo else ""
+		)
+	except Exception as e:
+		db.rollback()
+		return str(e) + ". Failed to load unit test tab.", 500
+	finally:
+		db.close()
+
+
 def renderSyllabus(db, is_demo, url_suffix):
 	syllabus = get_syllabus(db, is_demo)
 	columns = get_columns(db, is_demo)
