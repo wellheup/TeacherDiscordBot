@@ -61,7 +61,7 @@ def run_discord_bot():
 	
 	@bot.event
 	async def on_ready():
-		print("I am " + bot.user.name)
+		print(f"I am {bot.user.name}. The live url for this local run is: {os.getenv('REPL_URL')}?url_suffix={db.get('url_suffix', '')}")
 	
 	@bot.event
 	async def on_message(message):
