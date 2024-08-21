@@ -28,3 +28,7 @@ ignore = ['W291', 'W292', 'W293']
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dependencies]
+python = ">=3.10.0,<3.11"
+pytest = "^6.2"  # Ensure pytest is added here
