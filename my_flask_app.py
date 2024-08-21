@@ -99,6 +99,31 @@ def add():
 	finally:
 		db.close()
 
+@app.route('/bulkAdd', methods=['POST'])
+def bulkAdd():
+	url_suffix = request.args.get('url_suffix', '')
+	db: Session = SessionLocal()
+	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+	try:
+		bookList = request.form.get('bookList')
+		added_by = request.form.get('added_by')
+
+		books = [entry.strip() for entry in bookList.split('\n') if entry.strip()]
+
+		for book_entry in books:
+			book_details = book_entry.split(',')
+			book = book_details[0].strip()
+			author = book_details[1].strip() if len(book_details) > 1 else ''
+			series = book_details[2].strip() if len(book_details) > 2 else ''
+			num_in_series = int(book_details[3].strip()) if len(book_details) > 3 else 0
+			add_book(db, book, author, series, added_by, 0, is_demo, '', num_in_series, False)
+		return renderSyllabus(db, is_demo, url_suffix)
+	except Exception as e:
+		db.rollback()
+		return str(e), 500
+	finally:
+		db.close()
+
 @app.route('/delete', methods=['POST'])
 def delete():
 	url_suffix = request.args.get('url_suffix', '')

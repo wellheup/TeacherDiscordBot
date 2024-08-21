@@ -54,9 +54,9 @@ def add_book(db: Session,
 			author: str, 
 			series: str, 
 			added_by: str, 
-			season: int,
-			is_demo: bool, 
-			genre: str,
+			season: int = 0,
+			is_demo: bool = True, 
+			genre: str = "",
 			num_in_series: int = None,
 			is_extra_credit: bool = False):
 	date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
