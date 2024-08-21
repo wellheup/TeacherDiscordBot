@@ -27,8 +27,6 @@ def test_syllabus_content(client):
 	assert b'id="confirmDeleteForm"' in rv.data
 	assert b'id="newAssignmentForm"' in rv.data
 
-import pytest
-
 def test_new_assignment(client):
 	data = {
 		'assignment_data': 'Read Chapter 5'
