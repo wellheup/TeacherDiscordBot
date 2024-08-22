@@ -87,6 +87,10 @@
 											</form>
 										{% endif %}
 									</div>
+								{% elif column == 'author' %}
+									<div name="{{column}}">
+										<a href="#" class="author-link" data-author="{{ book[column] }}">{{ book[column] }}</a>
+									</div>
 								{% else %}
 									<div name="{{column}}">
 										{{ book[column] }}
@@ -245,6 +249,15 @@
 	</div>
 </div>
 
+<!-- Author Pop-up Container -->
+<div id="author-content-container" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="authorPopupLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<!-- AJAX-loaded content will appear here -->
+		</div>
+	</div>
+</div>
+
 <!-- New Assignment Pop-up -->
 <div id="newAssignmentForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newAssignmentLabel" aria-hidden="true" style="display: none;">
 	<div class="modal-dialog modal-dialog-centered" role="document">
@@ -270,46 +283,6 @@
 </div>
 
 <script>
-	// new assignment pop-up
-	$('#newAssignmentButton').on('click', function() {
-		$('#newAssignmentForm').modal('show');
-	});
-
-	// new book pop-up
-	$('#addNewBookButton').on('click', function() {
-		$('#newEntryForm').modal('show');
-	});
-
-	// bulk add pop-up
-	$('#bulkAddButton').on('click', function() {
-		$('#bulkAddForm').modal('show');
-	});
-
-	// edit book button
-	$('[id^="edit-"]').on('click', function() {
-		const popup = $('#editEntryForm');
-		const row = $(this).closest('tr')[0];
-		const cells = row.querySelectorAll('td > div');
-		popup.find('input, checkbox, select').each(function() {
-			const inputName = $(this).attr('name');
-			const cell = Array.from(cells).find(cell => cell.getAttribute('name') === inputName);
-			if ($(this).is(':checkbox')) {
-				$(this).prop('checked', cell.textContent.trim() === '✔');
-			} else {
-				$(this).val(cell.textContent.trim());
-			}
-		});
-		popup.modal('show');
-	});
-
-	// delete book button
-	$('[id^="delete-"]').on('click', function() {
-		const index = $(this).attr('id').split('-')[1];
-		const popup = $('#confirmDeleteForm');
-		popup.find('input[type="number"]').val(index);
-		popup.modal('show');
-	});
-
 	// Function to toggle column visibility based on checkboxes
 	function toggleColumnVisibility() {
 		const checkboxes = document.querySelectorAll('.column-toggle');
@@ -321,10 +294,59 @@
 			});
 		});
 	}
+
+	function fetchAuthorBooks(author) {
+		const url_suffix = new URLSearchParams(window.location.search).get('url_suffix');
+		$.get('/author_books', { author: author, url_suffix: url_suffix }, function(data) {
+			$('#author-content-container .modal-content').html(data);
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			console.log('Failed to fetch author books: ', textStatus, errorThrown);
+			$('#author-content-container .modal-content').html('<p>Failed to fetch author books. Please try again.</p>');
+		});
+	}
 	
 	$(document).ready(function() {
 		toggleColumnVisibility(); // Ensure initial state
 
+		// new assignment pop-up
+		$('#newAssignmentButton').on('click', function() {
+			$('#newAssignmentForm').modal('show');
+		});
+
+		// new book pop-up
+		$('#addNewBookButton').on('click', function() {
+			$('#newEntryForm').modal('show');
+		});
+
+		// bulk add pop-up
+		$('#bulkAddButton').on('click', function() {
+			$('#bulkAddForm').modal('show');
+		});
+
+		// edit book button
+		$('[id^="edit-"]').on('click', function() {
+			const popup = $('#editEntryForm');
+			const row = $(this).closest('tr')[0];
+			const cells = row.querySelectorAll('td > div');
+			popup.find('input, checkbox, select').each(function() {
+				const inputName = $(this).attr('name');
+				const cell = Array.from(cells).find(cell => cell.getAttribute('name') === inputName);
+				if ($(this).is(':checkbox')) {
+					$(this).prop('checked', cell.textContent.trim() === '✔');
+				} else {
+					$(this).val(cell.textContent.trim());
+				}
+			});
+			popup.modal('show');
+		});
+
+		// delete book button
+		$('[id^="delete-"]').on('click', function() {
+			const index = $(this).attr('id').split('-')[1];
+			const popup = $('#confirmDeleteForm');
+			popup.find('input[type="number"]').val(index);
+			popup.modal('show');
+		});
 		
 		// Checkboxes to toggle columns
 		$(document).on('change', '.column-toggle', function() {
@@ -342,6 +364,14 @@
 				}
 			});
 			toggleColumnVisibility();
+		});
+
+		// Handle the author link click event
+		$(document).on('click', '.author-link', function(e) {
+			e.preventDefault();
+			const authorName = $(this).data('author');
+			fetchAuthorBooks(authorName);
+			$('#author-content-container').modal('show');
 		});
 	});
 </script>

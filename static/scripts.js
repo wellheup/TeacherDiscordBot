@@ -49,7 +49,6 @@ function attachFormSubmitHandler() {
 	$(document).off('submit', 'form').on('submit', 'form', handleFormSubmit);
 }
 
-
 $(document).ready(function() {
 	loadInitialTab();
 
@@ -57,8 +56,6 @@ $(document).ready(function() {
 	$('a[data-tabname]').on('click', function(e) {
 		e.preventDefault();
 		const tabName = $(this).data('tabname');
-		// const url_suffix = getUrlSuffix();
-		// window.location.hash = tabName; // Update URL hash
 		$('.nav-link').removeClass('active');
 		$(this).addClass('active');
 		loadTabContent(tabName);

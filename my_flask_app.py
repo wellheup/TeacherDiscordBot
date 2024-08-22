@@ -30,7 +30,7 @@ def syllabus_content():
 	if not is_demo:
 		print(f"current_url_suffix is {current_url_suffix}")
 	try:
-		syllabus = get_syllabus(db, is_demo)
+		syllabus = get_graveyard_web(db, is_demo)
 		columns = get_columns(db, is_demo)
 		pretty_columns = get_pretty_columns(db)
 		assignment = get_current_assignment(db, is_demo)
@@ -45,6 +45,30 @@ def syllabus_content():
 	except Exception as e:
 		db.rollback()
 		return f"{e}. Failed to get syllabus data.", 500
+	finally:
+		db.close()
+
+@app.route('/author_books', methods=['GET'])
+def author_books():
+	author = request.args.get('author')
+	url_suffix = request.args.get('url_suffix', '')
+	db: Session = SessionLocal()
+	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+	try:
+		books = get_books_by_author(db, author, is_demo)
+		seriesDict = {}
+		for row in books:
+			if row.series in seriesDict:
+				seriesDict[row.series].append(row.book)
+			else:
+				seriesDict[row.series] = [row.book]
+		return render_template('author.html',
+								author=author,
+								seriesDict=seriesDict,
+								demo="DEMO " if is_demo else "")
+	except Exception as e:
+		db.rollback()
+		return str(e) + ". Failed to fetch author books.", 500
 	finally:
 		db.close()
 
@@ -175,7 +199,7 @@ def graveyard_content():
 	db: Session = SessionLocal()
 	is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
 	try:
-		graveyard = get_graveyard(db, is_demo)
+		graveyard = get_graveyard_web(db, is_demo)
 		return render_template(
 			'graveyard.html', 
 			graveyard=graveyard,
@@ -230,7 +254,7 @@ def unitTest_content():
 
 
 def renderSyllabus(db, is_demo, url_suffix):
-	syllabus = get_syllabus(db, is_demo)
+	syllabus = get_graveyard_web(db, is_demo)
 	columns = get_columns(db, is_demo)
 	pretty_columns = get_pretty_columns(db)
 	assignment = get_current_assignment(db, is_demo)

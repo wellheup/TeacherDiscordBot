@@ -143,7 +143,7 @@ def delete_bug_id(db: Session, bug_id: int, is_demo: bool):
 		raise
 
 
-def get_graveyard_abbrev(db: Session, is_demo: bool):
+def get_graveyard_bot(db: Session, is_demo: bool):
 	try:
 		if is_demo:
 			return db.query(DemoSyllabus.book, DemoSyllabus.author, DemoSyllabus.series, DemoSyllabus.num_in_series, DemoSyllabus.unique_id, DemoSyllabus.is_completed) \
@@ -161,7 +161,7 @@ def get_graveyard_abbrev(db: Session, is_demo: bool):
 		raise
 
 
-def get_graveyard(db: Session, is_demo: bool):
+def get_graveyard_web(db: Session, is_demo: bool):
 	try:
 		if is_demo:
 			return db.query(DemoSyllabus) \
@@ -313,7 +313,7 @@ def create_bugs_table(db: Session, table_name: str):
 		raise
 
 
-def get_syllabus_abbrev(db: Session, is_demo: bool):
+def get_graveyard_bot(db: Session, is_demo: bool):
 	try:
 		if is_demo:
 			return db.query(DemoSyllabus.book, DemoSyllabus.author, DemoSyllabus.series, DemoSyllabus.num_in_series, DemoSyllabus.unique_id, DemoSyllabus.is_completed) \
@@ -329,7 +329,7 @@ def get_syllabus_abbrev(db: Session, is_demo: bool):
 		raise
 
 
-def get_syllabus(db: Session, is_demo: bool):
+def get_graveyard_web(db: Session, is_demo: bool):
 	try:
 		if is_demo:
 			return db.query(DemoSyllabus) \
@@ -459,10 +459,24 @@ def update_database(
 		raise
 
 
-def get_author(db: Session, author_name: str):
-	return db.query(Syllabus).filter(Syllabus.author == author_name).all()
+def get_books_by_author(db: Session, author: str, is_demo: bool):
+	try:
+		if is_demo:
+			return db.query(DemoSyllabus.series, DemoSyllabus.book) \
+				.filter(DemoSyllabus.author == author) \
+				.order_by(DemoSyllabus.series, DemoSyllabus.num_in_series) \
+				.all()
+		else:
+			return db.query(Syllabus.series, Syllabus.book) \
+				.filter(Syllabus.author == author) \
+				.order_by(Syllabus.series, Syllabus.num_in_series) \
+				.all()
+	except Exception as e:
+		db.rollback()  # Rollback on error
+		print(f"Error getting books by author: {e}")
+		raise
 
-		
+
 def get_bugs(db: Session, is_demo: bool):
 	try:
 		if is_demo:

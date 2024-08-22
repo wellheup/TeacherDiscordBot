@@ -61,8 +61,8 @@ def run_discord_bot():
 	
 	@bot.event
 	async def on_ready():
-		print(f"I am {bot.user.name}. The live url for this local run is: {os.getenv('REPL_URL')}?url_suffix={db.get('url_suffix', '')}")
-	
+		print(f"I am {bot.user.name}. The live url is:\nhttps://teacher-phillipmm.replit.app?url_suffix={db.get('url_suffix', '')}\n")
+		
 	@bot.event
 	async def on_message(message):
 		if message.author == bot.user:
