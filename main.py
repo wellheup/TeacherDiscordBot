@@ -61,7 +61,7 @@ def run_discord_bot():
 	
 	@bot.event
 	async def on_ready():
-		print(f"I am {bot.user.name}. The live url is:\nhttps://teacher-phillipmm.replit.app?url_suffix={db.get('url_suffix', '')}\n")
+		print(f"I am {bot.user.name}. The live url is:\nhttps://teacher-phillipmm.replit.app/?url_suffix={db.get('url_suffix', '')}\n")
 		
 	@bot.event
 	async def on_message(message):
