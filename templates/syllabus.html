@@ -1,54 +1,41 @@
 
-<style>
-	.table-responsive {
-		overflow-x: auto;
-	}
-	.table-fixed-header thead tr th {
-		position: sticky;
-		top: 0;
-		z-index: 10;
-		background-color: white; /* Ensure the header has a background color */
-	}
-	.scrollable-table-container {
-		max-height: 70vh; /* Adjust the height as needed */
-		overflow-y: auto; /* Enable vertical scrolling */
-	}
-</style>
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/css/bootstrap3/bootstrap-switch.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/syllabus.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js"></script>
+	<script src="{{ url_for('static', filename='syllabusScripts.js') }}"></script>
+	<title>{{demo}}Rapid Reading Homework</title>
+</head>
 
 <!-- syllabus.html -->
+<body>
 <div class="tab-pane fade show active tab-content mt-3 p-0" id="syllabus" role="tabpanel" aria-labelledby="syllabus-tab">
 	<h1>{{demo}}RAPID READING HOMEWORK</h1>
 	<div class="d-flex justify-content-between">
 		<p class="h4">
 			<b>Current assignment:</b> {{assignment.description}}, assigned on {{assignment.date_added}}
 			<br>
-			<button type="button" class="btn btn-sm btn-info ml-3" id="newAssignmentButton">New Assignment</button>
-			<button type="button" class="btn btn-sm btn-info ml-3" id="bulkAddButton">Bulk Add Books</button>
 		</p>
 	</div>
-
-	<!-- Column Visibility Controls -->
-	<div class="column-controls mb-3">
-		{% for column in columns %}
-			{% if column not in ['book', 'author', 'series', 'is_completed', 'date_completed'] %}
-				<div class="form-check form-check-inline">
-					<input class="form-check-input column-toggle" type="checkbox" id="toggle-{{ column }}" data-column="{{ column }}" checked>
-					<label class="form-check-label" for="toggle-{{ column }}">{{ pretty_columns[column] }}</label>
-				</div>
-			{% endif %}
-		{% endfor %}
-		<button type="button" id="viewLessButton" class="btn btn-sm btn-info ml-3">View Less</button>
-	</div>
+	<button type="button" class="btn btn-sm btn-info ml-3" id="newAssignmentButton">New Assignment</button>
+	<button type="button" class="btn btn-sm btn-info ml-3" id="bulkAddButton">Bulk Add Books</button>
+	<span style="padding-left: 20px;"><label for="column-visibility-toggle">View</label> <input type="checkbox" name="column-visibility-toggle" checked class="ml-3"></span>
 
 	<!-- syllabus table contents -->
 	<div class="table-responsive scrollable-table-container">
-		<table class="table table-bordered table-fixed-header mt-3" style="text-align: center; padding: 5px;">
+		<table class="table table-bordered table-fixed-header" style="text-align: center; padding: 5px;">
 			<thead class="thead-light">
 				<tr>
 					{% for column in columns %}
-						<th class="col-{{ column }}" style="padding: 5px;">{{ pretty_columns[column] }}</th>
+						<th class="col-{{ column }}" style="padding: 5px; white-space: nowrap;">{{ pretty_columns[column] }}</th>
 					{% endfor %}
-					<th style="padding: 5px;"><button class="btn btn-success" id="addNewBookButton" style="white-space: nowrap;">Add New</button></th>
+					<th style="padding: 5px; white-space: nowrap;"><button class="btn btn-sm btn-success" id="addNewBookButton" style="white-space: nowrap;">Add New</button></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -283,95 +270,7 @@
 </div>
 
 <script>
-	// Function to toggle column visibility based on checkboxes
-	function toggleColumnVisibility() {
-		const checkboxes = document.querySelectorAll('.column-toggle');
-		checkboxes.forEach(checkbox => {
-			const columnClass = 'col-' + checkbox.dataset.column;
-			const elements = document.querySelectorAll('.' + columnClass);
-			elements.forEach(el => {
-				el.style.display = checkbox.checked ? '' : 'none';
-			});
-		});
-	}
 
-	function fetchAuthorBooks(author) {
-		const url_suffix = new URLSearchParams(window.location.search).get('url_suffix');
-		$.get('/author_books', { author: author, url_suffix: url_suffix }, function(data) {
-			$('#author-content-container .modal-content').html(data);
-		}).fail(function(jqXHR, textStatus, errorThrown) {
-			console.log('Failed to fetch author books: ', textStatus, errorThrown);
-			$('#author-content-container .modal-content').html('<p>Failed to fetch author books. Please try again.</p>');
-		});
-	}
-	
-	$(document).ready(function() {
-		toggleColumnVisibility(); // Ensure initial state
-
-		// new assignment pop-up
-		$('#newAssignmentButton').on('click', function() {
-			$('#newAssignmentForm').modal('show');
-		});
-
-		// new book pop-up
-		$('#addNewBookButton').on('click', function() {
-			$('#newEntryForm').modal('show');
-		});
-
-		// bulk add pop-up
-		$('#bulkAddButton').on('click', function() {
-			$('#bulkAddForm').modal('show');
-		});
-
-		// edit book button
-		$('[id^="edit-"]').on('click', function() {
-			const popup = $('#editEntryForm');
-			const row = $(this).closest('tr')[0];
-			const cells = row.querySelectorAll('td > div');
-			popup.find('input, checkbox, select').each(function() {
-				const inputName = $(this).attr('name');
-				const cell = Array.from(cells).find(cell => cell.getAttribute('name') === inputName);
-				if ($(this).is(':checkbox')) {
-					$(this).prop('checked', cell.textContent.trim() === '✔');
-				} else {
-					$(this).val(cell.textContent.trim());
-				}
-			});
-			popup.modal('show');
-		});
-
-		// delete book button
-		$('[id^="delete-"]').on('click', function() {
-			const index = $(this).attr('id').split('-')[1];
-			const popup = $('#confirmDeleteForm');
-			popup.find('input[type="number"]').val(index);
-			popup.modal('show');
-		});
-		
-		// Checkboxes to toggle columns
-		$(document).on('change', '.column-toggle', function() {
-			toggleColumnVisibility();
-		});
-		
-		// View Less button to hide columns
-		$('#viewLessButton').on('click', function(){
-			console.log('View Less button clicked');
-			const columnsToKeep = ['book', 'author', 'series', 'is_completed', 'date_completed'];
-			const checkboxes = document.querySelectorAll('.column-toggle');
-			checkboxes.forEach(checkbox => {
-				if (!columnsToKeep.includes(checkbox.dataset.column)) {
-					checkbox.removeAttribute('checked');
-				}
-			});
-			toggleColumnVisibility();
-		});
-
-		// Handle the author link click event
-		$(document).on('click', '.author-link', function(e) {
-			e.preventDefault();
-			const authorName = $(this).data('author');
-			fetchAuthorBooks(authorName);
-			$('#author-content-container').modal('show');
-		});
-	});
 </script>
+</body>
+</html>
