@@ -1,6 +1,7 @@
 # used to verify that pytest deployment scripts work
 def test_succeed():
-	assert True
+    assert True
+
 
 # def test_fail():
-	# assert False, "This test is intentionally failing"
+# assert False, "This test is intentionally failing"

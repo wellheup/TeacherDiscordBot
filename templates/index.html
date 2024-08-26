@@ -1,38 +1,79 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
-		
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.0/umd/popper.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
-		<script src="{{ url_for('static', filename='scripts.js') }}"></script>
-		<title>Rapid Reading Homework</title>
-	</head>
-	<body>
-		<div class="container mt-5" id="myTab" role="tablist">
-			<ul class="nav nav-tabs">
-				<li class="nav-item">
-					<a class="nav-link active" id="syllabus-tab" href="?url_suffix={{url_suffix}}" data-tabname="syllabus" role="tab">Syllabus</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" id="graveyard-tab" href="?url_suffix={{url_suffix}}" data-tabname="graveyard" role="tab">Graveyard</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" id="todo-tab" href="?url_suffix={{url_suffix}}" data-tabname="todo" role="tab">To Do</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" id="bugs-tab" href="?url_suffix={{url_suffix}}" data-tabname="bugs" role="tab">Bugs</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" id="unitTests-tab" href="?url_suffix={{url_suffix}}" data-tabname="unitTest" role="tab">Unit Tests</a>
-				</li>
-			</ul>
-		</div>
-		<div id="tab-content-container" class=" tab-content">
-			<!-- AJAX-loaded content will appear here -->
-		</div>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.0/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <title>Rapid Reading Homework</title>
+  </head>
+  <body>
+    <div class="container mt-5" id="myTab" role="tablist">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a
+            class="nav-link active"
+            id="syllabus-tab"
+            href="?url_suffix={{url_suffix}}"
+            data-tabname="syllabus"
+            role="tab"
+            >Syllabus</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="graveyard-tab"
+            href="?url_suffix={{url_suffix}}"
+            data-tabname="graveyard"
+            role="tab"
+            >Graveyard</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="todo-tab"
+            href="?url_suffix={{url_suffix}}"
+            data-tabname="todo"
+            role="tab"
+            >To Do</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="bugs-tab"
+            href="?url_suffix={{url_suffix}}"
+            data-tabname="bugs"
+            role="tab"
+            >Bugs</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="unitTests-tab"
+            href="?url_suffix={{url_suffix}}"
+            data-tabname="unitTest"
+            role="tab"
+            >Unit Tests</a
+          >
+        </li>
+      </ul>
+    </div>
+    <div id="tab-content-container" class="tab-content">
+      <!-- AJAX-loaded content will appear here -->
+    </div>
+  </body>
 </html>

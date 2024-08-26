@@ -1,4 +1,5 @@
 from discord.ext import commands
+
 from utils import send_and_delete
 
 command_descriptions = """
@@ -20,7 +21,8 @@ command_descriptions = """
 **!update "bookOrId#" "column" "new_value"**: Updates a specific column of an item in the syllabus.
 """
 
+
 # The command to display available commands
 @commands.command()
 async def cmds(ctx):
-	await send_and_delete(ctx, command_descriptions)
+    await send_and_delete(ctx, command_descriptions)
