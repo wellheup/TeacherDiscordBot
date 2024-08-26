@@ -87,8 +87,8 @@
 		</div>
 
 		<script>
-			// Show new bug pop-up
-			$('#newBugButton').on('click', function() {
+			// Show modal for new bug with a single event listener
+			$('#newBugButton').off('click').on('click', function() {
 				$('#newBugForm').modal('show');
 			});
 		</script>
