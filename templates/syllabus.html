@@ -18,32 +18,37 @@
 
 <!-- syllabus.html -->
 <body>
-<div class="tab-pane fade show active tab-content mt-3 p-0" id="syllabus" role="tabpanel" aria-labelledby="syllabus-tab">
-	<h1>{{demo}}RAPID READING HOMEWORK</h1>
-	<div class="d-flex justify-content-between">
-		<p class="h4">
-			<b>Current assignment:</b> {{assignment.description}}, assigned on {{assignment.date_added}}
-			<br>
-		</p>
+<div class="tab-pane fade show active tab-content" id="syllabus" role="tabpanel" aria-labelledby="syllabus-tab">
+	<div class="container">
+		<h1>{{demo}}RAPID READING HOMEWORK</h1>
+		<div class="d-flex justify-content-between">
+			<p class="h4">
+				<b>Current assignment:</b> {{assignment.description}}, assigned on {{assignment.date_added}}
+				<br>
+			</p>
+		</div>
+		<button type="button" class="btn btn-sm btn-info ml-3" id="newAssignmentButton">New Assignment</button>
+		<button type="button" class="btn btn-sm btn-info ml-3" id="bulkAddButton">Bulk Add Books</button>
+		<span style="padding-left: 20px;"><label for="column-visibility-toggle">View</label> <input type="checkbox" id="column-visibility-toggle" name="column-visibility-toggle" checked class="ml-3"></span>
 	</div>
-	<button type="button" class="btn btn-sm btn-info ml-3" id="newAssignmentButton">New Assignment</button>
-	<button type="button" class="btn btn-sm btn-info ml-3" id="bulkAddButton">Bulk Add Books</button>
-	<span style="padding-left: 20px;"><label for="column-visibility-toggle">View</label> <input type="checkbox" id="column-visibility-toggle" name="column-visibility-toggle" checked class="ml-3"></span>
-
 	<!-- syllabus table contents -->
 	<div class="table-responsive scrollable-table-container">
 		<table class="table table-bordered table-fixed-header" style="text-align: center; padding: 5px;">
 			<thead class="thead-light">
 				<tr>
+					<th style="padding: 5px; white-space: nowrap;"><button class="btn btn-sm btn-success" id="addNewBookButton" style="white-space: nowrap;">Add Book</button></th>
 					{% for column in columns %}
 						<th class="col-{{ column }}" style="padding: 5px; white-space: nowrap;">{{ pretty_columns[column] }}</th>
 					{% endfor %}
-					<th style="padding: 5px; white-space: nowrap;"><button class="btn btn-sm btn-success" id="addNewBookButton" style="white-space: nowrap;">Add New</button></th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for book in syllabus %}
 					<tr style="background-color: {{ loop.cycle('#d3d3d3', 'white') }};">
+						<td style="white-space: nowrap; padding: 5px;">
+							<button class="btn btn-sm btn-info" name="edit" value="{{ loop.index0 }}" id="edit-{{ loop.index0 }}-Button">Edit</button>
+							<button class="btn btn-sm btn-danger" name="delete" value="{{ book.unique_id }}" id="delete-{{ book.unique_id }}-Button">Delete</button>
+						</td>
 						{% for column in columns %}
 							<td class="col-{{ column }}" style="white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %}; padding: 5px;">
 								{% if column in ['unique_id', 'date_added'] %}
@@ -88,10 +93,7 @@
 								{% endif %}
 							</td>
 						{% endfor %}
-						<td style="white-space: nowrap; padding: 5px;">
-							<button class="btn btn-sm btn-info" name="edit" value="{{ loop.index0 }}" id="edit-{{ loop.index0 }}-Button">Edit</button>
-							<button class="btn btn-sm btn-danger" name="delete" value="{{ book.unique_id }}" id="delete-{{ book.unique_id }}-Button">Delete</button>
-						</td>
+						
 					</tr>
 				{% endfor %}
 			</tbody>
@@ -271,6 +273,5 @@
 		</div>
 	</div>
 </div>
-
 </body>
 </html>
