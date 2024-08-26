@@ -30,7 +30,7 @@ def syllabus_content():
 	if not is_demo:
 		print(f"current_url_suffix is {current_url_suffix}")
 	try:
-		syllabus = get_graveyard_web(db, is_demo)
+		syllabus = get_syllabus_web(db, is_demo)
 		columns = get_columns(db, is_demo)
 		pretty_columns = get_pretty_columns(db)
 		assignment = get_current_assignment(db, is_demo)
@@ -254,7 +254,7 @@ def unitTest_content():
 
 
 def renderSyllabus(db, is_demo, url_suffix):
-	syllabus = get_graveyard_web(db, is_demo)
+	syllabus = get_syllabus_web(db, is_demo)
 	columns = get_columns(db, is_demo)
 	pretty_columns = get_pretty_columns(db)
 	assignment = get_current_assignment(db, is_demo)

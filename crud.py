@@ -314,16 +314,14 @@ def create_bugs_table(db: Session, table_name: str):
 		raise
 
 
-def get_graveyard_bot(db: Session, is_demo: bool):
+def get_syllabus_bot(db: Session, is_demo: bool):
 	try:
 		if is_demo:
 			return db.query(DemoSyllabus.book, DemoSyllabus.author, DemoSyllabus.series, DemoSyllabus.num_in_series, DemoSyllabus.unique_id, DemoSyllabus.is_completed) \
-				.filter(DemoSyllabus.is_completed == True) \
 				.order_by(DemoSyllabus.author, DemoSyllabus.series, DemoSyllabus.num_in_series) \
 				.all()
 		else:
 			return db.query(Syllabus.book, Syllabus.author, Syllabus.series, Syllabus.num_in_series, Syllabus.unique_id, Syllabus.is_completed) \
-				.filter(Syllabus.is_completed == True) \
 				.order_by(Syllabus.author, Syllabus.series, Syllabus.num_in_series) \
 				.all()
 	except Exception as e:
@@ -332,15 +330,14 @@ def get_graveyard_bot(db: Session, is_demo: bool):
 		raise
 
 
-def get_graveyard_web(db: Session, is_demo: bool):
+def get_syllabus_web(db: Session, is_demo: bool):
 	try:
 		if is_demo:
 			return db.query(DemoSyllabus) \
-				.filter(DemoSyllabus.is_completed == True) \
 				.order_by(DemoSyllabus.author, DemoSyllabus.series, DemoSyllabus.num_in_series) \
 				.all()
 		else:
-			return db.query(Syllabus).filter(Syllabus.is_completed == True).order_by(Syllabus.author, Syllabus.series, Syllabus.num_in_series).all()
+			return db.query(Syllabus).order_by(Syllabus.author, Syllabus.series, Syllabus.num_in_series).all()
 	except Exception as e:
 		db.rollback()  # Rollback on error
 		print(f"Error getting syllabus: {e}")

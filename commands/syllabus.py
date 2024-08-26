@@ -9,7 +9,7 @@ async def syllabus(ctx, minutes: int = 5):
 	db: Session = SessionLocal()
 	is_demo = 'demo' in ctx.channel.name
 	try:
-		rows = get_graveyard_bot(db, is_demo)
+		rows = get_syllabus_bot(db, is_demo)
 		currentAuthor = ''
 		currentSeries = ''
 		message = '**The current syllabus is as follows: **\n'
