@@ -14,6 +14,7 @@ $(document).ready(function() {
 	$("[name='column-visibility-toggle']").bootstrapSwitch({
 		onText: "Less",
 		offText: "More",
+		labelText: "Columns",
 		onColor: "info",
 		offColor: "primary",
 		state: false  // Default state is off
