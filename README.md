@@ -2,8 +2,9 @@
 This is my first Discord bot, I made it in python on replit.com. Its purpose is to store a list of books we have/will/want to read in 
 our book club. It will post to the book club chat channel upon command to help us keep track of our books.
 
-##[View Discord Demo Here:](https://discord.gg/52vBudgfxk) https://discord.gg/52vBudgfxk
-##[View Web Demo Here:](https://teacher-phillipmm.replit.app/#) https://teacher-phillipmm.replit.app/#
+## [View Discord Demo Here:](https://discord.gg/52vBudgfxk) https://discord.gg/52vBudgfxk
+
+## [View Web Demo Here:](https://teacher-phillipmm.replit.app/#) https://teacher-phillipmm.replit.app/#
 
 ## Getting Started
 To set up the bot, follow these steps:
