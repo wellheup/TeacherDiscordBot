@@ -2,6 +2,8 @@
 This is my first Discord bot, I made it in python on replit.com. Its purpose is to store a list of books we have/will/want to read in 
 our book club. It will post to the book club chat channel upon command to help us keep track of our books.
 
+##[View Demo Here:](https://discord.gg/52vBudgfxk)
+
 ## Getting Started
 To set up the bot, follow these steps:
 1. Set up a Discord bot account following [these instructions](https://discordpy.readthedocs.io/en/stable/discord.html).
@@ -23,8 +25,5 @@ Prefix all commands with `!`:
 - `!report_bug <description>`: Reports a bug.
 - `!web` or `!url`: will print the current url for the web application in a live deployment
 
-
-
-## FAQ
 ## FAQ
 If you encounter a `429 Too Many Requests` error, refer to this [Stack Overflow question](https://stackoverflow.com/questions/66724687/in-discord-py-how-to-solve-the-error-for-toomanyrequests).
