@@ -16,7 +16,8 @@ async def update_assignment(ctx, description: str):
             message = f"The {table_name} table does not exist."
         else:
             assignment = update_current_assignment(db, description, is_demo)
-            message = f"The current assignment is now: {assignment.description}, assigned on {assignment.date_added}"
+            message = (f"The current assignment is now: {assignment.description}, "
+                       f"assigned on {assignment.date_added}")
     except Exception as e:
         message = f"An error occurred in updating assignment: {e}"
         print(message)

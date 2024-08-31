@@ -1,7 +1,7 @@
 from discord.ext import commands
 from sqlalchemy.orm import Session
 
-from crud import get_graveyard_bot
+from crud import get_syllabus_bot
 from database import SessionLocal
 from utils import send_and_delete
 
@@ -20,7 +20,6 @@ async def syllabus(ctx, minutes: int = 5):
             book = f"*{row[0]}*"
             author = row[1]
             series = row[2]
-            num_in_series = row[3]
             if row[5] == 1:
                 book += " ✅"
             if author != currentAuthor:

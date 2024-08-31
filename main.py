@@ -1,27 +1,22 @@
 import os
 import threading
-
 from replit import db
-
 from keep_alive import keep_alive
 # Web App
 from my_flask_app import app as flask_app
 from utils import daily_update_url
+# Discord bot
+import discord
+from discord.ext import commands
+from utils import send_and_delete
 
-
+# Web App
 def run_flask():
     daily_update_url()
     port = 80 if os.getenv("REPLIT_DEPLOYMENT") == "1" else 5000
     flask_app.run(host="0.0.0.0", port=port)
 
-
 # Discord bot
-import discord
-from discord.ext import commands
-
-from utils import send_and_delete
-
-
 def run_discord_bot():
     daily_update_url()
     # Import commands from separate modules
@@ -68,7 +63,9 @@ def run_discord_bot():
     @bot.event
     async def on_ready():
         print(
-            f"I am {bot.user.name}. The live url is:\nhttps://teacher-phillipmm.replit.app/?url_suffix={db.get('url_suffix', '')}\n"
+            f"I am {bot.user.name}. The live url is:\n"
+            "https://teacher-phillipmm.replit.app/?url_suffix="
+            f"{db.get('url_suffix', '')}\n"
         )
 
     @bot.event
@@ -77,12 +74,13 @@ def run_discord_bot():
             return
         elif bot.user.mentioned_in(message):
             reply = (
-                f"I am a keeper of the First House and a servant to the Necrolord Highest, "
-                f"and you must call me {bot.user.name}; not due to my own merits of learning, "
-                f"but because I stand in the stead of the merciful God Above Death, "
-                f"and I live in hope that one day you will call him {bot.user.name}. "
-                f"And may I call you then, {message.author.mention}! "
-                f"Should you require further instruction type !cmds."
+                "I am a keeper of the First House and a servant to the Necrolord "
+                "Highest, and you must call me {bot.user.name}; not due to my own "
+                "merits of learning, but because I stand in the stead of the "
+                "merciful God Above Death, and I live in hope that one day you will "
+                "call him {bot.user.name}. And may I call you then, "
+                "{message.author.mention}! Should you require further instruction "
+                "type !cmds."
             )
             send_and_delete(message.channel, reply)
         await bot.process_commands(message)
@@ -97,10 +95,12 @@ def run_discord_bot():
     except discord.HTTPException as e:
         if e.status == 429:
             print(
-                "The Discord servers denied the connection for making too many requests"
+                "The Discord servers denied the connection for making too many "
+                "requests"
             )
             print(
-                "Get help from https://stackoverflow.com/questions/66724687/in-discord-py-how-to-solve-the-error-for-toomanyrequests"
+                "Get help from https://stackoverflow.com/questions/66724687/"
+                "in-discord-py-how-to-solve-the-error-for-toomanyrequests"
             )
         else:
             raise e
@@ -115,8 +115,8 @@ if __name__ == "__main__":
     flask_thread.join()
     discord_thread.join()
 
-# TODO:
-# follow tutorial to see more about bots https://www.youtube.com/watch?v=nW8c7vT6Hl4&list=PLW3GfRiBCHOhfVoiDZpSz8SM_HybXRPzZ&ab_channel=Lucas to make modifications
+# TODO: follow tutorial to see more about bots to make modifications
+# https://www.youtube.com/watch?v=nW8c7vT6Hl4&list=PLW3GfRiBCHOhfVoiDZpSz8SM_HybXRPzZ&ab_channel=Lucas 
 
 # sources:
 # https://docs.replit.com/tutorials/python/discord-role-bot

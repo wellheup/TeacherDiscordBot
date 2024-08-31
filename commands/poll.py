@@ -49,24 +49,29 @@ async def poll(ctx, item):
         print(message)
     finally:
         db.close()
-    await send_and_delete(ctx, message)
+    sent_message = await send_and_delete(ctx, message)
 
 
-async def postResults(db, book_title, poll_message, row, is_demo):
+async def postResults(poll_message, db, book_title, poll_message, row, is_demo):
     from main import bot
 
-    reaction_dict = discord.utils.get(bot.cached_messages, id=poll_message.id).reactions
+    reaction_dict = discord.utils.get(
+        bot.cached_messages, id=poll_message.id
+    ).reactions
     up_votes = 0
     down_votes = 0
     for reaction in reaction_dict:
         if str(reaction.emoji) == "👍":
-            up_votes = reaction.count - 1  # Subtract 1 to exclude bot's reaction
+            # Subtract 1 to exclude bot's reaction
+            up_votes = reaction.count - 1  
         elif str(reaction.emoji) == "👎":
-            down_votes = reaction.count - 1  # Subtract 1 to exclude bot's reaction
+            # Subtract 1 to exclude bot's reaction
+            down_votes = reaction.count - 1  
 
     update_book_poll(db, book_title, up_votes, down_votes, is_demo)
 
-    result_message = await ctx.send(f"Up Votes: {up_votes}, Down Votes: {down_votes}")
+    result_message_content = f"Up Votes: {up_votes}, Down Votes: {down_votes}"
+    result_message = await ctx.send(result_message_content)
     await result_message.add_reaction("💯")
     await poll_message.delete()
     try:

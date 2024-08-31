@@ -1,8 +1,3 @@
-from datetime import datetime
-
-import pytest
-
-
 def test_index(client):
     rv = client.get("/")
     assert rv.status_code == 200
@@ -64,12 +59,14 @@ def test_edit_entry(client):
     data = rv.data.decode("utf-8")
     start_index = data.find("New Book Title test")
     if start_index == -1:
-        raise AssertionError("The added book entry was not found in the syllabus")
+        raise AssertionError(
+            "The added book entry was not found in the syllabus"
+        )
 
     # Find the corresponding unique_id for the added entry
     unique_id_start = data.rfind("col-unique_id", 0, start_index)
-    unique_id_value_start = data.find('unique_id">', unique_id_start) + len(
-        'unique_id">'
+    unique_id_value_start = (
+        data.find('unique_id">', unique_id_start) + len('unique_id">')
     )
     unique_id_value_end = data.find("<", unique_id_value_start)
     unique_id = data[unique_id_value_start:unique_id_value_end].strip()
@@ -110,7 +107,9 @@ def test_complete_entry(client):
     data = rv.data.decode("utf-8")
     start_index = data.find("Edited Book Title test")
     if start_index == -1:
-        raise AssertionError("The edited book entry was not found in the syllabus")
+        raise AssertionError(
+            "The edited book entry was not found in the syllabus"
+        )
 
     # Find the form for marking the book as complete
     form_start = data.find("<form", start_index)
@@ -118,7 +117,9 @@ def test_complete_entry(client):
     form_content = data[form_start:form_end]
 
     # Extract necessary data from the form
-    book_value_start = form_content.find('value="') + len('value="')
+    book_value_start = (
+        form_content.find('value="') + len('value="')
+    )
     book_value_end = form_content.find('"', book_value_start)
     book_name = form_content[book_value_start:book_value_end]
 
@@ -128,7 +129,8 @@ def test_complete_entry(client):
     # Post the complete data to the /complete route
     rv = client.post("/complete", data=data_complete, follow_redirects=True)
 
-    # Check if the 'Mark Book Complete' button is no longer on the syllabus page for the completed entry
+    # Check if the 'Mark Book Complete' button is no longer on the
+    # syllabus page for the completed entry
     rv = client.get("/syllabus")
     data = rv.data.decode("utf-8")
     assert f"Edited Book Title test".encode() in rv.data
@@ -140,17 +142,20 @@ def test_complete_entry(client):
 
 
 def test_delete_entry(client):
-    # Assume 'Edited Book Title test' entry already exists and find its unique_id
+    # Assume 'Edited Book Title test' entry already exists and
+    # find its unique_id
     rv = client.get("/syllabus")
     data = rv.data.decode("utf-8")
     start_index = data.find("Edited Book Title test")
     if start_index == -1:
-        raise AssertionError("The edited book entry was not found in the syllabus")
+        raise AssertionError(
+            "The edited book entry was not found in the syllabus"
+        )
 
     # Find the corresponding unique_id for the edited entry
     unique_id_start = data.rfind("col-unique_id", 0, start_index)
-    unique_id_value_start = data.find('unique_id">', unique_id_start) + len(
-        'unique_id">'
+    unique_id_value_start = (
+        data.find('unique_id">', unique_id_start) + len('unique_id">')
     )
     unique_id_value_end = data.find("<", unique_id_value_start)
     unique_id = data[unique_id_value_start:unique_id_value_end].strip()
@@ -174,13 +179,15 @@ def test_delete_entry(client):
 def test_graveyard_content(client):
     rv = client.get("/graveyard")
     assert rv.status_code == 200
-    assert b"<p>The following assignments have already been completed:</p>" in rv.data
+    assert b"<p>The following assignments have already been completed:</p>"
+    in rv.data
 
 
 def test_todo_content(client):
     rv = client.get("/todo")
     assert rv.status_code == 200
-    assert b"<p>The following assignments have yet to be completed:</p>" in rv.data
+    assert b"<p>The following assignments have yet to be completed:</p>"
+    in rv.data
 
 
 def test_bugs_content(client):
@@ -218,7 +225,9 @@ def test_delete_bug(client):
 
     # Find the corresponding bug_id for the bug entry
     bug_id_start = data.rfind('name="bug_id"', 0, start_index)
-    bug_id_value_start = data.find('value="', bug_id_start) + len('value="')
+    bug_id_value_start = (
+        data.find('value="', bug_id_start) + len('value="')
+    )
     bug_id_value_end = data.find('"', bug_id_value_start)
     bug_id = data[bug_id_value_start:bug_id_value_end]
 

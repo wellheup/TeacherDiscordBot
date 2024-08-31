@@ -12,7 +12,8 @@ async def columns(ctx):
     is_demo = "demo" in ctx.channel.name
     try:
         columns = get_columns(db, is_demo)
-        message = "Column names in the syllabus table:\n- " + "\n- ".join(columns)
+        message = "Column names in the syllabus table:\n- " 
+        message += "\n- ".join(columns)
     except Exception as e:
         message = f"Failed to retrieve column names: {e}"
         print(message)

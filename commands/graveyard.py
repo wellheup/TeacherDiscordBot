@@ -14,13 +14,15 @@ async def graveyard(ctx, minutes: int = 5):
         rows = get_graveyard_bot(db, is_demo)
         currentAuthor = ""
         currentSeries = ""
-        message = "**The following assignments have already been completed: **\n"
+        message = (
+            "**The following assignments have already been " +
+            "completed: **\n"
+        )
 
         for row in rows:
             book = f"*{row[0]}*"
             author = row[1]
             series = row[2]
-            num_in_series = row[3]
             if row[5] == 1:
                 book += " ✅"
             if author != currentAuthor:

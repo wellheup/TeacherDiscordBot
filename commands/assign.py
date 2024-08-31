@@ -2,7 +2,7 @@ from discord.ext import commands
 from sqlalchemy.orm import Session
 
 from crud import add_assignment, check_table_existing, create_assignments_table
-from database import Base, SessionLocal
+from database import SessionLocal
 from utils import send_and_delete
 
 
@@ -12,7 +12,7 @@ async def assign(ctx, description: str):
     is_demo = "demo" in ctx.channel.name
     table_name = "demo_assignments" if is_demo else "assignments"
     try:
-        if check_table_existing(db, table_name) == False:
+        if check_table_existing(db, table_name) is False:
             try:
                 create_assignments_table(db, table_name)
             except Exception as e:

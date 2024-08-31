@@ -2,7 +2,7 @@ from discord.ext import commands
 from sqlalchemy.orm import Session
 
 from crud import check_table_existing, get_current_assignment
-from database import Base, SessionLocal
+from database import SessionLocal
 from utils import send_and_delete
 
 
@@ -12,11 +12,14 @@ async def assignment(ctx):
     is_demo = "demo" in ctx.channel.name
     table_name = "demo_assignments" if is_demo else "assignments"
     try:
-        if check_table_existing(db, table_name) == False:
+        if check_table_existing(db, table_name) is False:
             message = f"The {table_name} table does not exist."
         else:
             assignment = get_current_assignment(db, is_demo)
-            message = f"The current assignment is: {assignment.description}, assigned on {assignment.date_added}"
+            message = (
+                f"The current assignment is: {assignment.description}, "
+                f"assigned on {assignment.date_added}"
+            )
     except Exception as e:
         message = f"An error occurred in retrieving assignment: {e}"
         print(message)

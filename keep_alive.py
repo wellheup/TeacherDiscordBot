@@ -1,10 +1,6 @@
 import os
 from threading import Thread
-
-from flask import Flask
-
 from my_flask_app import app as flask_app
-
 
 def run(host, port):
     port = 80 if os.getenv("REPLIT_DEPLOYMENT") == "1" else 5000

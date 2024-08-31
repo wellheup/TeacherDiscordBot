@@ -1,10 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
+import os
+from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
-import os
-
-from sqlalchemy.orm import sessionmaker
 
 # Fetch the DATABASE_URL environment variable
 DATABASE_URL = os.getenv("DATABASE_URL", "postgres://user:password@localhost/dbname")

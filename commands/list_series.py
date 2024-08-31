@@ -13,7 +13,8 @@ async def list_series(ctx, series_name):
     try:
         rows = get_series(db, series_name, is_demo)
         if rows:
-            # Assuming author is the same for all books in the series and thus taking it from the first row
+            # Assuming the author is the same for all books in
+            # the series and thus taking it from the first row
             author = rows[0][1] if rows[0][1] else "Unknown"
             message = f"{series_name} by **{author}**\n"
 
