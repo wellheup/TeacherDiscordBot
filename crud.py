@@ -1,8 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, MetaData, String, Table, Text, inspect
+from sqlalchemy import inspect
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import text
 
 from models import (Assignments, Bugs, DemoAssignments, DemoBugs, DemoSyllabus,
                     Syllabus)
@@ -22,28 +21,6 @@ def add_assignment(db: Session, description: str, is_demo: bool):
     except Exception as e:
         db.rollback()  # Rollback on error
         print(f"Error adding assignment: {e}")
-        raise
-
-
-def create_assignments_table(db: Session, table_name: str):
-    try:
-        metadata = MetaData(bind=db.bind)
-        inspector = inspect(db.bind)
-        if not inspector.has_table(table_name):
-            assignments_table = Table(
-                table_name,
-                metadata,
-                Column("assignment_id", Integer, primary_key=True, autoincrement=True),
-                Column("description", Text, nullable=False),
-                Column("date_added", Date, nullable=False),
-            )
-            metadata.create_all()
-            print(f"'{table_name}' table created")
-        else:
-            print(f"'{table_name}' table already exists")
-    except Exception as e:
-        db.rollback()  # Rollback on error
-        print(f"Error creating new assignments table: {e}")
         raise
 
 
@@ -369,28 +346,6 @@ def check_table_existing(db: Session, table_name: str):
     except Exception as e:
         db.rollback()  # Rollback on error
         print(f"Error checking db for table: {e}")
-        raise
-
-
-def create_bugs_table(db: Session, table_name: str):
-    try:
-        metadata = MetaData(bind=db.bind)
-        inspector = inspect(db.bind)
-        if not inspector.has_table(table_name):
-            bugs_table = Table(
-                table_name,
-                metadata,
-                Column("bug_id", Integer, primary_key=True, autoincrement=True),
-                Column("description", Text, nullable=False),
-                Column("added_by", String(255), nullable=False),
-            )
-            metadata.create_all()
-            print(f"'{table_name}' table created")
-        else:
-            print(f"'{table_name}' table already exists")
-    except Exception as e:
-        db.rollback()  # Rollback on error
-        print(f"Error creating new bugs table: {e}")
         raise
 
 

@@ -15,8 +15,7 @@ async def update(ctx, item, column, new_value):
             book = update_id(db, item, column, new_value, is_demo)
         else:
             book = update_book(db, item, column, new_value, is_demo)
-        message = (f"Updated {book.book} in column {column} "
-                   f"with value {new_value}")
+        message = f"Updated {book.book} in column {column} " f"with value {new_value}"
     except Exception as e:
         message = f"An error occurred: {e}"
         print(message)

@@ -1,20 +1,23 @@
 import os
 import threading
-from replit import db
-from keep_alive import keep_alive
-# Web App
-from my_flask_app import app as flask_app
-from utils import daily_update_url
+
 # Discord bot
 import discord
 from discord.ext import commands
-from utils import send_and_delete
+from replit import db
+
+from keep_alive import keep_alive
+# Web App
+from my_flask_app import app as flask_app
+from utils import daily_update_url, send_and_delete
+
 
 # Web App
 def run_flask():
     daily_update_url()
     port = 80 if os.getenv("REPLIT_DEPLOYMENT") == "1" else 5000
     flask_app.run(host="0.0.0.0", port=port)
+
 
 # Discord bot
 def run_discord_bot():
@@ -116,7 +119,7 @@ if __name__ == "__main__":
     discord_thread.join()
 
 # TODO: follow tutorial to see more about bots to make modifications
-# https://www.youtube.com/watch?v=nW8c7vT6Hl4&list=PLW3GfRiBCHOhfVoiDZpSz8SM_HybXRPzZ&ab_channel=Lucas 
+# https://www.youtube.com/watch?v=nW8c7vT6Hl4&list=PLW3GfRiBCHOhfVoiDZpSz8SM_HybXRPzZ&ab_channel=Lucas
 
 # sources:
 # https://docs.replit.com/tutorials/python/discord-role-bot

@@ -1,17 +1,10 @@
-import os
-
-from flask import Flask, jsonify, redirect, render_template, request, url_for
+from flask import Flask, jsonify, render_template, request
 from flask_bootstrap import Bootstrap
-from flask_sqlalchemy import SQLAlchemy
 from replit import db as replit_db
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import text
 
 from crud import *
-from database import Base, SessionLocal
-from models import (Assignments, Bugs, DemoAssignments, DemoBugs, DemoSyllabus,
-                    Syllabus)
-from utils import daily_update_url, get_current_url
+from database import SessionLocal
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)

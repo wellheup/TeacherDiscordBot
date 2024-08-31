@@ -48,7 +48,7 @@ echo "Sorting imports with isort..."
 run_format "*.py" "isort"
 
 echo "Checking code with flake8..."
-run_format "*.py" "flake8"
+run_format "*.py" "flake8 --config .flake8"
 
 # Format HTML and CSS files
 echo "Formatting HTML files with prettier..."

@@ -7,13 +7,7 @@ from utils import send_and_delete
 
 
 @commands.command()
-async def add(
-    ctx, 
-    book: str, 
-    author: str = None, 
-    series: str = None, 
-    season=None
-):
+async def add(ctx, book: str, author: str = None, series: str = None, season=None):
     db: Session = SessionLocal()
     is_demo = "demo" in ctx.channel.name
     try:

@@ -1,13 +1,15 @@
 import os
-import discord
 # Daily shifting URL
 import random
 import string
 from datetime import datetime
+
+import discord
 from replit import db
 
+
 async def send_and_delete(ctx, message, minutes=5):
-    if minutes != None:
+    if minutes is not None:
         minutes = int(minutes) * 60
     allowed_mentions = discord.AllowedMentions.none()
     if len(message) > 2000:
@@ -24,29 +26,24 @@ async def send_and_delete(ctx, message, minutes=5):
         if "office-hours" in ctx.channel.name:
             await ctx.message.add_reaction("👍")
             for part in message_parts:
-                sent_messge = await ctx.send(
-                    part, allowed_mentions=allowed_mentions
-                )
+                sent_messge = await ctx.send(part, allowed_mentions=allowed_mentions)
         else:
             await ctx.message.delete()
             for part in message_parts:
                 sent_messge = await ctx.send(
-                    part, delete_after=minutes,
-                    allowed_mentions=allowed_mentions
+                    part, delete_after=minutes, allowed_mentions=allowed_mentions
                 )
     else:
         if "office-hours" in ctx.channel.name:
-            sent_messge = await ctx.send(
-                message, allowed_mentions=allowed_mentions
-            )
+            sent_messge = await ctx.send(message, allowed_mentions=allowed_mentions)
             await ctx.message.add_reaction("👍")
         else:
             sent_messge = await ctx.message.delete()
             await ctx.send(
-                message, delete_after=minutes,
-                allowed_mentions=allowed_mentions
+                message, delete_after=minutes, allowed_mentions=allowed_mentions
             )
     return sent_messge
+
 
 # Daily shifting URL
 def generate_random_string(length=8):

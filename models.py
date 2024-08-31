@@ -1,5 +1,7 @@
 from sqlalchemy import Boolean, Column, Date, Integer, String
+
 from database import Base, engine
+
 
 class Syllabus(Base):
     __tablename__ = "syllabus"

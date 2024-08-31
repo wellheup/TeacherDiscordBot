@@ -55,18 +55,16 @@ async def poll(ctx, item):
 async def postResults(poll_message, db, book_title, poll_message, row, is_demo):
     from main import bot
 
-    reaction_dict = discord.utils.get(
-        bot.cached_messages, id=poll_message.id
-    ).reactions
+    reaction_dict = discord.utils.get(bot.cached_messages, id=poll_message.id).reactions
     up_votes = 0
     down_votes = 0
     for reaction in reaction_dict:
         if str(reaction.emoji) == "👍":
             # Subtract 1 to exclude bot's reaction
-            up_votes = reaction.count - 1  
+            up_votes = reaction.count - 1
         elif str(reaction.emoji) == "👎":
             # Subtract 1 to exclude bot's reaction
-            down_votes = reaction.count - 1  
+            down_votes = reaction.count - 1
 
     update_book_poll(db, book_title, up_votes, down_votes, is_demo)
 

@@ -14,9 +14,7 @@ async def todo(ctx, minutes: int = 5):
         rows = get_todo(db, is_demo)
         currentAuthor = ""
         currentSeries = ""
-        message = (
-            "**The following assignments have not yet been completed: **\n"
-        )
+        message = "**The following assignments have not yet been completed: **\n"
 
         for row in rows:
             book = f"*{row[0]}*"

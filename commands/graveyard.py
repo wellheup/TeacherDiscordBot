@@ -14,10 +14,7 @@ async def graveyard(ctx, minutes: int = 5):
         rows = get_graveyard_bot(db, is_demo)
         currentAuthor = ""
         currentSeries = ""
-        message = (
-            "**The following assignments have already been " +
-            "completed: **\n"
-        )
+        message = "**The following assignments have already been " + "completed: **\n"
 
         for row in rows:
             book = f"*{row[0]}*"
