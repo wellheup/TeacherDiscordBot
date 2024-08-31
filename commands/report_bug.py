@@ -1,13 +1,16 @@
 from discord.ext import commands
 from sqlalchemy.orm import Session
 
-from crud import add_bug, check_table_existing, create_bugs_table
+from crud import add_bug, check_table_existing
 from database import SessionLocal
 from utils import send_and_delete
 
 
 @commands.command()
-async def report_bug(ctx, description: str):
+async def report_bug(
+    ctx, 
+    description: str = commands.parameter(default=None, description="The bug description")
+):
     db: Session = SessionLocal()
     is_demo = "demo" in ctx.channel.name
     table_name = "demo_bugs" if is_demo else "bugs"

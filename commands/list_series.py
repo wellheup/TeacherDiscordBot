@@ -7,7 +7,10 @@ from utils import send_and_delete
 
 
 @commands.command()
-async def list_series(ctx, series_name):
+async def list_series(
+    ctx, 
+    series_name : str = commands.parameter(default=None, description="The name of the series to list books from")
+):
     db: Session = SessionLocal()
     is_demo = "demo" in ctx.channel.name
     try:

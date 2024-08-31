@@ -5,9 +5,14 @@ from crud import add_book
 from database import SessionLocal
 from utils import send_and_delete
 
-
 @commands.command()
-async def add(ctx, book: str, author: str = None, series: str = None, season=None):
+async def add(
+    ctx, 
+    book: str = commands.parameter(default=None, description="Name of the book"), 
+    author: str = commands.parameter(default=None, description="Name of the author"), 
+    series: str = commands.parameter(default=None, description="Name of the book series"), 
+    season: int = commands.parameter(default=0, description="Season the book was read during"),
+):
     db: Session = SessionLocal()
     is_demo = "demo" in ctx.channel.name
     try:

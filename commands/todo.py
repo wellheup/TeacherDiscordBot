@@ -7,7 +7,10 @@ from utils import send_and_delete
 
 
 @commands.command()
-async def todo(ctx, minutes: int = 5):
+async def todo(
+    ctx, 
+    minutes: int = commands.parameter(default=5, description=("The number of minutes to keep the message, 0 for infinite")
+):
     db: Session = SessionLocal()
     is_demo = "demo" in ctx.channel.name
     try:
