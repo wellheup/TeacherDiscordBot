@@ -6,6 +6,7 @@ import discord
 from discord.ext import commands
 from replit import db
 
+# Keep app alive
 from keep_alive import keep_alive
 # Web App
 from my_flask_app import app as flask_app
@@ -78,11 +79,11 @@ def run_discord_bot():
         elif bot.user.mentioned_in(message):
             reply = (
                 "I am a keeper of the First House and a servant to the Necrolord "
-                "Highest, and you must call me {bot.user.name}; not due to my own "
+                f"Highest, and you must call me {bot.user.name}; not due to my own "
                 "merits of learning, but because I stand in the stead of the "
                 "merciful God Above Death, and I live in hope that one day you will "
-                "call him {bot.user.name}. And may I call you then, "
-                "{message.author.mention}! Should you require further instruction "
+                f"call him {bot.user.name}. And may I call you then, "
+                f"{message.author.mention}! Should you require further instruction "
                 "type !cmds."
             )
             send_and_delete(message.channel, reply)

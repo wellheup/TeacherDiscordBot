@@ -9,13 +9,15 @@ from utils import send_and_delete
 # The commmand to remove an item from the syllabus by name or unique_id
 @commands.command()
 async def remove(
-    ctx, 
-    book : str = commands.parameter(default=None, description="Name of the book to remove"),
+    ctx,
+    book: str = commands.parameter(
+        default=None, description="Name or id of the book to remove"
+    ),
 ):
     db: Session = SessionLocal()
     is_demo = "demo" in ctx.channel.name
     try:
-        if item.isdigit() and int(book) > 0:
+        if book.isdigit() and int(book) > 0:
             book = remove_id(db, book, is_demo)
         else:
             book = remove_book(db, book, is_demo)

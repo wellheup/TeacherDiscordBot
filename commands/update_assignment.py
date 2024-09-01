@@ -8,8 +8,10 @@ from utils import send_and_delete
 
 @commands.command()
 async def update_assignment(
-    ctx, 
-    description: str = commands.parameter(default=None, description="The new assignment description")
+    ctx,
+    description: str = commands.parameter(
+        default=None, description="The new assignment description"
+    ),
 ):
     db: Session = SessionLocal()
     is_demo = "demo" in ctx.channel.name
