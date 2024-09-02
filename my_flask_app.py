@@ -9,13 +9,10 @@ from database import SessionLocal
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 
-current_url_suffix = replit_db.get("url_suffix")
-
-
 @app.route("/", methods=["GET"])
 def index():
     url_suffix = request.args.get("url_suffix", "")
-    is_demo = not url_suffix or url_suffix != current_url_suffix
+    is_demo = not url_suffix or url_suffix != replit_db.get("url_suffix")
     return render_template("index.html", is_demo=is_demo)
 
 
@@ -24,9 +21,9 @@ def index():
 def syllabus_content():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     if not is_demo:
-        print(f"current_url_suffix is {current_url_suffix}")
+        print(f"current_url_suffix is {replit_db.get('url_suffix')}")
     try:
         syllabus = get_syllabus_web(db, is_demo)
         columns = get_columns(db, is_demo)
@@ -53,7 +50,7 @@ def author_books():
     author = request.args.get("author")
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         books = get_books_by_author(db, author, is_demo)
         seriesDict = {}
@@ -79,7 +76,7 @@ def author_books():
 def update():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         data = {
             "book": request.form.get("book"),
@@ -109,7 +106,7 @@ def update():
 def add():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         book = request.form.get("book")
         author = request.form.get("author")
@@ -143,7 +140,7 @@ def add():
 def bulkAdd():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         bookList = request.form.get("bookList")
         added_by = request.form.get("added_by")
@@ -171,7 +168,7 @@ def bulkAdd():
 def delete():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         id = int(request.form.get("unique_id"))
         remove_id(db, id, is_demo)
@@ -187,7 +184,7 @@ def delete():
 def complete():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         book = request.form.get("book")
         complete_book(db, book, is_demo)
@@ -203,7 +200,7 @@ def complete():
 def assign():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         assignment_data = request.form.get("assignment_data")
         add_assignment(db, assignment_data, is_demo)
@@ -219,7 +216,7 @@ def assign():
 def graveyard_content():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         graveyard = get_graveyard_web(db, is_demo)
         return render_template(
@@ -236,7 +233,7 @@ def graveyard_content():
 def todo_content():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         todo_unformatted = get_todo(db, is_demo)
         todo = format_todo(todo_unformatted)
@@ -252,7 +249,7 @@ def todo_content():
 def unitTest_content():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         if not is_demo:
             with open("result.log", "r") as file:
@@ -293,7 +290,7 @@ def renderSyllabus(db, is_demo, url_suffix):
 def bugs_content():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         bugs = get_bugs(db, is_demo)
         return render_template(
@@ -313,7 +310,7 @@ def bugs_content():
 def report_bug():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         description = request.form.get("description")
         added_by = request.form.get("added_by")
@@ -330,7 +327,7 @@ def report_bug():
 def delete_bug():
     url_suffix = request.args.get("url_suffix", "")
     db: Session = SessionLocal()
-    is_demo = True if not url_suffix or url_suffix != current_url_suffix else False
+    is_demo = True if not url_suffix or url_suffix != replit_db.get("url_suffix") else False
     try:
         bug_id = int(request.form.get("bug_id"))
         delete_bug_id(db, bug_id, is_demo)
