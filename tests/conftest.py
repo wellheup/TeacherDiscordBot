@@ -1,9 +1,10 @@
 import os
 import sys
+
 import pytest
 
 # Add the project directory to the system path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 # Debug statements to ensure path is correct
 print(f"Current sys.path: {sys.path}")

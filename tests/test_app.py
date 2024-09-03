@@ -56,10 +56,10 @@ def test_add_new(client):
 
 
 def test_author_books(client):
-    rv = client.get('/author_books?author=Author Name test')
+    rv = client.get("/author_books?author=Author Name test")
     assert rv.status_code == 200
-    assert b'Books by Author Name test' in rv.data
-    assert b'New Book Title test' in rv.data
+    assert b"Books by Author Name test" in rv.data
+    assert b"New Book Title test" in rv.data
 
 
 def test_edit_entry(client):
