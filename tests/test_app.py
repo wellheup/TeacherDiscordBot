@@ -19,7 +19,7 @@ def test_syllabus_content(client):
     # look for each form button
     assert b"New Assignment" in rv.data
     assert b"Add New" in rv.data
-    assert b"View Less" in rv.data
+    assert b"column-visibility-toggle" in rv.data
     assert b"Mark Book Complete" in rv.data
     assert b"Edit" in rv.data
     assert b"Delete" in rv.data
@@ -53,6 +53,13 @@ def test_add_new(client):
     assert b"New Book Title test" in rv.data
     assert b"Author Name test" in rv.data
     assert b"Series Name test" in rv.data
+
+
+def test_author_books(client):
+    rv = client.get('/author_books?author=Author Name test')
+    assert rv.status_code == 200
+    assert b'Books by Author Name test' in rv.data
+    assert b'New Book Title test' in rv.data
 
 
 def test_edit_entry(client):

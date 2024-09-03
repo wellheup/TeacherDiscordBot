@@ -25,4 +25,4 @@ command_descriptions = """
 # The command to display available commands
 @commands.command()
 async def cmds(ctx):
-    await send_and_delete(ctx, command_descriptions)
+    return await send_and_delete(ctx, command_descriptions)

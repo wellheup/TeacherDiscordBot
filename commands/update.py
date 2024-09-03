@@ -30,4 +30,4 @@ async def update(
         print(message)
     finally:
         db.close()
-    await send_and_delete(ctx, message)
+    return await send_and_delete(ctx, message)

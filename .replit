@@ -5,6 +5,7 @@ hidden = [".pythonlibs"]
 
 [nix]
 channel = "stable-23_05"
+pkgs = ["python39Full", "poetry"]
 
 [deployment]
 run = ["python", "main.py"]
@@ -24,6 +25,7 @@ externalPort = 8080
 
 [env]
 REPLIT_KEEP_PACKAGE_DEV_DEPENDENCIES = "1"
+PYTHONPATH="."
 
 [run]
 command = "sh deploy.sh"
