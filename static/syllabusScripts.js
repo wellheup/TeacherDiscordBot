@@ -9,7 +9,7 @@ function fetchAuthorBooks(author) {
 }
 
 $(document).ready(function() {
-	const columnsToKeep = ['book', 'author', 'series', 'is_completed', 'date_completed'];
+	const columnsToKeep = ['book', 'author', 'series', 'is_completed', 'date_completed', 'num_in_series'];
 	// Initialize the toggle switch
 	$("[name='column-visibility-toggle']").bootstrapSwitch({
 		onText: "Less",
@@ -25,16 +25,18 @@ $(document).ready(function() {
 	$("[name='column-visibility-toggle']").on('switchChange.bootstrapSwitch', function (event, state) {
 		toggleColumnVisibilityBySwitchState(state);
 	});
+	
 	function toggleColumnVisibilityBySwitchState(state) {
-		const elements = document.querySelectorAll('.table td, .table th');
-		elements.forEach(el => {
-			const columnClasses = Array.from(el.classList).filter(c => c.startsWith('col-'));
-			columnClasses.forEach(columnClass => {
-				if (!columnsToKeep.some(col => columnClass.endsWith(col))) {
-					el.style.display = state ? '' : 'none';
-				}
-			});
+	  const elements = document.querySelectorAll('.table td, .table th');
+	  elements.forEach(el => {
+		const columnClasses = Array.from(el.classList).filter(c => c.startsWith('col-'));
+		columnClasses.forEach(columnClass => {
+		  const columnName = columnClass.replace('col-', '');
+		  if (!columnsToKeep.includes(columnName)) {
+			el.style.display = state ? '' : 'none';
+		  }
 		});
+	  });
 	}
 
 	// new assignment pop-up
