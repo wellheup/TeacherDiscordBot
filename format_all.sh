@@ -57,4 +57,7 @@ prettier --write "**/*.html" --ignore-path ".prettierignore"
 echo "Formatting CSS files with prettier..."
 prettier --write "**/*.css" --ignore-path ".prettierignore"
 
+# echo "Formatting TypeScript files with prettier..."
+# prettier --write "**/*.ts" --ignore-path ".prettierignore"
+
 echo "Formatting complete!"
