@@ -116,8 +116,9 @@ if __name__ == "__main__":
 
     flask_thread.start()
     discord_thread.start()
+    
+    # Keep Flask running even if Discord bot fails
     flask_thread.join()
-    discord_thread.join()
 
 # TODO: follow tutorial to see more about bots to make modifications
 # https://www.youtube.com/watch?v=nW8c7vT6Hl4&list=PLW3GfRiBCHOhfVoiDZpSz8SM_HybXRPzZ&ab_channel=Lucas
