@@ -12,6 +12,14 @@ async def send_and_delete(ctx, message, minutes=5):
     if minutes is not None:
         minutes = int(minutes) * 60
     allowed_mentions = discord.AllowedMentions.none()
+    sent_message = None
+    
+    # Handle both Context and Message objects
+    channel = getattr(ctx, "channel", ctx)
+    # For Message objects, treat the Message itself as the target for reactions/deletion
+    msg = getattr(ctx, "message", None) or (ctx if isinstance(ctx, discord.Message) else None)
+    channel_name = getattr(channel, "name", "")
+    
     if len(message) > 2000:
         message_parts = []
         current_part = ""
@@ -23,26 +31,30 @@ async def send_and_delete(ctx, message, minutes=5):
             current_part += f"{line}\n"
         message_parts.append(current_part)
 
-        if "office-hours" in ctx.channel.name:
-            await ctx.message.add_reaction("👍")
+        if "office-hours" in channel_name:
+            if msg:
+                await msg.add_reaction("👍")
             for part in message_parts:
-                sent_messge = await ctx.send(part, allowed_mentions=allowed_mentions)
+                sent_message = await channel.send(part, allowed_mentions=allowed_mentions)
         else:
-            await ctx.message.delete()
+            if msg:
+                await msg.delete()
             for part in message_parts:
-                sent_messge = await ctx.send(
+                sent_message = await channel.send(
                     part, delete_after=minutes, allowed_mentions=allowed_mentions
                 )
     else:
-        if "office-hours" in ctx.channel.name:
-            sent_messge = await ctx.send(message, allowed_mentions=allowed_mentions)
-            await ctx.message.add_reaction("👍")
+        if "office-hours" in channel_name:
+            sent_message = await channel.send(message, allowed_mentions=allowed_mentions)
+            if msg:
+                await msg.add_reaction("👍")
         else:
-            sent_messge = await ctx.message.delete()
-            await ctx.send(
+            if msg:
+                await msg.delete()
+            sent_message = await channel.send(
                 message, delete_after=minutes, allowed_mentions=allowed_mentions
             )
-    return sent_messge
+    return sent_message
 
 
 # Daily shifting URL
@@ -65,6 +77,6 @@ def daily_update_url():
 def get_current_url(is_demo=True):
     """Retrieve the current URL with the random suffix"""
     if is_demo:
-        f"{os.environ['TEACHER_URL']}"
+        return f"{os.environ['TEACHER_URL']}"
     else:
         return f"{os.environ['TEACHER_URL']}?url_suffix={db.get('url_suffix', '')}"

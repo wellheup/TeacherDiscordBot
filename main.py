@@ -6,8 +6,6 @@ import discord
 from discord.ext import commands
 from replit import db
 
-# Keep app alive
-from keep_alive import keep_alive
 # Web App
 from my_flask_app import app as flask_app
 from utils import daily_update_url, send_and_delete
@@ -86,7 +84,7 @@ def run_discord_bot():
                 f"{message.author.mention}! Should you require further instruction "
                 "type !cmds."
             )
-            send_and_delete(message.channel, reply)
+            await send_and_delete(message, reply)
         await bot.process_commands(message)
 
     try:
@@ -94,7 +92,6 @@ def run_discord_bot():
         if not token:
             raise Exception("Please add your token to the Secrets pane.")
         bot.run(token)
-        keep_alive()
 
     except discord.HTTPException as e:
         if e.status == 429:
