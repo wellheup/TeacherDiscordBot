@@ -13,108 +13,108 @@ from utils import daily_update_url, send_and_delete
 
 # Web App
 def run_flask():
-    daily_update_url()
-    port = 80 if os.getenv("REPLIT_DEPLOYMENT") == "1" else 5000
-    flask_app.run(host="0.0.0.0", port=port)
+	daily_update_url()
+	port = 80 if os.getenv("REPLIT_DEPLOYMENT") == "1" else 5000
+	flask_app.run(host="0.0.0.0", port=port)
 
 
 # Discord bot
 def run_discord_bot():
-    daily_update_url()
-    # Import commands from separate modules
-    from commands.add import add
-    from commands.assign import assign
-    from commands.assignment import assignment
-    from commands.cmds import cmds
-    from commands.columns import columns
-    from commands.complete import complete
-    from commands.graveyard import graveyard
-    from commands.list_series import list_series
-    # from commands.poll import poll
-    from commands.remove import remove
-    from commands.report_bug import report_bug
-    from commands.syllabus import syllabus
-    from commands.todo import todo
-    from commands.update import update
-    from commands.update_assignment import update_assignment
-    from commands.url import url
+	daily_update_url()
+	# Import commands from separate modules
+	from commands.add import add
+	from commands.assign import assign
+	from commands.assignment import assignment
+	from commands.cmds import cmds
+	from commands.columns import columns
+	from commands.complete import complete
+	from commands.graveyard import graveyard
+	from commands.list_series import list_series
+	# from commands.poll import poll
+	from commands.remove import remove
+	from commands.report_bug import report_bug
+	from commands.syllabus import syllabus
+	from commands.todo import todo
+	from commands.update import update
+	from commands.update_assignment import update_assignment
+	from commands.url import url
 
-    intents = discord.Intents.default()
-    intents.message_content = True
-    prefix = "!" if os.getenv("REPLIT_DEPLOYMENT") == "1" else "."
-    bot = commands.Bot(command_prefix=prefix, intents=intents)
+	intents = discord.Intents.default()
+	intents.message_content = True
+	prefix = "!" if os.getenv("REPLIT_DEPLOYMENT") == "1" else "."
+	bot = commands.Bot(command_prefix=prefix, intents=intents)
 
-    # Register commands with the bot
-    bot.add_command(add)
-    bot.add_command(assign)
-    bot.add_command(assignment)
-    bot.add_command(cmds)
-    bot.add_command(columns)
-    bot.add_command(complete)
-    bot.add_command(graveyard)
-    bot.add_command(list_series)
-    # bot.add_command(poll)
-    bot.add_command(remove)
-    bot.add_command(report_bug)
-    bot.add_command(syllabus)
-    bot.add_command(todo)
-    bot.add_command(update_assignment)
-    bot.add_command(update)
-    bot.add_command(url)
+	# Register commands with the bot
+	bot.add_command(add)
+	bot.add_command(assign)
+	bot.add_command(assignment)
+	bot.add_command(cmds)
+	bot.add_command(columns)
+	bot.add_command(complete)
+	bot.add_command(graveyard)
+	bot.add_command(list_series)
+	# bot.add_command(poll)
+	bot.add_command(remove)
+	bot.add_command(report_bug)
+	bot.add_command(syllabus)
+	bot.add_command(todo)
+	bot.add_command(update_assignment)
+	bot.add_command(update)
+	bot.add_command(url)
 
-    @bot.event
-    async def on_ready():
-        print(
-            f"I am {bot.user.name}. The live url is:\n"
-            "https://teacher-phillipmm.replit.app/?url_suffix="
-            f"{db.get('url_suffix', '')}\n"
-        )
+	@bot.event
+	async def on_ready():
+		print(
+			f"I am {bot.user.name}. The live url is:\n"
+			"https://teacher-phillipmm.replit.app/?url_suffix="
+			f"{db.get('url_suffix', '')}\n"
+		)
 
-    @bot.event
-    async def on_message(message):
-        if message.author == bot.user:
-            return
-        elif bot.user.mentioned_in(message):
-            reply = (
-                "I am a keeper of the First House and a servant to the Necrolord "
-                f"Highest, and you must call me {bot.user.name}; not due to my own "
-                "merits of learning, but because I stand in the stead of the "
-                "merciful God Above Death, and I live in hope that one day you will "
-                f"call him {bot.user.name}. And may I call you then, "
-                f"{message.author.mention}! Should you require further instruction "
-                "type !cmds."
-            )
-            await send_and_delete(message, reply)
-        await bot.process_commands(message)
+	@bot.event
+	async def on_message(message):
+		if message.author == bot.user:
+			return
+		elif bot.user.mentioned_in(message):
+			reply = (
+				"I am a keeper of the First House and a servant to the Necrolord "
+				f"Highest, and you must call me {bot.user.name}; not due to my own "
+				"merits of learning, but because I stand in the stead of the "
+				"merciful God Above Death, and I live in hope that one day you will "
+				f"call him {bot.user.name}. And may I call you then, "
+				f"{message.author.mention}! Should you require further instruction "
+				"type !cmds."
+			)
+			await send_and_delete(message, reply)
+		await bot.process_commands(message)
 
-    try:
-        token = os.getenv("DISCORD_BOT_SECRET")
-        if not token:
-            raise Exception("Please add your token to the Secrets pane.")
-        bot.run(token)
+	try:
+		token = os.getenv("DISCORD_BOT_SECRET")
+		if not token:
+			raise Exception("Please add your token to the Secrets pane.")
+		bot.run(token)
 
-    except discord.HTTPException as e:
-        if e.status == 429:
-            print(
-                "The Discord servers denied the connection for making too many "
-                "requests"
-            )
-            print(
-                "Get help from https://stackoverflow.com/questions/66724687/"
-                "in-discord-py-how-to-solve-the-error-for-toomanyrequests"
-            )
-        else:
-            raise e
+	except discord.HTTPException as e:
+		if e.status == 429:
+			print(
+				"The Discord servers denied the connection for making too many "
+				"requests"
+			)
+			print(
+				"Get help from https://stackoverflow.com/questions/66724687/"
+				"in-discord-py-how-to-solve-the-error-for-toomanyrequests"
+			)
+		else:
+			raise e
 
 
 if __name__ == "__main__":
-    flask_thread = threading.Thread(target=run_flask)
-    discord_thread = threading.Thread(target=run_discord_bot)
+	flask_thread = threading.Thread(target=run_flask)
+	discord_thread = threading.Thread(target=run_discord_bot)
 
-    flask_thread.start()
-    discord_thread.start()
-    flask_thread.join()
-    discord_thread.join()
+	flask_thread.start()
+	discord_thread.start()
+	flask_thread.join()
+	discord_thread.join()
 
 # TODO: follow tutorial to see more about bots to make modifications
 # https://www.youtube.com/watch?v=nW8c7vT6Hl4&list=PLW3GfRiBCHOhfVoiDZpSz8SM_HybXRPzZ&ab_channel=Lucas

@@ -14,5 +14,5 @@ from my_flask_app import app
 
 @pytest.fixture(scope="function")
 def client():
-    with app.test_client() as client:
-        yield client
+	with app.test_client() as client:
+		yield client
