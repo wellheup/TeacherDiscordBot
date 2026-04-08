@@ -90,13 +90,21 @@ PART 4: INSTALL PYTHON AND DEPENDENCIES
 
 Run these commands one at a time:
 
-	sudo apt update && sudo apt upgrade -y
+        sudo apt update && sudo apt upgrade -y
 
 (This may take a few minutes)
 
-	sudo apt install python3 python3-pip python3-venv git -y
+        sudo apt install python3 python3-pip python3-venv git -y
 
-	pip3 install discord.py flask python-dotenv
+Your project includes a file called requirements_deploy.txt listing all
+the packages your bot needs. After uploading your files in Part 5,
+install everything with one command:
+
+        pip3 install -r requirements_deploy.txt
+
+(If you want to install before uploading files, run this instead:)
+
+        pip3 install discord.py flask flask-sqlalchemy flask-bootstrap psycopg2-binary replit sqlalchemy python-dotenv
 
 ================================================
 PART 5: UPLOAD YOUR BOT FILES
@@ -114,16 +122,16 @@ OPTION A — Use the Upload button in Google Cloud's browser SSH:
 3. Upload your files one by one, or zip them first and upload
    the zip, then unzip on the server:
 
-	sudo apt install unzip
-	unzip your-project.zip -d ~/bot/
+        sudo apt install unzip
+        unzip your-project.zip -d ~/bot/
 
 OPTION B — Use scp from your computer terminal:
 
 On Mac/Linux:
-	scp -r /path/to/your/project/* your-username@EXTERNAL_IP:~/bot/
+        scp -r /path/to/your/project/* your-username@EXTERNAL_IP:~/bot/
 
 On Windows (PowerShell):
-	scp -r C:\path\to\project\* your-username@EXTERNAL_IP:/home/your-username/bot/
+        scp -r C:\path\to\project\* your-username@EXTERNAL_IP:/home/your-username/bot/
 
 Find your EXTERNAL_IP on the VM Instances page in Google Cloud Console.
 
@@ -133,22 +141,28 @@ PART 6: SET UP YOUR SECRETS / ENVIRONMENT VARIABLES
 
 In your SSH window:
 
-	mkdir -p ~/bot
-	cd ~/bot
-	nano .env
+        mkdir -p ~/bot
+        cd ~/bot
+        nano .env
 
 In the text editor that opens, add your secrets:
 
-	DISCORD_BOT_SECRET=your_discord_token_here
-	TEACHER_URL=https://teacher-phillipmm.replit.app
-	DATABASE_URL=your_replit_database_url_here
+        DISCORD_BOT_SECRET=your_discord_token_here
+        TEACHER_URL=https://teacher-phillipmm.replit.app
+        DATABASE_URL=your_replit_database_url_here
+        REPLIT_DB_URL=your_replit_db_url_here
 
 Save by pressing: Ctrl+X, then Y, then Enter
 
-To find your DATABASE_URL from Replit:
+To find these values from Replit:
 - Open your Replit project
 - Go to the Secrets tab (lock icon)
-- Copy the value of DATABASE_URL
+- Copy the values of DATABASE_URL and REPLIT_DB_URL
+
+NOTE: DATABASE_URL is used by your Flask app and SQLAlchemy to connect
+to the PostgreSQL database. REPLIT_DB_URL is used by the replit package
+to store small values like the daily URL suffix. Both need to be set or
+your bot will crash on startup.
 
 ================================================
 PART 7: OPEN THE FIREWALL FOR YOUR WEB APP
@@ -171,7 +185,7 @@ Google Cloud manages firewall rules through VPC Firewall Rules:
 Also run this in your SSH window to allow it through Ubuntu's
 internal firewall:
 
-	sudo iptables -I INPUT -p tcp --dport 5000 -j ACCEPT
+        sudo iptables -I INPUT -p tcp --dport 5000 -j ACCEPT
 
 ================================================
 PART 8: KEEP YOUR BOT RUNNING 24/7 WITH PM2
@@ -179,26 +193,26 @@ PART 8: KEEP YOUR BOT RUNNING 24/7 WITH PM2
 
 Install PM2 (keeps your app running and auto-restarts if it crashes):
 
-	sudo apt install nodejs npm -y
-	sudo npm install -g pm2
+        sudo apt install nodejs npm -y
+        sudo npm install -g pm2
 
 Start your bot:
 
-	cd ~/bot
-	pm2 start main.py --name teacher-bot --interpreter python3
+        cd ~/bot
+        pm2 start main.py --name teacher-bot --interpreter python3
 
 Make it restart automatically if the server reboots:
 
-	pm2 save
-	pm2 startup
+        pm2 save
+        pm2 startup
 
 (Copy and run the command that PM2 outputs after the last command)
 
 USEFUL PM2 COMMANDS:
-	pm2 status              # Check if your bot is running
-	pm2 logs teacher-bot    # View live logs
-	pm2 restart teacher-bot # Restart after updates
-	pm2 stop teacher-bot    # Stop the bot
+        pm2 status              # Check if your bot is running
+        pm2 logs teacher-bot    # View live logs
+        pm2 restart teacher-bot # Restart after updates
+        pm2 stop teacher-bot    # Stop the bot
 
 ================================================
 PART 9: UPDATING YOUR BOT IN THE FUTURE
@@ -225,9 +239,9 @@ even after moving your bot to Google Cloud. The easiest approach is:
 If you ever want to fully move off Replit, you can install PostgreSQL
 directly on the Google Cloud VM:
 
-	sudo apt install postgresql postgresql-contrib -y
-	sudo systemctl start postgresql
-	sudo systemctl enable postgresql
+        sudo apt install postgresql postgresql-contrib -y
+        sudo systemctl start postgresql
+        sudo systemctl enable postgresql
 
 Then update DATABASE_URL in your .env to point to localhost.
 
@@ -241,21 +255,21 @@ TROUBLESHOOTING
 ================================================
 
 Bot not starting?
-	pm2 logs teacher-bot
-	(Check for error messages)
+        pm2 logs teacher-bot
+        (Check for error messages)
 
 Can't reach the website?
-	- Double-check Part 7 (firewall rules in Google Cloud Console)
-	- Make sure Flask is running (check pm2 status)
-	- Try http://YOUR_EXTERNAL_IP:5000 in your browser
+        - Double-check Part 7 (firewall rules in Google Cloud Console)
+        - Make sure Flask is running (check pm2 status)
+        - Try http://YOUR_EXTERNAL_IP:5000 in your browser
 
 Running out of memory?
-	- Check usage with: free -h
-	- If consistently low, consider moving the Flask web app to
-	  Render.com (free) and only running the bot here
+        - Check usage with: free -h
+        - If consistently low, consider moving the Flask web app to
+          Render.com (free) and only running the bot here
 
 VM stopped unexpectedly?
-	- Google Cloud may stop free tier VMs if they detect no usage
-	- PM2's startup command (Part 8) will restart your bot
-	  automatically when the VM comes back online
-	- Log into Google Cloud Console and restart the VM if needed
+        - Google Cloud may stop free tier VMs if they detect no usage
+        - PM2's startup command (Part 8) will restart your bot
+          automatically when the VM comes back online
+        - Log into Google Cloud Console and restart the VM if needed
