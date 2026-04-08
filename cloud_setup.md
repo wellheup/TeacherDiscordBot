@@ -105,11 +105,7 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install python3 python3-pip python3-venv git -y
 ```
 
-After cloning your project in Part 5, install all dependencies with one command:
-
-```bash
-pip3 install -r requirements_deploy.txt
-```
+After cloning your project in Part 5, you'll set up a virtual environment and install dependencies there. The commands are included in Part 5.
 
 ---
 
@@ -125,11 +121,18 @@ cd bot
 
 Replace `YOUR_USERNAME` and `YOUR_REPO_NAME` with your actual GitHub username and repository name.
 
-Then install your dependencies:
+Then set up a virtual environment and install your dependencies:
 
 ```bash
-pip3 install -r requirements_deploy.txt
+cd ~/bot
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements_deploy.txt
 ```
+
+> **Why a virtual environment?** Newer Ubuntu versions block system-wide pip installs to
+> protect the OS. A virtual environment is an isolated space just for your project's packages.
+> You'll see `(venv)` at the start of your prompt when it's active.
 
 > **Note:** Your `.env` file with secrets should NOT be in your GitHub repo.
 > You'll create that manually in the next step.
@@ -201,11 +204,11 @@ sudo apt install nodejs npm -y
 sudo npm install -g pm2
 ```
 
-Start your bot:
+Start your bot, pointing PM2 to your virtual environment's Python:
 
 ```bash
 cd ~/bot
-pm2 start main.py --name teacher-bot --interpreter python3
+pm2 start main.py --name teacher-bot --interpreter ~/bot/venv/bin/python3
 ```
 
 Make it restart automatically if the server reboots:
@@ -229,11 +232,19 @@ pm2 stop teacher-bot       # Stop the bot
 
 ## Part 9: Updating Your Bot in the Future
 
-Whenever you push changes to GitHub, updating your server is just two commands:
+Whenever you push changes to GitHub, updating your server is straightforward:
 
 ```bash
 cd ~/bot
 git pull
+pm2 restart teacher-bot
+```
+
+If you've added new packages to `requirements_deploy.txt`, also run:
+
+```bash
+source ~/bot/venv/bin/activate
+pip install -r requirements_deploy.txt
 pm2 restart teacher-bot
 ```
 
