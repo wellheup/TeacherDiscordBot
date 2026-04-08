@@ -1,0 +1,226 @@
+ORACLE CLOUD FREE TIER SETUP GUIDE
+Discord Bot (Python/discord.py) + Flask Web App
+================================================
+
+WHAT YOU GET (FREE FOREVER):
+- 4 CPU cores + 24 GB RAM (ARM-based)
+- 200 GB storage
+- 10 TB/month bandwidth
+- 2 public IP addresses
+- Never expires
+
+================================================
+PART 1: CREATE YOUR ORACLE CLOUD ACCOUNT
+================================================
+
+1. Go to oracle.com/cloud/free
+2. Click "Start for Free"
+3. Fill in your details and verify your email
+4. Enter a credit card (identity verification only — you won't be charged)
+5. Complete signup and log into the Oracle Cloud Console
+
+================================================
+PART 2: CREATE YOUR VIRTUAL MACHINE
+================================================
+
+1. Click the hamburger menu (☰) in the top left
+2. Go to Compute → Instances
+3. Click "Create Instance"
+4. Give it a name like: discord-bot
+
+CHANGE THE IMAGE:
+- Click "Change image"
+- Select Ubuntu 22.04
+- Make sure it says "Always Free Eligible"
+- Click "Select image"
+
+CHANGE THE SHAPE:
+- Click "Change shape"
+- Select "Ampere" (ARM-based)
+- Choose VM.Standard.A1.Flex
+- Set 2 OCPUs and 12 GB RAM (both free)
+- Click "Select shape"
+
+SSH KEYS:
+- Leave it on "Generate a key pair for me"
+- Click "Save private key"
+- Save this file somewhere safe — you'll need it!
+
+5. Click "Create" and wait 2-3 minutes for the VM to start
+
+NOTE: If you see "Out of host capacity", Oracle doesn't have free slots
+in your region right now. Wait a few hours and try again, or click
+"Show advanced options" to try a different Availability Domain.
+
+================================================
+PART 3: CONNECT TO YOUR SERVER
+================================================
+
+Find your Public IP address on the instance details page.
+
+ON MAC/LINUX (open Terminal):
+	chmod 400 ~/Downloads/ssh-key-YYYY-MM-DD.key
+	ssh -i ~/Downloads/ssh-key-YYYY-MM-DD.key ubuntu@YOUR_IP_ADDRESS
+
+ON WINDOWS (open PowerShell):
+	ssh -i C:\Users\YourName\Downloads\ssh-key-YYYY-MM-DD.key ubuntu@YOUR_IP_ADDRESS
+
+Replace YOUR_IP_ADDRESS with your instance's public IP.
+Type "yes" if asked to confirm the connection.
+
+You should see a prompt like: ubuntu@discord-bot:~$
+You're in!
+
+================================================
+PART 4: INSTALL PYTHON AND DEPENDENCIES
+================================================
+
+Run these commands one at a time:
+
+	sudo apt update && sudo apt upgrade -y
+
+(This may take a few minutes)
+
+	sudo apt install python3 python3-pip python3-venv git -y
+
+	pip3 install discord.py flask python-dotenv
+
+================================================
+PART 5: UPLOAD YOUR BOT FILES
+================================================
+
+First, download your project from Replit:
+- Click the three-dot menu in Replit
+- Select "Download as zip"
+- Unzip the file on your computer
+
+Then open a SECOND terminal window on your own computer
+(not the SSH one) and run:
+
+ON MAC/LINUX:
+	scp -i ~/Downloads/ssh-key-YYYY-MM-DD.key -r /path/to/your/project/* ubuntu@YOUR_IP_ADDRESS:~/bot/
+
+ON WINDOWS:
+	scp -i C:\Users\YourName\Downloads\ssh-key-YYYY-MM-DD.key -r C:\path\to\project\* ubuntu@YOUR_IP_ADDRESS:/home/ubuntu/bot/
+
+================================================
+PART 6: SET UP YOUR SECRETS / ENVIRONMENT VARIABLES
+================================================
+
+Back in your SSH window, create the bot folder and config file:
+
+	mkdir -p ~/bot
+	cd ~/bot
+	nano .env
+
+In the text editor that opens, add your secrets:
+
+	DISCORD_BOT_SECRET=your_discord_token_here
+	TEACHER_URL=https://teacher-phillipmm.replit.app
+	DATABASE_URL=your_replit_database_url_here
+
+Save by pressing: Ctrl+X, then Y, then Enter
+
+To find your DATABASE_URL from Replit:
+- Open your Replit project
+- Go to the "Secrets" tab (lock icon)
+- Copy the value of DATABASE_URL
+
+================================================
+PART 7: OPEN THE FIREWALL FOR YOUR WEB APP
+================================================
+
+Step A — Open port in Oracle's firewall:
+1. In Oracle Cloud Console, go to your instance page
+2. Click on your Virtual Cloud Network name
+3. Click "Security Lists" → "Default Security List"
+4. Click "Add Ingress Rules"
+5. Set:
+   - Source CIDR: 0.0.0.0/0
+   - Destination Port Range: 5000
+6. Click "Add Ingress Rules"
+
+Step B — Open port in Ubuntu's firewall:
+Back in your SSH window, run:
+
+	sudo iptables -I INPUT -p tcp --dport 5000 -j ACCEPT
+
+================================================
+PART 8: KEEP YOUR BOT RUNNING 24/7 WITH PM2
+================================================
+
+Install PM2 (keeps your app running and auto-restarts if it crashes):
+
+	sudo apt install nodejs npm -y
+	sudo npm install -g pm2
+
+Start your bot:
+
+	cd ~/bot
+	pm2 start main.py --name teacher-bot --interpreter python3
+
+Make it restart automatically if the server reboots:
+
+	pm2 save
+	pm2 startup
+
+(Copy and run the command that PM2 outputs after the last command)
+
+USEFUL PM2 COMMANDS:
+	pm2 status              # Check if your bot is running
+	pm2 logs teacher-bot    # View live logs
+	pm2 restart teacher-bot # Restart after updates
+	pm2 stop teacher-bot    # Stop the bot
+
+================================================
+PART 9: UPDATING YOUR BOT IN THE FUTURE
+================================================
+
+Whenever you make changes to your code on Replit:
+
+1. Download updated files from Replit (Download as zip)
+2. Upload to Oracle using scp (same as Part 5)
+3. Run: pm2 restart teacher-bot
+
+================================================
+NOTES ABOUT YOUR DATABASE
+================================================
+
+Your Replit PostgreSQL database stays accessible via its DATABASE_URL
+even after moving your bot to Oracle Cloud. The easiest approach is:
+
+- Keep the database on Replit (no migration needed)
+- Copy your DATABASE_URL into the .env file on Oracle (Part 6)
+- Your bot will connect to Replit's database from Oracle's server
+
+If you ever want to fully move off Replit, you can install PostgreSQL
+directly on the Oracle VM:
+
+	sudo apt install postgresql postgresql-contrib -y
+	sudo systemctl start postgresql
+	sudo systemctl enable postgresql
+
+Then update DATABASE_URL in your .env to point to localhost.
+
+================================================
+TROUBLESHOOTING
+================================================
+
+Bot not starting?
+	pm2 logs teacher-bot
+	(Check for error messages)
+
+Can't connect via SSH?
+	- Make sure you're using the right key file
+	- Make sure you're using the right IP address
+	- Check that the instance status is "Running" in Oracle console
+
+Can't reach the website?
+	- Double-check Part 7 (firewall rules)
+	- Make sure Flask is running (check pm2 status)
+	- Try http://YOUR_IP_ADDRESS:5000 in your browser
+
+"Out of host capacity" when creating VM?
+	- Wait a few hours and try again
+	- Try a different Availability Domain in advanced options
+	- Try a smaller shape (1 OCPU / 6GB RAM) temporarily
