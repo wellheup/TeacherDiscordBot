@@ -58,12 +58,30 @@ PART 3: CONNECT TO YOUR SERVER
 
 Find your Public IP address on the instance details page.
 
-ON MAC/LINUX (open Terminal):
-	chmod 400 ~/Downloads/ssh-key-YYYY-MM-DD.key
-	ssh -i ~/Downloads/ssh-key-YYYY-MM-DD.key ubuntu@YOUR_IP_ADDRESS
+OPTION A — BROWSER-BASED (EASIEST): Oracle Cloud Shell
+Oracle has a terminal built directly into the console — no downloads needed.
 
-ON WINDOWS (open PowerShell):
-	ssh -i C:\Users\YourName\Downloads\ssh-key-YYYY-MM-DD.key ubuntu@YOUR_IP_ADDRESS
+1. In the Oracle Cloud Console, click the terminal icon (>_) in the
+   top right navigation bar
+2. A terminal opens at the bottom of your browser
+3. Upload your SSH key by clicking the gear icon in the Cloud Shell
+   toolbar and selecting "Upload", then upload your .key file
+4. Connect to your VM by running:
+
+        ssh -i ~/.ssh/ssh-key-YYYY-MM-DD.key ubuntu@YOUR_IP_ADDRESS
+
+OPTION B — BROWSER-BASED (POLISHED): Termius
+A dedicated SSH client with a free tier and a browser/desktop app.
+Sign up at termius.com and add your VM's IP and SSH key.
+
+OPTION C — TERMINAL ON YOUR COMPUTER:
+
+On Mac/Linux (open Terminal):
+        chmod 400 ~/Downloads/ssh-key-YYYY-MM-DD.key
+        ssh -i ~/Downloads/ssh-key-YYYY-MM-DD.key ubuntu@YOUR_IP_ADDRESS
+
+On Windows (open PowerShell):
+        ssh -i C:\Users\YourName\Downloads\ssh-key-YYYY-MM-DD.key ubuntu@YOUR_IP_ADDRESS
 
 Replace YOUR_IP_ADDRESS with your instance's public IP.
 Type "yes" if asked to confirm the connection.
@@ -77,13 +95,13 @@ PART 4: INSTALL PYTHON AND DEPENDENCIES
 
 Run these commands one at a time:
 
-	sudo apt update && sudo apt upgrade -y
+        sudo apt update && sudo apt upgrade -y
 
 (This may take a few minutes)
 
-	sudo apt install python3 python3-pip python3-venv git -y
+        sudo apt install python3 python3-pip python3-venv git -y
 
-	pip3 install discord.py flask python-dotenv
+        pip3 install discord.py flask python-dotenv
 
 ================================================
 PART 5: UPLOAD YOUR BOT FILES
@@ -98,10 +116,10 @@ Then open a SECOND terminal window on your own computer
 (not the SSH one) and run:
 
 ON MAC/LINUX:
-	scp -i ~/Downloads/ssh-key-YYYY-MM-DD.key -r /path/to/your/project/* ubuntu@YOUR_IP_ADDRESS:~/bot/
+        scp -i ~/Downloads/ssh-key-YYYY-MM-DD.key -r /path/to/your/project/* ubuntu@YOUR_IP_ADDRESS:~/bot/
 
 ON WINDOWS:
-	scp -i C:\Users\YourName\Downloads\ssh-key-YYYY-MM-DD.key -r C:\path\to\project\* ubuntu@YOUR_IP_ADDRESS:/home/ubuntu/bot/
+        scp -i C:\Users\YourName\Downloads\ssh-key-YYYY-MM-DD.key -r C:\path\to\project\* ubuntu@YOUR_IP_ADDRESS:/home/ubuntu/bot/
 
 ================================================
 PART 6: SET UP YOUR SECRETS / ENVIRONMENT VARIABLES
@@ -109,15 +127,15 @@ PART 6: SET UP YOUR SECRETS / ENVIRONMENT VARIABLES
 
 Back in your SSH window, create the bot folder and config file:
 
-	mkdir -p ~/bot
-	cd ~/bot
-	nano .env
+        mkdir -p ~/bot
+        cd ~/bot
+        nano .env
 
 In the text editor that opens, add your secrets:
 
-	DISCORD_BOT_SECRET=your_discord_token_here
-	TEACHER_URL=https://teacher-phillipmm.replit.app
-	DATABASE_URL=your_replit_database_url_here
+        DISCORD_BOT_SECRET=your_discord_token_here
+        TEACHER_URL=https://teacher-phillipmm.replit.app
+        DATABASE_URL=your_replit_database_url_here
 
 Save by pressing: Ctrl+X, then Y, then Enter
 
@@ -143,7 +161,7 @@ Step A — Open port in Oracle's firewall:
 Step B — Open port in Ubuntu's firewall:
 Back in your SSH window, run:
 
-	sudo iptables -I INPUT -p tcp --dport 5000 -j ACCEPT
+        sudo iptables -I INPUT -p tcp --dport 5000 -j ACCEPT
 
 ================================================
 PART 8: KEEP YOUR BOT RUNNING 24/7 WITH PM2
@@ -151,26 +169,26 @@ PART 8: KEEP YOUR BOT RUNNING 24/7 WITH PM2
 
 Install PM2 (keeps your app running and auto-restarts if it crashes):
 
-	sudo apt install nodejs npm -y
-	sudo npm install -g pm2
+        sudo apt install nodejs npm -y
+        sudo npm install -g pm2
 
 Start your bot:
 
-	cd ~/bot
-	pm2 start main.py --name teacher-bot --interpreter python3
+        cd ~/bot
+        pm2 start main.py --name teacher-bot --interpreter python3
 
 Make it restart automatically if the server reboots:
 
-	pm2 save
-	pm2 startup
+        pm2 save
+        pm2 startup
 
 (Copy and run the command that PM2 outputs after the last command)
 
 USEFUL PM2 COMMANDS:
-	pm2 status              # Check if your bot is running
-	pm2 logs teacher-bot    # View live logs
-	pm2 restart teacher-bot # Restart after updates
-	pm2 stop teacher-bot    # Stop the bot
+        pm2 status              # Check if your bot is running
+        pm2 logs teacher-bot    # View live logs
+        pm2 restart teacher-bot # Restart after updates
+        pm2 stop teacher-bot    # Stop the bot
 
 ================================================
 PART 9: UPDATING YOUR BOT IN THE FUTURE
@@ -196,9 +214,9 @@ even after moving your bot to Oracle Cloud. The easiest approach is:
 If you ever want to fully move off Replit, you can install PostgreSQL
 directly on the Oracle VM:
 
-	sudo apt install postgresql postgresql-contrib -y
-	sudo systemctl start postgresql
-	sudo systemctl enable postgresql
+        sudo apt install postgresql postgresql-contrib -y
+        sudo systemctl start postgresql
+        sudo systemctl enable postgresql
 
 Then update DATABASE_URL in your .env to point to localhost.
 
@@ -207,20 +225,20 @@ TROUBLESHOOTING
 ================================================
 
 Bot not starting?
-	pm2 logs teacher-bot
-	(Check for error messages)
+        pm2 logs teacher-bot
+        (Check for error messages)
 
 Can't connect via SSH?
-	- Make sure you're using the right key file
-	- Make sure you're using the right IP address
-	- Check that the instance status is "Running" in Oracle console
+        - Make sure you're using the right key file
+        - Make sure you're using the right IP address
+        - Check that the instance status is "Running" in Oracle console
 
 Can't reach the website?
-	- Double-check Part 7 (firewall rules)
-	- Make sure Flask is running (check pm2 status)
-	- Try http://YOUR_IP_ADDRESS:5000 in your browser
+        - Double-check Part 7 (firewall rules)
+        - Make sure Flask is running (check pm2 status)
+        - Try http://YOUR_IP_ADDRESS:5000 in your browser
 
 "Out of host capacity" when creating VM?
-	- Wait a few hours and try again
-	- Try a different Availability Domain in advanced options
-	- Try a smaller shape (1 OCPU / 6GB RAM) temporarily
+        - Wait a few hours and try again
+        - Try a different Availability Domain in advanced options
+        - Try a smaller shape (1 OCPU / 6GB RAM) temporarily
