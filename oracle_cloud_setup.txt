@@ -1,100 +1,87 @@
-ORACLE CLOUD FREE TIER SETUP GUIDE
+GOOGLE CLOUD FREE TIER SETUP GUIDE
 Discord Bot (Python/discord.py) + Flask Web App
 ================================================
 
 WHAT YOU GET (FREE FOREVER):
-- 4 CPU cores + 24 GB RAM (ARM-based)
-- 200 GB storage
-- 10 TB/month bandwidth
-- 2 public IP addresses
+- 1 shared vCPU + 1 GB RAM (e2-micro instance)
+- 30 GB storage
+- 1 GB/month network egress
+- Static external IP
 - Never expires
+- Must use one of these regions: us-west1 (Oregon),
+  us-central1 (Iowa), or us-east1 (South Carolina)
 
 ================================================
-PART 1: CREATE YOUR ORACLE CLOUD ACCOUNT
+PART 1: CREATE YOUR GOOGLE CLOUD ACCOUNT
 ================================================
 
-1. Go to oracle.com/cloud/free
-2. Click "Start for Free"
-3. Fill in your details and verify your email
-4. Enter a credit card (identity verification only — you won't be charged)
-5. Complete signup and log into the Oracle Cloud Console
+1. Go to cloud.google.com
+2. Click "Get started for free"
+3. Sign in with your Google account
+4. Enter a credit card (identity verification only — you won't
+   be charged as long as you stay within free tier limits)
+5. Complete signup and land on the Google Cloud Console
 
 ================================================
 PART 2: CREATE YOUR VIRTUAL MACHINE
 ================================================
 
 1. Click the hamburger menu (☰) in the top left
-2. Go to Compute → Instances
-3. Click "Create Instance"
-4. Give it a name like: discord-bot
+2. Go to Compute Engine → VM Instances
+3. If prompted, click "Enable" to enable the Compute Engine API
+   (takes about a minute)
+4. Click "Create Instance"
+5. Give it a name like: discord-bot
 
-CHANGE THE IMAGE:
-- Click "Change image"
-- Select Ubuntu 22.04
-- Make sure it says "Always Free Eligible"
-- Click "Select image"
+REGION AND ZONE:
+- Region: Choose one of these (required for free tier):
+    us-west1 (Oregon)
+    us-central1 (Iowa)
+    us-east1 (South Carolina)
+- Zone: Leave as the default for whichever region you pick
 
-CHANGE THE SHAPE:
-- Click "Change shape"
-- Select "Ampere" (ARM-based)
-- Choose VM.Standard.A1.Flex
-- Set 2 OCPUs and 12 GB RAM (both free)
-- Click "Select shape"
+MACHINE CONFIGURATION:
+- Series: E2
+- Machine type: e2-micro
+  (it will show "Always Free" eligibility next to it)
 
-NETWORKING:
-- Virtual Cloud Network: Leave as "Create new virtual cloud network"
-  (Oracle auto-fills a name like vcn-YYYY-MM-DD-XXXX — that's fine)
-- Subnet: Leave as "Create new public subnet"
-- Public IP Address: Make sure "Assign a public IPv4 address" is set to YES
-  (This is critical — without it your bot and website won't be reachable
-  from the internet)
+BOOT DISK:
+- Click "Change"
+- Operating System: Ubuntu
+- Version: Ubuntu 22.04 LTS
+- Boot disk type: Standard persistent disk
+- Size: 30 GB (the free limit)
+- Click "Select"
 
-SSH KEYS:
-- Leave it on "Generate a key pair for me"
-- Click "Save private key"
-- Save this file somewhere safe — you'll need it!
+FIREWALL:
+- Check "Allow HTTP traffic"
+- Check "Allow HTTPS traffic"
 
-5. Click "Create" and wait 2-3 minutes for the VM to start
-
-NOTE: If you see "Out of host capacity", Oracle doesn't have free slots
-in your region right now. Wait a few hours and try again, or click
-"Show advanced options" to try a different Availability Domain.
+6. Click "Create" and wait 1-2 minutes for the VM to start
 
 ================================================
 PART 3: CONNECT TO YOUR SERVER
 ================================================
 
-Find your Public IP address on the instance details page.
+Google Cloud has a built-in browser SSH that is even easier than
+Oracle — no key files to manage!
 
-OPTION A — BROWSER-BASED (EASIEST): Oracle Cloud Shell
-Oracle has a terminal built directly into the console — no downloads needed.
-
-1. In the Oracle Cloud Console, click the terminal icon (>_) in the
-   top right navigation bar
-2. A terminal opens at the bottom of your browser
-3. Upload your SSH key by clicking the gear icon in the Cloud Shell
-   toolbar and selecting "Upload", then upload your .key file
-4. Connect to your VM by running:
-
-        ssh -i ~/.ssh/ssh-key-YYYY-MM-DD.key ubuntu@YOUR_IP_ADDRESS
+OPTION A — BROWSER-BASED (EASIEST): Google Cloud SSH Button
+1. In the VM Instances list, find your discord-bot instance
+2. Click the "SSH" button in the Connect column
+3. A browser terminal window opens — you're in!
+   No key files, no commands needed.
 
 OPTION B — BROWSER-BASED (POLISHED): Termius
 A dedicated SSH client with a free tier and a browser/desktop app.
-Sign up at termius.com and add your VM's IP and SSH key.
+Sign up at termius.com, then use your VM's external IP and the
+SSH key from Google (downloadable via the SSH dropdown menu).
 
 OPTION C — TERMINAL ON YOUR COMPUTER:
+1. Install Google Cloud CLI from: cloud.google.com/sdk
+2. Run: gcloud compute ssh discord-bot --zone YOUR_ZONE
 
-On Mac/Linux (open Terminal):
-        chmod 400 ~/Downloads/ssh-key-YYYY-MM-DD.key
-        ssh -i ~/Downloads/ssh-key-YYYY-MM-DD.key ubuntu@YOUR_IP_ADDRESS
-
-On Windows (open PowerShell):
-        ssh -i C:\Users\YourName\Downloads\ssh-key-YYYY-MM-DD.key ubuntu@YOUR_IP_ADDRESS
-
-Replace YOUR_IP_ADDRESS with your instance's public IP.
-Type "yes" if asked to confirm the connection.
-
-You should see a prompt like: ubuntu@discord-bot:~$
+You should see a prompt like: your-username@discord-bot:~$
 You're in!
 
 ================================================
@@ -103,13 +90,13 @@ PART 4: INSTALL PYTHON AND DEPENDENCIES
 
 Run these commands one at a time:
 
-        sudo apt update && sudo apt upgrade -y
+	sudo apt update && sudo apt upgrade -y
 
 (This may take a few minutes)
 
-        sudo apt install python3 python3-pip python3-venv git -y
+	sudo apt install python3 python3-pip python3-venv git -y
 
-        pip3 install discord.py flask python-dotenv
+	pip3 install discord.py flask python-dotenv
 
 ================================================
 PART 5: UPLOAD YOUR BOT FILES
@@ -120,56 +107,71 @@ First, download your project from Replit:
 - Select "Download as zip"
 - Unzip the file on your computer
 
-Then open a SECOND terminal window on your own computer
-(not the SSH one) and run:
+OPTION A — Use the Upload button in Google Cloud's browser SSH:
+1. In the browser SSH window, click the gear icon (⚙) in the
+   top right corner
+2. Select "Upload file"
+3. Upload your files one by one, or zip them first and upload
+   the zip, then unzip on the server:
 
-ON MAC/LINUX:
-        scp -i ~/Downloads/ssh-key-YYYY-MM-DD.key -r /path/to/your/project/* ubuntu@YOUR_IP_ADDRESS:~/bot/
+	sudo apt install unzip
+	unzip your-project.zip -d ~/bot/
 
-ON WINDOWS:
-        scp -i C:\Users\YourName\Downloads\ssh-key-YYYY-MM-DD.key -r C:\path\to\project\* ubuntu@YOUR_IP_ADDRESS:/home/ubuntu/bot/
+OPTION B — Use scp from your computer terminal:
+
+On Mac/Linux:
+	scp -r /path/to/your/project/* your-username@EXTERNAL_IP:~/bot/
+
+On Windows (PowerShell):
+	scp -r C:\path\to\project\* your-username@EXTERNAL_IP:/home/your-username/bot/
+
+Find your EXTERNAL_IP on the VM Instances page in Google Cloud Console.
 
 ================================================
 PART 6: SET UP YOUR SECRETS / ENVIRONMENT VARIABLES
 ================================================
 
-Back in your SSH window, create the bot folder and config file:
+In your SSH window:
 
-        mkdir -p ~/bot
-        cd ~/bot
-        nano .env
+	mkdir -p ~/bot
+	cd ~/bot
+	nano .env
 
 In the text editor that opens, add your secrets:
 
-        DISCORD_BOT_SECRET=your_discord_token_here
-        TEACHER_URL=https://teacher-phillipmm.replit.app
-        DATABASE_URL=your_replit_database_url_here
+	DISCORD_BOT_SECRET=your_discord_token_here
+	TEACHER_URL=https://teacher-phillipmm.replit.app
+	DATABASE_URL=your_replit_database_url_here
 
 Save by pressing: Ctrl+X, then Y, then Enter
 
 To find your DATABASE_URL from Replit:
 - Open your Replit project
-- Go to the "Secrets" tab (lock icon)
+- Go to the Secrets tab (lock icon)
 - Copy the value of DATABASE_URL
 
 ================================================
 PART 7: OPEN THE FIREWALL FOR YOUR WEB APP
 ================================================
 
-Step A — Open port in Oracle's firewall:
-1. In Oracle Cloud Console, go to your instance page
-2. Click on your Virtual Cloud Network name
-3. Click "Security Lists" → "Default Security List"
-4. Click "Add Ingress Rules"
-5. Set:
-   - Source CIDR: 0.0.0.0/0
-   - Destination Port Range: 5000
-6. Click "Add Ingress Rules"
+Google Cloud manages firewall rules through VPC Firewall Rules:
 
-Step B — Open port in Ubuntu's firewall:
-Back in your SSH window, run:
+1. In Google Cloud Console, click the hamburger menu (☰)
+2. Go to VPC Network → Firewall
+3. Click "Create Firewall Rule"
+4. Set:
+   - Name: allow-flask
+   - Direction: Ingress
+   - Action on match: Allow
+   - Targets: All instances in the network
+   - Source IPv4 ranges: 0.0.0.0/0
+   - Protocols and ports: TCP, port 5000
+5. Click "Create"
 
-        sudo iptables -I INPUT -p tcp --dport 5000 -j ACCEPT
+Also run this in your SSH window to allow it through Ubuntu's
+internal firewall:
+
+	sudo iptables -I INPUT -p tcp --dport 5000 -j ACCEPT
 
 ================================================
 PART 8: KEEP YOUR BOT RUNNING 24/7 WITH PM2
@@ -177,26 +179,26 @@ PART 8: KEEP YOUR BOT RUNNING 24/7 WITH PM2
 
 Install PM2 (keeps your app running and auto-restarts if it crashes):
 
-        sudo apt install nodejs npm -y
-        sudo npm install -g pm2
+	sudo apt install nodejs npm -y
+	sudo npm install -g pm2
 
 Start your bot:
 
-        cd ~/bot
-        pm2 start main.py --name teacher-bot --interpreter python3
+	cd ~/bot
+	pm2 start main.py --name teacher-bot --interpreter python3
 
 Make it restart automatically if the server reboots:
 
-        pm2 save
-        pm2 startup
+	pm2 save
+	pm2 startup
 
 (Copy and run the command that PM2 outputs after the last command)
 
 USEFUL PM2 COMMANDS:
-        pm2 status              # Check if your bot is running
-        pm2 logs teacher-bot    # View live logs
-        pm2 restart teacher-bot # Restart after updates
-        pm2 stop teacher-bot    # Stop the bot
+	pm2 status              # Check if your bot is running
+	pm2 logs teacher-bot    # View live logs
+	pm2 restart teacher-bot # Restart after updates
+	pm2 stop teacher-bot    # Stop the bot
 
 ================================================
 PART 9: UPDATING YOUR BOT IN THE FUTURE
@@ -205,7 +207,8 @@ PART 9: UPDATING YOUR BOT IN THE FUTURE
 Whenever you make changes to your code on Replit:
 
 1. Download updated files from Replit (Download as zip)
-2. Upload to Oracle using scp (same as Part 5)
+2. Upload to Google Cloud using the SSH browser upload button
+   or scp (same as Part 5)
 3. Run: pm2 restart teacher-bot
 
 ================================================
@@ -213,40 +216,46 @@ NOTES ABOUT YOUR DATABASE
 ================================================
 
 Your Replit PostgreSQL database stays accessible via its DATABASE_URL
-even after moving your bot to Oracle Cloud. The easiest approach is:
+even after moving your bot to Google Cloud. The easiest approach is:
 
 - Keep the database on Replit (no migration needed)
-- Copy your DATABASE_URL into the .env file on Oracle (Part 6)
-- Your bot will connect to Replit's database from Oracle's server
+- Copy your DATABASE_URL into the .env file on Google Cloud (Part 6)
+- Your bot will connect to Replit's database from Google's server
 
 If you ever want to fully move off Replit, you can install PostgreSQL
-directly on the Oracle VM:
+directly on the Google Cloud VM:
 
-        sudo apt install postgresql postgresql-contrib -y
-        sudo systemctl start postgresql
-        sudo systemctl enable postgresql
+	sudo apt install postgresql postgresql-contrib -y
+	sudo systemctl start postgresql
+	sudo systemctl enable postgresql
 
 Then update DATABASE_URL in your .env to point to localhost.
+
+NOTE ON RAM: The e2-micro only has 1GB RAM. Running both the Discord
+bot and Flask app together should work fine for light usage. If you
+notice slowdowns, consider using the split approach: host the bot here
+and host the Flask web app on Render.com's free tier separately.
 
 ================================================
 TROUBLESHOOTING
 ================================================
 
 Bot not starting?
-        pm2 logs teacher-bot
-        (Check for error messages)
-
-Can't connect via SSH?
-        - Make sure you're using the right key file
-        - Make sure you're using the right IP address
-        - Check that the instance status is "Running" in Oracle console
+	pm2 logs teacher-bot
+	(Check for error messages)
 
 Can't reach the website?
-        - Double-check Part 7 (firewall rules)
-        - Make sure Flask is running (check pm2 status)
-        - Try http://YOUR_IP_ADDRESS:5000 in your browser
+	- Double-check Part 7 (firewall rules in Google Cloud Console)
+	- Make sure Flask is running (check pm2 status)
+	- Try http://YOUR_EXTERNAL_IP:5000 in your browser
 
-"Out of host capacity" when creating VM?
-        - Wait a few hours and try again
-        - Try a different Availability Domain in advanced options
-        - Try a smaller shape (1 OCPU / 6GB RAM) temporarily
+Running out of memory?
+	- Check usage with: free -h
+	- If consistently low, consider moving the Flask web app to
+	  Render.com (free) and only running the bot here
+
+VM stopped unexpectedly?
+	- Google Cloud may stop free tier VMs if they detect no usage
+	- PM2's startup command (Part 8) will restart your bot
+	  automatically when the VM comes back online
+	- Log into Google Cloud Console and restart the VM if needed
