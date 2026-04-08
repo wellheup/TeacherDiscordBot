@@ -41,6 +41,14 @@ CHANGE THE SHAPE:
 - Set 2 OCPUs and 12 GB RAM (both free)
 - Click "Select shape"
 
+NETWORKING:
+- Virtual Cloud Network: Leave as "Create new virtual cloud network"
+  (Oracle auto-fills a name like vcn-YYYY-MM-DD-XXXX — that's fine)
+- Subnet: Leave as "Create new public subnet"
+- Public IP Address: Make sure "Assign a public IPv4 address" is set to YES
+  (This is critical — without it your bot and website won't be reachable
+  from the internet)
+
 SSH KEYS:
 - Leave it on "Generate a key pair for me"
 - Click "Save private key"
