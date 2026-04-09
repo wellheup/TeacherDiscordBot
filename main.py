@@ -7,11 +7,10 @@ load_dotenv()
 # Discord bot
 import discord
 from discord.ext import commands
-from replit import db
 
 # Web App
 from my_flask_app import app as flask_app
-from utils import daily_update_url, send_and_delete
+from utils import daily_update_url, get_config, send_and_delete
 
 
 # Web App
@@ -70,7 +69,7 @@ def run_discord_bot():
                 print(
                         f"I am {bot.user.name}. The live url is:\n"
                         "https://teacher-phillipmm.replit.app/?url_suffix="
-                        f"{db.get('url_suffix', '')}\n"
+                        f"{get_config('url_suffix', '')}\n"
                 )
 
         @bot.event

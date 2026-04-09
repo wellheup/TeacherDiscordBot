@@ -36,8 +36,21 @@ Fixed several critical bugs that were causing the app to crash or become unrespo
 ### Technology Stack
 - Flask (web framework)
 - discord.py (Discord bot)
-- PostgreSQL (database via Replit)
+- PostgreSQL (Neon hosted: `ep-little-base-a5qoksxf.us-east-2.aws.neon.tech`)
+- SQLAlchemy ORM
 - Threading (concurrent Flask + Discord bot execution)
 
+### Database Tables
+- `syllabus` / `demo_syllabus` — book reading list
+- `bugs` / `demo_bugs` — bug reports
+- `assignments` / `demo_assignments` — current assignments
+- `app_config` — key-value config store (replaces Replit KV); stores `url_suffix` and `last_update`
+
+## Deployment
+- Target: Google Cloud Free Tier e2-micro (us-west1/us-central1/us-east1)
+- Process manager: PM2 with Python venv
+- See `cloud_setup.md` for full setup guide
+- Dependencies for deployment: `requirements_deploy.txt`
+
 ## Current State
-The application is running stably with both the Flask web server and Discord bot active. All critical bugs have been resolved and the code has been reviewed for correctness.
+The application is running stably with both the Flask web server and Discord bot active. All critical bugs have been resolved. The `url_suffix` daily-rotating secret (used to gate write access on the web dashboard) is now stored in PostgreSQL (`app_config` table) instead of Replit's key-value store — removing the `replit` package dependency entirely.
