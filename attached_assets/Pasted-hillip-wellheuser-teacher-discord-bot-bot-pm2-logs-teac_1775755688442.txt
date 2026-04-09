@@ -1,0 +1,286 @@
+hillip_wellheuser@teacher-discord-bot:~/bot$ pm2 logs teacher-bot
+[TAILING] Tailing last 15 lines for [teacher-bot] process (change the value with --lines option)
+/home/phillip_wellheuser/.pm2/logs/teacher-bot-out.log last 15 lines:
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+0|teacher- | Warning: error initializing database. Replit DB is not configured.
+
+/home/phillip_wellheuser/.pm2/logs/teacher-bot-error.log last 15 lines:
+0|teacher- |     self.dbapi_connection = connection = pool._invoke_creator(self)
+0|teacher- |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher- |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py", line 643, in connect
+0|teacher- |     return dialect.connect(*cargs, **cparams)
+0|teacher- |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher- |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 620, in connect
+0|teacher- |     return self.loaded_dbapi.connect(*cargs, **cparams)
+0|teacher- |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher- |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/psycopg2/__init__.py", line 122, in connect
+0|teacher- |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+0|teacher- |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher- | sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+0|teacher- |    Is the server running on that host and accepting TCP/IP connections?
+0|teacher- | 
+0|teacher- | (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+0|teacher-bot  | Warning: error initializing database. Replit DB is not configured.
+0|teacher-bot  | Warning: error initializing database. Replit DB is not configured.
+0|teacher-bot  | Warning: error initializing database. Replit DB is not configured.
+0|teacher-bot  | Warning: error initializing database. Replit DB is not configured.
+0|teacher-bot  | Traceback (most recent call last):
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
+0|teacher-bot  |     self._dbapi_connection = engine.raw_connection()
+0|teacher-bot  |                              ^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3300, in raw_connection
+0|teacher-bot  |     return self.pool.connect()
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 449, in connect
+0|teacher-bot  |     return _ConnectionFairy._checkout(self)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 1263, in _checkout
+0|teacher-bot  |     fairy = _ConnectionRecord.checkout(pool)
+0|teacher-bot  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  | ^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+0|teacher-bot  |     rec = pool._do_get()
+0|teacher-bot  |           ^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/impl.py", line 179, in _do_get
+0|teacher-bot  |     with util.safe_reraise():
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+0|teacher-bot  |     raise exc_value.with_traceback(exc_tb)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
+0|teacher-bot  |     return self._create_connection()
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection
+0|teacher-bot  |     return _ConnectionRecord(self)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+0|teacher-bot  |     self.__connect()
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+0|teacher-bot  |     with util.safe_reraise():
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+0|teacher-bot  |     raise exc_value.with_traceback(exc_tb)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+0|teacher-bot  |     self.dbapi_connection = connection = pool._invoke_creator(self)
+0|teacher-bot  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py", line 643, in connect
+0|teacher-bot  |     return dialect.connect(*cargs, **cparams)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 620, in connect
+0|teacher-bot  |     return self.loaded_dbapi.connect(*cargs, **cparams)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/psycopg2/__init__.py", line 122, in connect
+0|teacher-bot  |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  | psycopg2.OperationalError: connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+0|teacher-bot  |        Is the server running on that host and accepting TCP/IP connections?
+0|teacher-bot  | The above exception was the direct cause of the following exception:
+0|teacher-bot  | Traceback (most recent call last):
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/main.py", line 10, in <module>
+0|teacher-bot  |     from my_flask_app import app as flask_app
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/my_flask_app.py", line 6, in <module>
+0|teacher-bot  |     from crud import *
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/crud.py", line 6, in <module>
+0|teacher-bot  |     from models import (Assignments, Bugs, DemoAssignments, DemoBugs, DemoSyllabus,
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/models.py", line 77, in <module>
+0|teacher-bot  |     Base.metadata.create_all(bind=engine)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 5857, in create_all
+0|teacher-bot  |     bind._run_ddl_visitor(
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3250, in _run_ddl_visitor
+0|teacher-bot  |     with self.begin() as conn:
+0|teacher-bot  |   File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+0|teacher-bot  |     return next(self.gen)
+0|teacher-bot  |            ^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3240, in begin
+0|teacher-bot  |     with self.connect() as conn:
+0|teacher-bot  |          ^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3276, in connect
+0|teacher-bot  |     return self._connection_cls(self)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 148, in __init__
+0|teacher-bot  |     Connection._handle_dbapi_exception_noconnection(
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2440, in _handle_dbapi_exception_noconnection
+0|teacher-bot  |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
+0|teacher-bot  |     self._dbapi_connection = engine.raw_connection()
+0|teacher-bot  |                              ^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3300, in raw_connection
+0|teacher-bot  |     return self.pool.connect()
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 449, in connect
+0|teacher-bot  |     return _ConnectionFairy._checkout(self)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 1263, in _checkout
+0|teacher-bot  |     fairy = _ConnectionRecord.checkout(pool)
+0|teacher-bot  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+0|teacher-bot  |     rec = pool._do_get()
+0|teacher-bot  |           ^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/impl.py", line 179, in _do_get
+0|teacher-bot  |     with util.safe_reraise():
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+0|teacher-bot  |     raise exc_value.with_traceback(exc_tb)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
+0|teacher-bot  |     return self._create_connection()
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection
+0|teacher-bot  |     return _ConnectionRecord(self)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+0|teacher-bot  |     self.__connect()
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+0|teacher-bot  |     with util.safe_reraise():
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+0|teacher-bot  |     raise exc_value.with_traceback(exc_tb)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+0|teacher-bot  |     self.dbapi_connection = connection = pool._invoke_creator(self)
+0|teacher-bot  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py", line 643, in connect
+0|teacher-bot  |     return dialect.connect(*cargs, **cparams)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 620, in connect
+0|teacher-bot  |     return self.loaded_dbapi.connect(*cargs, **cparams)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/psycopg2/__init__.py", line 122, in connect
+0|teacher-bot  |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  | sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+0|teacher-bot  |        Is the server running on that host and accepting TCP/IP connections?
+0|teacher-bot  | (Background on this error at: https://sqlalche.me/e/20/e3q8)
+0|teacher-bot  | Warning: error initializing database. Replit DB is not configured.
+0|teacher-bot  | Warning: error initializing database. Replit DB is not configured.
+0|teacher-bot  | Warning: error initializing database. Replit DB is not configured.
+0|teacher-bot  | Warning: error initializing database. Replit DB is not configured.
+0|teacher-bot  | Traceback (most recent call last):
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
+0|teacher-bot  |     self._dbapi_connection = engine.raw_connection()
+0|teacher-bot  |                              ^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3300, in raw_connection
+0|teacher-bot  |     return self.pool.connect()
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 449, in connect
+0|teacher-bot  |     return _ConnectionFairy._checkout(self)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 1263, in _checkout
+0|teacher-bot  |     fairy = _ConnectionRecord.checkout(pool)
+0|teacher-bot  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+0|teacher-bot  |     rec = pool._do_get()
+0|teacher-bot  |           ^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/impl.py", line 179, in _do_get
+0|teacher-bot  |     with util.safe_reraise():
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+0|teacher-bot  |     raise exc_value.with_traceback(exc_tb)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
+0|teacher-bot  |     return self._create_connection()
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection
+0|teacher-bot  |     return _ConnectionRecord(self)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+0|teacher-bot  |     self.__connect()
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+0|teacher-bot  |     with util.safe_reraise():
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+0|teacher-bot  |     raise exc_value.with_traceback(exc_tb)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+0|teacher-bot  |     self.dbapi_connection = connection = pool._invoke_creator(self)
+0|teacher-bot  |                                          ^^^^^^
+0|teacher-bot  | ^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py", line 643, in connect
+0|teacher-bot  |     return dialect.connect(*cargs, **cparams)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 620, in connect
+0|teacher-bot  |     return self.loaded_dbapi.connect(*cargs, **cparams)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/psycopg2/__init__.py", line 122, in connect
+0|teacher-bot  |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  | psycopg2.OperationalError: connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+0|teacher-bot  |        Is the server running on that host and accepting TCP/IP connections?
+0|teacher-bot  | The above exception was the direct cause of the following exception:
+0|teacher-bot  | Traceback (most recent call last):
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/main.py", line 10, in <module>
+0|teacher-bot  |     from my_flask_app import app as flask_app
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/my_flask_app.py", line 6, in <module>
+0|teacher-bot  |     from crud import *
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/crud.py", line 6, in <module>
+0|teacher-bot  |     from models import (Assignments, Bugs, DemoAssignments, DemoBugs, DemoSyllabus,
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/models.py", line 77, in <module>
+0|teacher-bot  |     Base.metadata.create_all(bind=engine)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 5857, in create_all
+0|teacher-bot  |     bind._run_ddl_visitor(
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3250, in _run_ddl_visitor
+0|teacher-bot  |     with self.begin() as conn:
+0|teacher-bot  |   File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+0|teacher-bot  |     return next(self.gen)
+0|teacher-bot  |            ^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3240, in begin
+0|teacher-bot  |     with self.connect() as conn:
+0|teacher-bot  |          ^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3276, in connect
+0|teacher-bot  |     return self._connection_cls(self)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 148, in __init__
+0|teacher-bot  |     Connection._handle_dbapi_exception_noconnection(
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2440, in _handle_dbapi_exception_noconnection
+0|teacher-bot  |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
+0|teacher-bot  |     self._dbapi_connection = engine.raw_connection()
+0|teacher-bot  |                              ^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3300, in raw_connection
+0|teacher-bot  |     return self.pool.connect()
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 449, in connect
+0|teacher-bot  |     return _ConnectionFairy._checkout(self)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 1263, in _checkout
+0|teacher-bot  |     fairy = _ConnectionRecord.checkout(pool)
+0|teacher-bot  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+0|teacher-bot  |     rec = pool._do_get()
+0|teacher-bot  |           ^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/impl.py", line 179, in _do_get
+0|teacher-bot  |     with util.safe_reraise():
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+0|teacher-bot  |     raise exc_value.with_traceback(exc_tb)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
+0|teacher-bot  |     return self._create_connection()
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection
+0|teacher-bot  |     return _ConnectionRecord(self)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+0|teacher-bot  |     self.__connect()
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+0|teacher-bot  |     with util.safe_reraise():
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+0|teacher-bot  |     raise exc_value.with_traceback(exc_tb)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+0|teacher-bot  |     self.dbapi_connection = connection = pool._invoke_creator(self)
+0|teacher-bot  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py", line 643, in connect
+0|teacher-bot  |     return dialect.connect(*cargs, **cparams)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 620, in connect
+0|teacher-bot  |     return self.loaded_dbapi.connect(*cargs, **cparams)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/psycopg2/__init__.py", line 122, in connect
+0|teacher-bot  |     
+0|teacher-bot  | conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  | sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+0|teacher-bot  |        Is the server running on that host and accepting TCP/IP connections?
+0|teacher-bot  | (Background on this error at: https://sqlalche.me/e/20/e3q8)
