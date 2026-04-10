@@ -152,22 +152,51 @@ In the text editor that opens, add your secrets:
 
 ```
 DISCORD_BOT_SECRET=your_discord_token_here
-TEACHER_URL=https://teacher-phillipmm.replit.app
-DATABASE_URL=your_replit_database_url_here
-REPLIT_DB_URL=your_replit_db_url_here
+TEACHER_URL=http://YOUR_EXTERNAL_IP:5000
+DATABASE_URL=your_postgresql_connection_string_here
 ```
 
 Save by pressing **Ctrl+X**, then **Y**, then **Enter**
 
 ### Where to find these values
-- Open your Replit project
-- Go to the **Secrets tab** (lock icon)
-- Copy the values of `DATABASE_URL` and `REPLIT_DB_URL`
+- **DISCORD_BOT_SECRET** — from the [Discord Developer Portal](https://discord.com/developers/applications), under your bot's "Bot" tab → "Token"
+- **TEACHER_URL** — your Google Cloud VM's external IP address (visible in VM Instances list), formatted as `http://YOUR_EXTERNAL_IP:5000`
+- **DATABASE_URL** — your Neon (or other) PostgreSQL connection string
 
-> **Why both database variables?**
-> `DATABASE_URL` is used by Flask and SQLAlchemy for your PostgreSQL database.
-> `REPLIT_DB_URL` is used by the `replit` package to store small values like the daily URL suffix.
-> Both must be set or your bot will crash on startup.
+> **TEACHER_URL is important:** This controls the URL the bot posts when users run `!web`.
+> Set it to your Google Cloud server's external IP so it points to your Flask app,
+> not the old Replit deployment.
+
+---
+
+## Updating Your .env Values Later
+
+To change any secret or environment variable after initial setup:
+
+```bash
+nano ~/bot/.env
+```
+
+Use the arrow keys to navigate to the line you want to change, edit the value, then save with **Ctrl+X → Y → Enter**.
+
+After saving, restart the bot to pick up the new values:
+
+```bash
+pm2 restart teacher-bot
+```
+
+### Common things you might need to update
+
+| Variable | When to update |
+|----------|---------------|
+| `DISCORD_BOT_SECRET` | If you regenerate your bot token in Discord |
+| `TEACHER_URL` | If your server's external IP changes, or you set up a domain |
+| `DATABASE_URL` | If you move your database to a different host |
+
+> **Tip:** To quickly check your server's current external IP without leaving the terminal:
+> ```bash
+> curl ifconfig.me
+> ```
 
 ---
 
