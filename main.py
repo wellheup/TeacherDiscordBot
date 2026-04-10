@@ -15,8 +15,6 @@ from utils import daily_update_url, get_current_url, send_and_delete
 
 # Web App
 def run_flask():
-        import logging
-        logging.getLogger("werkzeug").setLevel(logging.ERROR)
         daily_update_url()
         port = 80 if os.getenv("REPLIT_DEPLOYMENT") == "1" else 5000
         flask_app.run(host="0.0.0.0", port=port)
@@ -115,11 +113,8 @@ if __name__ == "__main__":
 
         flask_thread.start()
         discord_thread.start()
-        try:
-                flask_thread.join()
-                discord_thread.join()
-        except KeyboardInterrupt:
-                pass
+        flask_thread.join()
+        discord_thread.join()
 
 # TODO: follow tutorial to see more about bots to make modifications
 # https://www.youtube.com/watch?v=nW8c7vT6Hl4&list=PLW3GfRiBCHOhfVoiDZpSz8SM_HybXRPzZ&ab_channel=Lucas
