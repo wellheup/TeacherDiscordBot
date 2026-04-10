@@ -1,0 +1,89 @@
+0|teacher-bot  | Traceback (most recent call last):
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+0|teacher-bot  |     self.dialect.do_execute(
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 924, in do_execute
+0|teacher-bot  |     cursor.execute(statement, parameters)
+0|teacher-bot  | psycopg2.errors.InvalidSchemaName: no schema has been selected to create in
+0|teacher-bot  | LINE 2: CREATE TABLE syllabus (
+0|teacher-bot  |                      ^
+0|teacher-bot  | The above exception was the direct cause of the following exception:
+0|teacher-bot  | Traceback (most recent call last):
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/main.py", line 12, in <module>
+0|teacher-bot  |     from my_flask_app import app as flask_app
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/my_flask_app.py", line 5, in <module>
+0|teacher-bot  |     from crud import *
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/crud.py", line 6, in <module>
+0|teacher-bot  |     from models import (Assignments, Bugs, DemoAssignments, DemoBugs, DemoSyllabus,
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/models.py", line 84, in <module>
+0|teacher-bot  |     Base.metadata.create_all(bind=engine)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 5857, in create_all
+0|teacher-bot  |     bind._run_ddl_visitor(
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3251, in _run_ddl_visitor
+0|teacher-bot  |     
+0|teacher-bot  | conn._run_ddl_visitor(visitorcallable, element, **kwargs)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2457, in _run_ddl_visitor
+0|teacher-bot  |     visitorcallable(self.dialect, self, **kwargs).traverse_single(element)
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+0|teacher-bot  |     return meth(obj, **kw)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 918, in visit_metadata
+0|teacher-bot  |     
+0|teacher-bot  | self.traverse_single(
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+0|teacher-bot  |     
+0|teacher-bot  | return meth(obj, **kw)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 956, in visit_table
+0|teacher-bot  |     )._invoke_with(self.connection)
+0|teacher-bot  |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 314, in _invoke_with
+0|teacher-bot  |     return bind.execute(self)
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1418, in execute
+0|teacher-bot  |     
+0|teacher-bot  | return meth(
+0|teacher-bot  |  
+0|teacher-bot  |  
+0|teacher-bot  |          ^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 180, in _execute_on_connection
+0|teacher-bot  |     return connection._execute_ddl(
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1529, in _execute_ddl
+0|teacher-bot  |     ret = self._execute_context(
+0|teacher-bot  |           ^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+0|teacher-bot  |     return self._exec_single_context(
+0|teacher-bot  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+0|teacher-bot  |     self._handle_dbapi_exception(
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2353, in _handle_dbapi_exception
+0|teacher-bot  |     
+0|teacher-bot  | raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+0|teacher-bot  |     
+0|teacher-bot  | self.dialect.do_execute(
+0|teacher-bot  |   File "/home/phillip_wellheuser/bot/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 924, in do_execute
+0|teacher-bot  |     cursor.execute(statement, parameters)
+0|teacher-bot  | sqlalchemy.exc.ProgrammingError: (psycopg2.errors.InvalidSchemaName) no schema has been selected to create in
+0|teacher-bot  | LINE 2: CREATE TABLE syllabus (
+0|teacher-bot  |                      ^
+0|teacher-bot  | [SQL: 
+0|teacher-bot  | CREATE TABLE syllabus (
+0|teacher-bot  |        unique_id SERIAL NOT NULL, 
+0|teacher-bot  |        book VARCHAR, 
+0|teacher-bot  |        author VARCHAR, 
+0|teacher-bot  |        series VARCHAR, 
+0|teacher-bot  |        num_in_series INTEGER, 
+0|teacher-bot  |        date_added DATE, 
+0|teacher-bot  |        is_completed BOOLEAN, 
+0|teacher-bot  |        added_by VARCHAR, 
+0|teacher-bot  |        season INTEGER, 
+0|teacher-bot  |        is_extra_credit BOOLEAN, 
+0|teacher-bot  |        date_completed DATE, 
+0|teacher-bot  |        up_votes INTEGER, 
+0|teacher-bot  |        down_votes INTEGER, 
+0|teacher-bot  |        genre VARCHAR, 
+0|teacher-bot  |        PRIMARY KEY (unique_id)
+0|teacher-bot  | )
+0|teacher-bot  | ]
+0|teacher-bot  | (Background on this error at: https://sqlalche.me/e/20/f405)
