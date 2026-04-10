@@ -196,6 +196,11 @@ pm2 restart teacher-bot --update-env
 | `DISCORD_BOT_SECRET` | If you regenerate your bot token in Discord |
 | `TEACHER_URL` | If your server's external IP changes, or you set up a domain |
 | `DATABASE_URL` | If you move your database to a different host |
+| `BOT_PREFIX` | If you want commands to use a different prefix (default is `!`) |
+
+> **BOT_PREFIX tip:** The bot defaults to `!` (e.g. `!web`, `!cmds`). If you run a second copy
+> of the bot for development on Replit, set `BOT_PREFIX=.` in Replit's Secrets so the two bots
+> don't respond to the same commands at the same time.
 
 > **Tip:** To quickly check your server's current external IP without leaving the terminal:
 > ```bash
