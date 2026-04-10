@@ -42,7 +42,7 @@ def run_discord_bot():
 
         intents = discord.Intents.default()
         intents.message_content = True
-        prefix = "!" if os.getenv("REPLIT_DEPLOYMENT") == "1" else "."
+        prefix = os.getenv("BOT_PREFIX", "!")
         bot = commands.Bot(command_prefix=prefix, intents=intents)
 
         # Register commands with the bot
