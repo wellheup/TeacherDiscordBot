@@ -22,7 +22,6 @@ def run_flask():
 
 # Discord bot
 def run_discord_bot():
-        daily_update_url()
         # Import commands from separate modules
         from commands.add import add
         from commands.assign import assign
