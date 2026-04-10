@@ -10,7 +10,7 @@ from discord.ext import commands
 
 # Web App
 from my_flask_app import app as flask_app
-from utils import daily_update_url, get_config, send_and_delete
+from utils import daily_update_url, get_current_url, send_and_delete
 
 
 # Web App
@@ -67,8 +67,7 @@ def run_discord_bot():
         async def on_ready():
                 print(
                         f"I am {bot.user.name}. The live url is:\n"
-                        "https://teacher-phillipmm.replit.app/?url_suffix="
-                        f"{get_config('url_suffix', '')}\n"
+                        f"{get_current_url(is_demo=False)}\n"
                 )
 
         @bot.event
