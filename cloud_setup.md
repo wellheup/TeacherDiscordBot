@@ -182,8 +182,12 @@ Use the arrow keys to navigate to the line you want to change, edit the value, t
 After saving, restart the bot to pick up the new values:
 
 ```bash
-pm2 restart teacher-bot
+pm2 restart teacher-bot --update-env
 ```
+
+> **Important:** You must include `--update-env` any time you change `.env` values.
+> A plain `pm2 restart` reuses the cached environment from when the process first started
+> and will **not** pick up your changes.
 
 ### Common things you might need to update
 
@@ -251,10 +255,11 @@ pm2 startup
 ### Useful PM2 Commands
 
 ```bash
-pm2 status                 # Check if your bot is running
-pm2 logs teacher-bot       # View live logs
-pm2 restart teacher-bot    # Restart after updates
-pm2 stop teacher-bot       # Stop the bot
+pm2 status                             # Check if your bot is running
+pm2 logs teacher-bot                   # View live logs
+pm2 restart teacher-bot                # Restart after code changes
+pm2 restart teacher-bot --update-env   # Restart AND reload .env changes
+pm2 stop teacher-bot                   # Stop the bot
 ```
 
 ---
