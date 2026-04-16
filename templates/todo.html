@@ -21,7 +21,7 @@
         <p>The following assignments have yet to be completed:</p>
         <div
           style="
-            max-height: 70vh;
+            max-height: 80vh;
             max-width: 95vw;
             overflow-x: auto;
             overflow-y: auto;
@@ -29,17 +29,17 @@
             margin-right: auto;
           "
         >
-          <ul>
+          <ul style="padding-left: 1.25rem; margin-bottom: 0;">
             {% for author in todo.keys() %}
-            <li>
+            <li style="margin-bottom: 1px; line-height: 1.3;">
               <b>{{author}}</b>
-              <ul>
+              <ul style="padding-left: 1.25rem; margin-bottom: 0;">
                 {% for series in todo[author].keys() %}
-                <li>
+                <li style="margin-bottom: 1px; line-height: 1.3;">
                   {{series}}
-                  <ul>
+                  <ul style="padding-left: 1.25rem; margin-bottom: 0;">
                     {% for book in todo[author][series] %}
-                    <li><i>{{book['book']}}</i> ({{book['id']}})</li>
+                    <li style="margin-bottom: 1px; line-height: 1.3;"><i>{{book['book']}}</i> ({{book['id']}})</li>
                     {% endfor %}
                   </ul>
                 </li>
