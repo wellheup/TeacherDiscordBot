@@ -30,7 +30,7 @@ def test_syllabus_content(client):
 
 
 def test_new_assignment(client):
-        data = {"assignment_data": "Read Chapter 5"}
+        data = {"assignment_data": "Read Chapter 5", "due_date": "2099-01-01"}
         rv = client.post("/assign", data=data, follow_redirects=True)
         assert rv.status_code == 200
         rv = client.get("/syllabus")
@@ -44,6 +44,8 @@ def test_past_assignments_content(client):
         assert b"PAST ASSIGNMENTS" in rv.data
         assert b"New Assignment" in rv.data
         assert b"Read Chapter 5" in rv.data
+        assert b"Due Date" in rv.data
+        assert b"2099-01-01" in rv.data
 
 
 def test_edit_assignment(client):
@@ -62,7 +64,7 @@ def test_edit_assignment(client):
         assignment_id = data[assignment_id_start:assignment_id_end].strip()
 
         # Post the edit data to /update_assignment
-        data_edit = {"assignment_id": assignment_id, "description": "Read Chapter 6 test"}
+        data_edit = {"assignment_id": assignment_id, "description": "Read Chapter 6 test", "due_date": "2099-02-01"}
         rv = client.post("/update_assignment", data=data_edit, follow_redirects=True)
         assert rv.status_code == 200
         assert b"Read Chapter 6 test" in rv.data

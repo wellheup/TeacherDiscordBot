@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Date, Integer, String
+from sqlalchemy import Boolean, Column, Date, Integer, String, text
 
 from database import Base, engine
 
@@ -36,6 +36,7 @@ class Assignments(Base):
         assignment_id = Column(Integer, primary_key=True, index=True)
         description = Column(String, index=True)
         date_added = Column(Date)
+        due_date = Column(Date, nullable=True)
 
 
 class DemoSyllabus(Base):
@@ -71,6 +72,7 @@ class DemoAssignments(Base):
         assignment_id = Column(Integer, primary_key=True, index=True)
         description = Column(String, index=True)
         date_added = Column(Date)
+        due_date = Column(Date, nullable=True)
 
 
 class AppConfig(Base):
@@ -82,3 +84,9 @@ class AppConfig(Base):
 
 # Create the tables in the database
 Base.metadata.create_all(bind=engine)
+
+# Migrate: add due_date column if it doesn't exist yet
+with engine.connect() as _conn:
+        _conn.execute(text("ALTER TABLE assignments ADD COLUMN IF NOT EXISTS due_date DATE"))
+        _conn.execute(text("ALTER TABLE demo_assignments ADD COLUMN IF NOT EXISTS due_date DATE"))
+        _conn.commit()

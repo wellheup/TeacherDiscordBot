@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from sqlalchemy import inspect
 from sqlalchemy.orm import Session
@@ -7,19 +7,21 @@ from models import (Assignments, Bugs, DemoAssignments, DemoBugs, DemoSyllabus,
                                         Syllabus)
 
 
-def add_assignment(db: Session, description: str, is_demo: bool):
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+def add_assignment(db: Session, description: str, is_demo: bool, due_date=None):
+        date = datetime.now().strftime("%Y-%m-%d")
+        if due_date is None:
+                due_date = (datetime.now() + timedelta(weeks=2)).strftime("%Y-%m-%d")
         try:
                 if is_demo:
-                        db_assignment = DemoAssignments(description=description, date_added=date)
+                        db_assignment = DemoAssignments(description=description, date_added=date, due_date=due_date)
                 else:
-                        db_assignment = Assignments(description=description, date_added=date)
+                        db_assignment = Assignments(description=description, date_added=date, due_date=due_date)
                 db.add(db_assignment)
                 db.commit()
                 db.refresh(db_assignment)
                 return db_assignment
         except Exception as e:
-                db.rollback()  # Rollback on error
+                db.rollback()
                 print(f"Error adding assignment: {e}")
                 raise
 
@@ -502,7 +504,7 @@ def get_all_assignments(db: Session, is_demo: bool):
                 raise
 
 
-def update_assignment(db: Session, assignment_id: int, description: str, is_demo: bool):
+def update_assignment(db: Session, assignment_id: int, description: str, is_demo: bool, due_date=None):
         try:
                 if is_demo:
                         db_assignment = (
@@ -518,6 +520,8 @@ def update_assignment(db: Session, assignment_id: int, description: str, is_demo
                         )
                 if db_assignment:
                         db_assignment.description = description
+                        if due_date is not None:
+                                db_assignment.due_date = due_date
                         db.commit()
                         db.refresh(db_assignment)
                 return db_assignment

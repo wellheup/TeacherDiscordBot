@@ -238,8 +238,9 @@ def assign():
         )
         try:
                 assignment_data = request.form.get("assignment_data")
+                due_date = request.form.get("due_date") or None
                 source = request.args.get("source", "syllabus")
-                add_assignment(db, assignment_data, is_demo)
+                add_assignment(db, assignment_data, is_demo, due_date=due_date)
                 if source == "past_assignments":
                         return renderPastAssignments(db, is_demo, url_suffix)
                 return renderSyllabus(db, is_demo, url_suffix)
@@ -282,7 +283,8 @@ def update_assignment_route():
         try:
                 assignment_id = int(request.form.get("assignment_id"))
                 description = request.form.get("description")
-                update_assignment(db, assignment_id, description, is_demo)
+                due_date = request.form.get("due_date") or None
+                update_assignment(db, assignment_id, description, is_demo, due_date=due_date)
                 return renderPastAssignments(db, is_demo, url_suffix)
         except Exception as e:
                 db.rollback()

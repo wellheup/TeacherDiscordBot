@@ -67,6 +67,7 @@
               </th>
               <th style="padding: 2px">Assignment</th>
               <th style="padding: 2px">Date Added</th>
+              <th style="padding: 2px">Due Date</th>
             </tr>
           </thead>
           <tbody>
@@ -80,6 +81,7 @@
                   title="Edit this assignment"
                   data-assignment-id="{{ assignment.assignment_id }}"
                   data-description="{{ assignment.description }}"
+                  data-due-date="{{ assignment.due_date or '' }}"
                   onclick="openEditModal(this)"
                 >
                   Edit
@@ -96,11 +98,12 @@
               </td>
               <td style="padding: 2px">{{ assignment.description }}</td>
               <td style="padding: 2px">{{ assignment.date_added }}</td>
+              <td style="padding: 2px">{{ assignment.due_date or '' }}</td>
             </tr>
             {% endfor %}
             {% else %}
             <tr>
-              <td colspan="3">No assignments found.</td>
+              <td colspan="4">No assignments found.</td>
             </tr>
             {% endif %}
           </tbody>
@@ -133,7 +136,14 @@
               <div class="modal-body">
                 <p>Please enter the new assignment:</p>
                 <form method="POST" action="/assign?url_suffix={{url_suffix}}&source=past_assignments">
-                  <input type="text" name="assignment_data" class="form-control" />
+                  <div class="form-group">
+                    <label for="newAssignmentData">Assignment</label>
+                    <input type="text" name="assignment_data" id="newAssignmentData" class="form-control" />
+                  </div>
+                  <div class="form-group">
+                    <label for="newAssignmentDueDate">Due Date (optional)</label>
+                    <input type="date" name="due_date" id="newAssignmentDueDate" class="form-control" />
+                  </div>
                   <div class="text-center mt-3">
                     <button type="submit" class="btn btn-success">✔</button>
                     <button
@@ -182,6 +192,15 @@
                       type="text"
                       name="description"
                       id="editDescription"
+                      class="form-control"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="editDueDate">Due Date</label>
+                    <input
+                      type="date"
+                      name="due_date"
+                      id="editDueDate"
                       class="form-control"
                     />
                   </div>
@@ -254,6 +273,7 @@
           function openEditModal(btn) {
             $("#editAssignmentId").val($(btn).data("assignment-id"));
             $("#editDescription").val($(btn).data("description"));
+            $("#editDueDate").val($(btn).data("due-date"));
             $("#editAssignmentForm").modal("show");
           }
 

@@ -500,7 +500,14 @@
           <div class="modal-body">
             <p>Please enter the new assignment:</p>
             <form method="POST" action="/assign?url_suffix={{url_suffix}}">
-              <input type="text" name="assignment_data" class="form-control" />
+              <div class="form-group">
+                <label for="syllabusAssignmentData">Assignment</label>
+                <input type="text" name="assignment_data" id="syllabusAssignmentData" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="syllabusAssignmentDueDate">Due Date (optional)</label>
+                <input type="date" name="due_date" id="syllabusAssignmentDueDate" class="form-control" />
+              </div>
               <div class="text-center mt-3">
                 <button type="submit" class="btn btn-success">✔</button>
                 <button
