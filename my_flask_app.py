@@ -211,6 +211,24 @@ def complete():
                 db.close()
 
 
+@app.route("/uncomplete", methods=["POST"])
+def uncomplete():
+        url_suffix = request.args.get("url_suffix", "")
+        db: Session = SessionLocal()
+        is_demo = (
+                True if not url_suffix or url_suffix != get_config("url_suffix") else False
+        )
+        try:
+                unique_id = int(request.form.get("unique_id"))
+                uncomplete_book(db, unique_id, is_demo)
+                return renderSyllabus(db, is_demo, url_suffix)
+        except Exception as e:
+                db.rollback()
+                return str(e), 500
+        finally:
+                db.close()
+
+
 @app.route("/assign", methods=["POST"])
 def assign():
         url_suffix = request.args.get("url_suffix", "")
