@@ -72,7 +72,7 @@
         >
           <thead class="thead-light">
             <tr>
-              <th style="padding: 2px; white-space: nowrap">
+              <th style="padding: 2px; white-space: nowrap; text-align: left">
                 <button
                   class="btn btn-sm btn-success"
                   id="addNewBookButton"
@@ -85,7 +85,7 @@
               {% for column in columns %}
               <th
                 class="col-{{ column }}"
-                style="padding: 2px; white-space: nowrap"
+                style="padding: 2px; white-space: nowrap; text-align: left"
               >
                 {{ pretty_columns[column] }}
               </th>
