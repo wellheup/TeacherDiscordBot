@@ -5,7 +5,7 @@ from utils import send_and_delete
 command_descriptions = """
 **!url or !web** - Get the current URL at which the syllabus is hosted
 **!add "book" "author" "series"**: Adds a new book with optional author and series to the syllabus.
-**!assign "descriptionOfAssignment"**: Assigns a new assignment for the class.
+**!assign "descriptionOfAssignment" "yyyy-mm-dd"**: Assigns a new assignment for the class. The second argument is an optional due date in yyyy-mm-dd format; if omitted or unparseable it defaults to 2 weeks from today (and any unparseable text is appended to the description).
 **!assignment**: Prints the current assignment for the class.
 **!cmds**: Displays available bot commands. (you already know this one)
 **!columns**: Lists all column names in the syllabus table.
@@ -17,7 +17,7 @@ command_descriptions = """
 **!report_bug "description"**: Allows users to report a bug, which then gets inserted into the database.
 **!syllabus "minutes"**: Lists all items in the syllabus, optionally deletes the message after specified minutes. Use 0 for infinite time.
 **!todo "minutes"**: Lists all incomplete items in the syllabus, optionally deletes the message after specified minutes.
-**!update_assignment "descriptionOfAssignment"**: Updates the current assignment for the class.
+**!update_assignment "descriptionOfAssignment"**: Updates the description of the most recent assignment.
 **!update "bookOrId#" "column" "new_value"**: Updates a specific column of an item in the syllabus.
 """
 
@@ -25,4 +25,4 @@ command_descriptions = """
 # The command to display available commands
 @commands.command()
 async def cmds(ctx):
-	return await send_and_delete(ctx, command_descriptions)
+        return await send_and_delete(ctx, command_descriptions)
