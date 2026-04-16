@@ -43,15 +43,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Main App"
+args = "Start application"
 
 [[workflows.workflow]]
-name = "Main App"
+name = "Start application"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python main.py"
+args = "python3 my_flask_app.py"
 waitForPort = 5000
 
 [workflows.workflow.metadata]

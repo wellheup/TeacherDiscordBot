@@ -485,3 +485,9 @@ def format_todo(todo):
                                 row.series: [{"book": row.book, "id": row.unique_id}]
                         }
         return todo_formatted
+
+
+if __name__ == "__main__":
+        from dotenv import load_dotenv
+        load_dotenv()
+        app.run(host="0.0.0.0", port=5000, debug=True)
