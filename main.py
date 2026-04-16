@@ -6,7 +6,7 @@ load_dotenv()
 
 # Discord bot
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 # Web App
 from my_flask_app import app as flask_app
@@ -63,8 +63,13 @@ def run_discord_bot():
         bot.add_command(update)
         bot.add_command(url)
 
+        @tasks.loop(hours=1)
+        async def refresh_daily_url():
+                daily_update_url()
+
         @bot.event
         async def on_ready():
+                refresh_daily_url.start()
                 print(
                         f"I am {bot.user.name}. The live url is:\n"
                         f"{get_current_url(is_demo=False)}\n"
