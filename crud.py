@@ -483,6 +483,73 @@ def update_book(
                 raise
 
 
+def get_all_assignments(db: Session, is_demo: bool):
+        try:
+                if is_demo:
+                        return (
+                                db.query(DemoAssignments)
+                                .order_by(DemoAssignments.assignment_id.desc())
+                                .all()
+                        )
+                else:
+                        return (
+                                db.query(Assignments)
+                                .order_by(Assignments.assignment_id.desc())
+                                .all()
+                        )
+        except Exception as e:
+                print(f"Error getting all assignments: {e}")
+                raise
+
+
+def update_assignment(db: Session, assignment_id: int, description: str, is_demo: bool):
+        try:
+                if is_demo:
+                        db_assignment = (
+                                db.query(DemoAssignments)
+                                .filter(DemoAssignments.assignment_id == assignment_id)
+                                .first()
+                        )
+                else:
+                        db_assignment = (
+                                db.query(Assignments)
+                                .filter(Assignments.assignment_id == assignment_id)
+                                .first()
+                        )
+                if db_assignment:
+                        db_assignment.description = description
+                        db.commit()
+                        db.refresh(db_assignment)
+                return db_assignment
+        except Exception as e:
+                db.rollback()
+                print(f"Error updating assignment: {e}")
+                raise
+
+
+def delete_assignment(db: Session, assignment_id: int, is_demo: bool):
+        try:
+                if is_demo:
+                        db_assignment = (
+                                db.query(DemoAssignments)
+                                .filter(DemoAssignments.assignment_id == assignment_id)
+                                .first()
+                        )
+                else:
+                        db_assignment = (
+                                db.query(Assignments)
+                                .filter(Assignments.assignment_id == assignment_id)
+                                .first()
+                        )
+                if db_assignment:
+                        db.delete(db_assignment)
+                        db.commit()
+        except Exception as e:
+                db.rollback()
+                print(f"Error deleting assignment: {e}")
+                raise
+
+
 def update_current_assignment(db: Session, new_value: str, is_demo: bool):
         try:
                 if is_demo:

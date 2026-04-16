@@ -238,8 +238,70 @@ def assign():
         )
         try:
                 assignment_data = request.form.get("assignment_data")
+                source = request.args.get("source", "syllabus")
                 add_assignment(db, assignment_data, is_demo)
+                if source == "past_assignments":
+                        return renderPastAssignments(db, is_demo, url_suffix)
                 return renderSyllabus(db, is_demo, url_suffix)
+        except Exception as e:
+                db.rollback()
+                return str(e), 500
+        finally:
+                db.close()
+
+
+@app.route("/past_assignments", methods=["GET"])
+def past_assignments_content():
+        url_suffix = request.args.get("url_suffix", "")
+        db: Session = SessionLocal()
+        is_demo = (
+                True if not url_suffix or url_suffix != get_config("url_suffix") else False
+        )
+        try:
+                assignments = get_all_assignments(db, is_demo)
+                return render_template(
+                        "past_assignments.html",
+                        assignments=assignments,
+                        demo="DEMO " if is_demo else "",
+                        url_suffix=url_suffix,
+                )
+        except Exception as e:
+                db.rollback()
+                return str(e) + ". Failed to load past assignments tab.", 500
+        finally:
+                db.close()
+
+
+@app.route("/update_assignment", methods=["POST"])
+def update_assignment_route():
+        url_suffix = request.args.get("url_suffix", "")
+        db: Session = SessionLocal()
+        is_demo = (
+                True if not url_suffix or url_suffix != get_config("url_suffix") else False
+        )
+        try:
+                assignment_id = int(request.form.get("assignment_id"))
+                description = request.form.get("description")
+                update_assignment(db, assignment_id, description, is_demo)
+                return renderPastAssignments(db, is_demo, url_suffix)
+        except Exception as e:
+                db.rollback()
+                return str(e), 500
+        finally:
+                db.close()
+
+
+@app.route("/delete_assignment", methods=["POST"])
+def delete_assignment_route():
+        url_suffix = request.args.get("url_suffix", "")
+        db: Session = SessionLocal()
+        is_demo = (
+                True if not url_suffix or url_suffix != get_config("url_suffix") else False
+        )
+        try:
+                assignment_id = int(request.form.get("assignment_id"))
+                delete_assignment(db, assignment_id, is_demo)
+                return renderPastAssignments(db, is_demo, url_suffix)
         except Exception as e:
                 db.rollback()
                 return str(e), 500
@@ -307,6 +369,17 @@ def unitTest_content():
                 return str(e) + ". Failed to load unit test tab.", 500
         finally:
                 db.close()
+
+
+def renderPastAssignments(db, is_demo, url_suffix):
+        assignments = get_all_assignments(db, is_demo)
+        html = render_template(
+                "past_assignments.html",
+                assignments=assignments,
+                demo="DEMO " if is_demo else "",
+                url_suffix=url_suffix,
+        )
+        return jsonify({"html": html, "close_modal": True})
 
 
 def renderSyllabus(db, is_demo, url_suffix):

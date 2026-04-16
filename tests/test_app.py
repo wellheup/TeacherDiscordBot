@@ -38,6 +38,59 @@ def test_new_assignment(client):
         assert b"Read Chapter 5" in rv.data
 
 
+def test_past_assignments_content(client):
+        rv = client.get("/past_assignments")
+        assert rv.status_code == 200
+        assert b"PAST ASSIGNMENTS" in rv.data
+        assert b"New Assignment" in rv.data
+        assert b"Read Chapter 5" in rv.data
+
+
+def test_edit_assignment(client):
+        rv = client.get("/past_assignments")
+        assert rv.status_code == 200
+        data = rv.data.decode("utf-8")
+
+        # Find assignment_id for "Read Chapter 5" from the edit button's data attribute
+        start_index = data.find("Read Chapter 5")
+        if start_index == -1:
+                raise AssertionError("'Read Chapter 5' assignment not found on past_assignments page")
+
+        btn_start = data.rfind('data-assignment-id="', 0, start_index)
+        assignment_id_start = btn_start + len('data-assignment-id="')
+        assignment_id_end = data.find('"', assignment_id_start)
+        assignment_id = data[assignment_id_start:assignment_id_end].strip()
+
+        # Post the edit data to /update_assignment
+        data_edit = {"assignment_id": assignment_id, "description": "Read Chapter 6 test"}
+        rv = client.post("/update_assignment", data=data_edit, follow_redirects=True)
+        assert rv.status_code == 200
+        assert b"Read Chapter 6 test" in rv.data
+        assert b"Read Chapter 5" not in rv.data
+
+
+def test_delete_assignment(client):
+        rv = client.get("/past_assignments")
+        assert rv.status_code == 200
+        data = rv.data.decode("utf-8")
+
+        # Find assignment_id for "Read Chapter 6 test" from the delete button
+        start_index = data.find("Read Chapter 6 test")
+        if start_index == -1:
+                raise AssertionError("'Read Chapter 6 test' assignment not found on past_assignments page")
+
+        btn_start = data.rfind('data-assignment-id="', 0, start_index)
+        assignment_id_start = btn_start + len('data-assignment-id="')
+        assignment_id_end = data.find('"', assignment_id_start)
+        assignment_id = data[assignment_id_start:assignment_id_end].strip()
+
+        # Post the delete data to /delete_assignment
+        data_delete = {"assignment_id": assignment_id}
+        rv = client.post("/delete_assignment", data=data_delete, follow_redirects=True)
+        assert rv.status_code == 200
+        assert b"Read Chapter 6 test" not in rv.data
+
+
 def test_add_new(client):
         data = {
                 "book": "New Book Title test",
