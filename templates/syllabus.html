@@ -66,11 +66,11 @@
       <div class="table-responsive scrollable-table-container">
         <table
           class="table table-bordered table-fixed-header"
-          style="text-align: center; padding: 5px"
+          style="text-align: center; padding: 2px"
         >
           <thead class="thead-light">
             <tr>
-              <th style="padding: 5px; white-space: nowrap">
+              <th style="padding: 2px; white-space: nowrap">
                 <button
                   class="btn btn-sm btn-success"
                   id="addNewBookButton"
@@ -82,7 +82,7 @@
               {% for column in columns %}
               <th
                 class="col-{{ column }}"
-                style="padding: 5px; white-space: nowrap"
+                style="padding: 2px; white-space: nowrap"
               >
                 {{ pretty_columns[column] }}
               </th>
@@ -92,7 +92,7 @@
           <tbody>
             {% for book in syllabus %}
             <tr style="background-color: {{ loop.cycle('#d3d3d3', 'white') }};">
-              <td style="white-space: nowrap; padding: 5px">
+              <td style="white-space: nowrap; padding: 2px">
                 <button
                   class="btn btn-sm btn-info"
                   name="edit"
@@ -113,7 +113,7 @@
               {% for column in columns %}
               <td
                 class="col-{{ column }}"
-                style="white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %}; padding: 5px;"
+                style="white-space: nowrap; width: auto; text-align: {% if column in ['unique_id', 'num_in_series', 'up_votes', 'down_votes'] %}center{% else %}left{% endif %}; padding: 2px;"
               >
                 {% if column in ['unique_id', 'date_added'] %}
                 <div name="{{column}}">{{ book[column] }}</div>
