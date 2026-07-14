@@ -4,7 +4,7 @@ our book club. It will post to the book club chat channel upon command to help u
 
 ## [View Discord Demo Here:](https://discord.gg/52vBudgfxk) https://discord.gg/52vBudgfxk
 
-## [View Web Demo Here:](http://34.169.197.3:5000/) http://34.169.197.3:5000/
+## [View Web Demo Here:](http://34.53.83.79:5000/) http://34.53.83.79:5000/
 
 ## Getting Started
 To set up the bot, follow these steps:
