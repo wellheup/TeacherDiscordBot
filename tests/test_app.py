@@ -273,6 +273,10 @@ def test_todo_content(client):
         rv = client.get("/todo")
         assert rv.status_code == 200
         assert b"<p>The following assignments have yet to be completed:</p>" in rv.data
+        assert b'id="pickRandomSeriesButton"' in rv.data
+        assert b'id="randomSeriesModal"' in rv.data
+        assert b"id=\"rerollRandomSeriesButton\"" in rv.data
+        assert rv.data.count(b'data-dismiss="modal"') >= 2
 
 
 def test_bugs_content(client):

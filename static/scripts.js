@@ -1,4 +1,50 @@
 let isSubmitting = false;
+let lastRandomTodoSeries = null;
+
+function renderRandomTodoSeries() {
+	const seriesItems = Array.from(
+		document.querySelectorAll('#todo .todo-series-item'),
+	);
+	if (!seriesItems.length) {
+		return false;
+	}
+
+	let choices = seriesItems;
+	if (seriesItems.length > 1 && lastRandomTodoSeries) {
+		const differentSeries = seriesItems.filter(
+			(item) => item !== lastRandomTodoSeries,
+		);
+		if (differentSeries.length > 0) {
+			choices = differentSeries;
+		}
+	}
+
+	const selected = choices[Math.floor(Math.random() * choices.length)];
+	lastRandomTodoSeries = selected;
+
+	const seriesName = selected
+		.querySelector('.todo-series-name')
+		.textContent.trim();
+	document.getElementById('randomSeriesModalLabel').textContent = seriesName;
+	document.getElementById('randomSeriesAuthor').textContent =
+		selected.dataset.author || '';
+
+	const booksList = document.getElementById('randomSeriesBooks');
+	booksList.replaceChildren();
+	const books = selected.querySelectorAll('.todo-series-books > li');
+	books.forEach((book) => {
+		const listItem = document.createElement('li');
+		listItem.textContent = book.textContent.trim();
+		booksList.appendChild(listItem);
+	});
+
+	if (!books.length) {
+		const emptyMessage = document.createElement('li');
+		emptyMessage.textContent = 'No books are currently listed for this series.';
+		booksList.appendChild(emptyMessage);
+	}
+	return true;
+}
 
 function getUrlSuffix() {
 	return new URL(window.location.href).searchParams.get('url_suffix') || '';
@@ -76,6 +122,20 @@ function initializeEventListeners() {
 		console.log(`Tab clicked: ${tabName}`);
 		loadTabContent(tabName);
 	});
+
+	$(document)
+		.off('click', '#pickRandomSeriesButton')
+		.on('click', '#pickRandomSeriesButton', function() {
+			if (renderRandomTodoSeries()) {
+				$('#randomSeriesModal').modal('show');
+			}
+		});
+
+	$(document)
+		.off('click', '#rerollRandomSeriesButton')
+		.on('click', '#rerollRandomSeriesButton', function() {
+			renderRandomTodoSeries();
+		});
 
 	attachFormSubmitHandler();
 
