@@ -17,6 +17,7 @@ sqlalchemy = "^2.0.30"
 app = "^0.0.1"
 idna = "^3.10"
 multidict = "^6.5.0"
+python-dotenv = "^1.2.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "8.2"
